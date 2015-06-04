@@ -1,0 +1,19 @@
+---
+# TODO Add feature local git clone
+# If we are local (git doesn't work in the remote)
+# push branch and tag from local directory
+# And don't forget to CLEAN it all UP
+tasks:
+
+  - include: drush-checks.yml
+
+  - include: deploy-codebase.yml
+    vars:
+      codebase_dir: "{{ webroot }}/{{ app['website']['host'] }}_{{ app['build'] }}"
+
+  - include: switch-on.yml
+
+  - include: branch-tag.yml
+    vars:
+      codebase_dir: "{{ webroot }}/{{ app['website']['host'] }}_{{ app['build'] }}"
+    when: target == 'prod'

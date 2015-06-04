@@ -1,0 +1,20 @@
+---
+- name: create hotfix branch
+  shell: "git checkout -b prod-{{ app['build'] }}"
+  args:
+    chdir: "{{ codebase_dir }}"
+
+- name: create build tag
+  shell: "git tag {{ app['build'] }}"
+  args:
+    chdir: "{{ codebase_dir }}"
+
+- name: push hotfix branch
+  shell: "git push origin prod-{{ app['build'] }}"
+  args:
+    chdir: "{{ codebase_dir }}"
+
+- name: push build tag
+  shell: "git push origin {{ app['build'] }}"
+  args:
+    chdir: "{{ codebase_dir }}"

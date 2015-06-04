@@ -1,0 +1,25 @@
+---
+  - name: remove .bak symlink and its contents
+    file:
+      path: "{{ webroot }}/{{ app['website']['host'] }}.bak"
+      follow: yes
+      state: absent
+
+  - name: rename current symlink to .bak
+    file:
+      path: "{{ webroot }}/{{ app['website']['host'] }}.bak"
+      src: "{{ webroot }}/{{ app['website']['host'] }}"
+      follow: yes
+      state: link
+
+  - name: set new symlink to new live codebase
+    file:
+      path: "{{ webroot }}/{{ app['website']['host'] }}"
+      src: "{{ webroot }}/{{ app['website']['host'] }}_{{ app['build'] }}"
+      state: link
+
+  - name: remove current build symlink
+    file:
+      path: "{{ webroot }}/{{ app['website']['host'] }}.build"
+      state: absent
+      follow: no
