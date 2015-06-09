@@ -5,7 +5,17 @@
 # And don't forget to CLEAN it all UP
 tasks:
 
+  - name: remove current build symlink and its contents, if any
+    file:
+      path: "{{ webroot }}/{{ app['website']['host'] }}/public_html.build"
+      state: absent
+      follow: yes
+
   - include: drush-checks.yml
+
+  - include: defaults-check.yml
+
+  - include: create-site.yml
 
   - include: deploy-codebase.yml
     vars:
@@ -17,3 +27,5 @@ tasks:
     vars:
       codebase_dir: "{{ webroot }}/{{ app['website']['host'] }}_{{ app['build'] }}"
     when: target == 'prod'
+
+  - include: logrotate.yml

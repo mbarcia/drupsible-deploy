@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  author: "Mariano Barcia"
+  license: 'GNU General Public License v3'
+  min_ansible_version: 1.4
+  platforms:
+    - name: Ubuntu
+      versions:
+        - precise
+        - trusty
+    - name: Debian
+      versions:
+        - squeeze
+        - wheezy
+  categories:
+    - web
+dependencies:
+  - role: drupsible.drush
