@@ -11,7 +11,3 @@
     src: "logrotate.d/backup.j2"
     dest: "/etc/logrotate.d/{{ app['website']['host'] }}-backup"
   tags: logrotate
-
-- name: run initial backup to spark the process
-  command: "drush @{{  app['website']['host'] }}.cur archive-dump --tar-options=\"--exclude=.git\" --description=\"Backup of {{ app['website']['host'] }} containing codebase, files and DB.\" --destination=/home/{{  app['website']['user'] }}/drush-backups/archive-dump/logrotate/{{  app['website']['host'] }}-ard.tar.gz --overwrite"
-  tags: logrotate
