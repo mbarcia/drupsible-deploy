@@ -3,29 +3,27 @@
 # If we are local (git doesn't work in the remote)
 # push branch and tag from local directory
 # And don't forget to CLEAN it all UP
-tasks:
+- name: remove current build symlink and its contents, if any
+  file:
+    path: "{{ webroot }}/{{ app['website']['host'] }}/public_html.build"
+    state: absent
+    follow: yes
 
-  - name: remove current build symlink and its contents, if any
-    file:
-      path: "{{ webroot }}/{{ app['website']['host'] }}/public_html.build"
-      state: absent
-      follow: yes
+- include: drush-checks.yml
 
-  - include: drush-checks.yml
+- include: defaults-check.yml
 
-  - include: defaults-check.yml
+- include: create-site.yml
 
-  - include: create-site.yml
+- include: deploy-codebase.yml
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app['website']['host'] }}_{{ app['build'] }}"
 
-  - include: deploy-codebase.yml
-    vars:
-      codebase_dir: "{{ webroot }}/{{ app['website']['host'] }}_{{ app['build'] }}"
+- include: logrotate.yml
 
-  - include: switch-on.yml
+- include: branch-tag.yml
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app['website']['host'] }}_{{ app['build'] }}"
+  when: target == 'prod'
 
-  - include: branch-tag.yml
-    vars:
-      codebase_dir: "{{ webroot }}/{{ app['website']['host'] }}_{{ app['build'] }}"
-    when: target == 'prod'
-
-  - include: logrotate.yml
+- include: switch-on.yml
