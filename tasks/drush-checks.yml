@@ -13,11 +13,11 @@
 
   - name: ensure build symlink is absent
     file:
-      path: "{{ webroot }}/{{ app['website']['host'] }}.build"
+      path: "{{ webroot }}/{{ webhost }}.build"
       state: absent
     
   - name: setting new build symlink to clone the new build
     file:
-      path: "{{ webroot }}/{{ app['website']['host'] }}.build"
-      src: "{{ webroot }}/{{ app['website']['host'] }}_{{ app['build'] }}"
+      path: "{{ webroot }}/{{ webhost }}.build"
+      src: "{{ webroot }}/{{ webhost }}_{{ app['build'] }}"
       state: link
