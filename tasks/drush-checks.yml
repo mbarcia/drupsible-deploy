@@ -1,23 +1,23 @@
 ---
-  - name: check drush is installed
+  - name: Check drush is installed
     shell: "drush --help | grep Drush"
     register: drush_help_result
     failed_when: "drush_help_result.rc != 0"
     changed_when: false
 
-  - name: check drush min version
+  - name: Check drush min version
     shell: "drush --version | cut -c 21"
     register: drush_version
     failed_when: "drush_version.stdout <= {{ drush_min_version }}"
     changed_when: false
 
-  - name: ensure build symlink is absent
+  - name: Ensure build symlink is absent
     file:
-      path: "{{ webroot }}/{{ webhost }}.build"
+      path: "{{ webroot }}/{{ webhost }}/public_html.build"
       state: absent
     
-  - name: setting new build symlink to clone the new build
+  - name: Setting new build symlink to clone the new build
     file:
-      path: "{{ webroot }}/{{ webhost }}.build"
-      src: "{{ webroot }}/{{ webhost }}_{{ build }}"
+      path: "{{ webroot }}/{{ webhost }}/public_html.build"
+      src: "{{ webroot }}/{{ webhost }}/public_html_{{ build }}"
       state: link
