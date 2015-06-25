@@ -4,15 +4,15 @@
     dest: /home/{{ app['user'] }}/.ssh/known_hosts
     create: yes
     state: present
-    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa {{ app['git_repo_server'] }}') }}"
-    regexp: "^{{ app['git_repo_server'] }}"
+    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa {{ git_repo_server }}') }}"
+    regexp: "^{{ git_repo_server }}"
 
 - name: Git clone the app codebase (https)
   git:
     clone: yes
     dest: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
-    repo: "{{ app['git_repo_protocol'] }}://{{ app['git_repo_user'] }}:{{ app['git_repo_pwd'] }}@{{ app['git_repo_server'] }}/{{ app['git_repo_path'] }}"
-  when: app['git_repo_protocol'] == "https"
+    repo: "{{ git_repo_protocol }}://{{ git_repo_user }}:{{ git_repo_pwd }}@{{ git_repo_server }}/{{ git_repo_path }}"
+  when: git_repo_protocol == "https"
 
 - name: Setting new build symlink to clone the new build
   file:
