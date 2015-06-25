@@ -19,5 +19,5 @@
   - name: setting new build symlink to clone the new build
     file:
       path: "{{ webroot }}/{{ webhost }}.build"
-      src: "{{ webroot }}/{{ webhost }}_{{ app['build'] }}"
+      src: "{{ webroot }}/{{ webhost }}_{{ build }}"
       state: link
