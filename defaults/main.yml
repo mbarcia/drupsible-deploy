@@ -1,40 +1,13 @@
 ---
-app:
-  name: "example"
-  # String to identify the build based on today's date like 20201224_1824
-  build: "{{ ansible_date_time['year'] }}{{ ansible_date_time['month'] }}{{ ansible_date_time['day'] }}_{{ ansible_date_time['hour'] }}{{ ansible_date_time['minute'] }}"
-  # 
-  # App web params
-  #
-  website: 
-    host: 'example.com'
-    user: 'example'
-    group: 'example'
-    admin_email: 'admin@example.com'
-    aliases: [
-      www.example.com
-    ]
-    #
-    # If using Drupal, these are the Drush source settings for initial import of the website
-    #
-    # base path in the source/remote host
-    source_docroot: '/var/www/html/example.com/public_html'
-    # source/remote hostname
-    source_remote_host: 'localhost'
-    # source/remote ssh user
-    source_remote_user: 'example'
-    # ssh user and port in case of using ProxyCommand
-    source_proxy_credentials: 'example@example.com'
-    source_proxy_port: 22
-  #
-  # GIT params
-  #
-  # Version of the repository to check out (full 40-character SHA-1 hash, the literal string HEAD, a branch name, or a tag name).
-  version: master
-  # can be git, ssh, or http
-  git_repo_protocol: "http"
-  git_repo_server: git.asmws.com
-  git_repo_path: ""
-  git_repo_user: ""
-  git_repo_pwd: ""
-  accept_hostkey: no
+# String to identify the build based on today's date like 20201224_1824
+build: "{{ ansible_date_time['year'] }}{{ ansible_date_time['month'] }}{{ ansible_date_time['day'] }}_{{ ansible_date_time['hour'] }}{{ ansible_date_time['minute'] }}"
+
+# Version of the repository to check out (full 40-character SHA-1 hash, the literal string HEAD, a branch name, or a tag name).
+git_version: master
+# can be git, ssh, or http
+git_repo_protocol: "http"
+git_repo_server: git.example.com
+git_repo_path: ""
+git_repo_user: ""
+git_repo_pwd: ""
+accept_hostkey: no
