@@ -13,8 +13,6 @@
 
 - include: defaults-check.yml
 
-- include: create-site.yml
-
 - include: deploy-codebase.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ webhost }}_{{ build }}"
