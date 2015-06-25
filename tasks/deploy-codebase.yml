@@ -1,5 +1,5 @@
 ---
-- name: ensure git host is a known host
+- name: Ensure git host is a known host
   lineinfile:
     dest: /home/{{ app['user'] }}/.ssh/known_hosts
     create: yes
@@ -7,10 +7,16 @@
     line: "{{ lookup('pipe', 'ssh-keyscan -t rsa {{ app['git_repo_server'] }}') }}"
     regexp: "^{{ app['git_repo_server'] }}"
 
-- name: git clone the app codebase (https)
+- name: Git clone the app codebase (https)
   git:
     clone: yes
-    dest: "{{ webroot }}/{{ webhost }}_{{ build }}"
+    dest: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
     repo: "{{ app['git_repo_protocol'] }}://{{ app['git_repo_user'] }}:{{ app['git_repo_pwd'] }}@{{ app['git_repo_server'] }}/{{ app['git_repo_path'] }}"
   when: app['git_repo_protocol'] == "https"
-    
+
+- name: Setting new build symlink to clone the new build
+  file:
+    path: "{{ webroot }}/{{ webhost }}/public_html.build"
+    src: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
+    state: link
+  
