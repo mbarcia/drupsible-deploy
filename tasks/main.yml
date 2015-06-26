@@ -15,13 +15,13 @@
 
 - include: deploy-codebase.yml
   vars:
-    codebase_dir: "{{ webroot }}/{{ webhost }}_{{ build }}"
+    codebase_dir: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
 
 - include: logrotate.yml
 
 - include: branch-tag.yml
   vars:
-    codebase_dir: "{{ webroot }}/{{ webhost }}_{{ build }}"
+    codebase_dir: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
   when: target == 'prod'
 
 - include: switch-on.yml
