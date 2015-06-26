@@ -1,44 +1,45 @@
 ---
-- name: remove .bak symlink and its contents
+- name: Check public_html.bak symlink exists
+  stat: 
+    path: "{{ webroot }}/{{ webhost }}/public_html.bak"
+  register: stat_public_html_bak_symlink
+
+- name: Remove .bak symlink and its contents, if it exists
   file:
     path: "{{ webroot }}/{{ webhost }}/public_html.bak"
     follow: yes
     state: absent
+  when: stat_public_html_bak_symlink.stat.exists
 
-- name: rename current symlink to .bak
-  file:
-    path: "{{ webroot }}/{{ webhost }}/public_html.bak"
-    src: "{{ webroot }}/{{ webhost }}/public_html"
-    follow: yes
-    state: link
-
-- name: set new symlink to new live codebase
-  file:
+- name: Check public_html symlink exists
+  stat: 
     path: "{{ webroot }}/{{ webhost }}/public_html"
+  register: stat_public_html_symlink
+
+- name: Rename current symlink to .bak, if it exists
+  command: creates="{{ webroot }}/{{ webhost }}/public_html.bak" removes="{{ webroot }}/{{ webhost }}/public_html" mv {{ webroot }}/{{ webhost }}/public_html {{ webroot }}/{{ webhost }}/public_html.bak
+  when: stat_public_html_symlink.stat.exists
+
+- name: Set new symlink to new live codebase
+  file:
+    dest: "{{ webroot }}/{{ webhost }}/public_html"
     src: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
+    owner: "{{ app['user'] }}"
+    group: "{{ app['group'] }}"
     state: link
 
-- name: remove current build symlink
+- name: Remove current build symlink
   file:
     path: "{{ webroot }}/{{ webhost }}/public_html.build"
     state: absent
     follow: no
 
-- name: Assures public_html folder exists
-  file:
-    path: "/home/{{ app['user'] }}/public_html"
-    state: directory
-    owner: "{{ app['user'] }}"
-    group: "{{ app['group'] }}"
-  tags: apache2
-
-- name: Check whether public_html symlink already exists
+- name: Check user/public_html symlink already exists
   stat: 
     path: "/home/{{ app['user'] }}/public_html"
   register: stat_public_symlink
-  tags: apache2
 
-- name: Create public_html symlink
+- name: Create user/public_html symlink
   file:
     src: "{{ webroot }}/{{ webhost }}/public_html"
     dest: "/home/{{ app['user'] }}/public_html"
@@ -46,6 +47,3 @@
     owner: "{{ app['user'] }}"
     group: "{{ app['group'] }}"
   when: not stat_public_symlink.stat.exists
-  tags: apache2
-
-      
