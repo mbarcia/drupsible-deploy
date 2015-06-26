@@ -4,10 +4,10 @@
     src: "logrotate.d/applog.j2"
     dest: "/etc/logrotate.d/{{ webhost }}"
   when: "app['log'] is defined"
-  tags: logrotate
-
+  sudo: yes
+  
 - name: setup logrotate.d script for daily backups
   template:
     src: "logrotate.d/backup.j2"
     dest: "/etc/logrotate.d/{{ webhost }}-backup"
-  tags: logrotate
+  sudo: yes
