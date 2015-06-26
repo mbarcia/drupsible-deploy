@@ -4,15 +4,30 @@
     dest: /home/{{ app['user'] }}/.ssh/known_hosts
     create: yes
     state: present
-    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa {{ git_repo_server }}') }}"
+    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + git_repo_server) }}"
     regexp: "^{{ git_repo_server }}"
+  changed_when: False
 
-- name: Git clone the app codebase (https)
+- name: Git clone the app codebase (http/s)
   git:
     clone: yes
     dest: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
-    repo: "{{ git_repo_protocol }}://{{ git_repo_user }}:{{ git_repo_pwd }}@{{ git_repo_server }}/{{ git_repo_path }}"
-  when: git_repo_protocol == "https"
+    repo: "{{ git_repo_protocol }}://{{ git_repo_server }}/{{ git_repo_path }}"
+  when: git_repo_protocol == 'https' or git_repo_protocol == 'http'
+
+- name: Git clone the app codebase (ssh)
+  git:
+    clone: yes
+    dest: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
+    repo: "ssh://{{ git_repo_user }}@{{ git_repo_server }}/{{ git_repo_path }}"
+  when: git_repo_protocol == 'ssh'
+
+- name: Git clone the app codebase (git)
+  git:
+    clone: yes
+    dest: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
+    repo: "git@{{ git_repo_server }}:{{ git_repo_user }}/{{ git_repo_path }}"
+  when: git_repo_protocol == 'git'
 
 - name: Setting new build symlink to clone the new build
   file:
