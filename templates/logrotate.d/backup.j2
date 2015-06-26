@@ -1,4 +1,4 @@
-/home/{{ app['website']['user'] }}/drush-backups/archive-dump/logrotate/{{ app['website']['host'] }}-ard.tar.gz {
+/home/{{ app['user'] }}/drush-backups/archive-dump/logrotate/{{ webhost }}-ard.tar.gz {
   daily
   dateext
   rotate 41
@@ -6,6 +6,6 @@
   create 640 asm www-data
   missingok
   postrotate
-    drush @{{ app['website']['host'] }}.cur archive-dump --tar-options="--exclude=.git" --description="Respaldo de {{ app['website']['host'] }} conteniendo codebase, ficheros y BBDD." --destination=/home/{{ app['website']['user'] }}/drush-backups/archive-dump/logrotate/{{ app['website']['host'] }}-ard.tar.gz --overwrite
+    drush @{{ webhost }}.cur archive-dump --tar-options="--exclude=.git" --description="Respaldo de {{ webhost }} conteniendo codebase, ficheros y BBDD." --destination=/home/{{ app['user'] }}/drush-backups/archive-dump/logrotate/{{ webhost }}-ard.tar.gz --overwrite
   endscript
 }

@@ -1,4 +1,4 @@
-{{ webroot }}/{{ app['website']['host'] }}/logs/{{ app['log'] }} {
+{{ webroot }}/{{ webhost }}/logs/{{ app['log'] }} {
     compress
     dateext
     maxage 365
@@ -6,6 +6,6 @@
     size=+4096k
     notifempty
     missingok
-    create 664 {{ app['website']['user'] }} {{ app['website']['group'] }}
+    create 664 {{ app['user'] }} {{ app['group'] }}
     endscript
 }
