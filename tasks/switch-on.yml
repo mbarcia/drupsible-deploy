@@ -15,7 +15,7 @@
 - name: set new symlink to new live codebase
   file:
     path: "{{ webroot }}/{{ webhost }}/public_html"
-    src: "{{ webroot }}/{{ webhost }}/public_html_{{ build }}"
+    src: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
     state: link
 
 - name: remove current build symlink
