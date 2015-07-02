@@ -2,15 +2,15 @@
 #
 # Preparation tasks
 #
-- fail: msg="Variable '{{ item }}' is required but not defined."
-  when: item not in vars
-  with_items:
-    - build
-    - app_name
-    - app_i18n
-    - app_env
-    - app_env['import']
-    - app_env['mode']
+#- fail: msg="Variable '{{ item }}' is required but not defined."
+#  when: item not in vars
+  #with_items:
+    #- build
+    #- app_name
+    #- app_i18n
+    #- app_env
+    #- app_env['import']
+    #- app_env['mode']
 
 - name: Remove current build symlink and its contents, if any.
   file:
