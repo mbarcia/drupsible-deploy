@@ -35,6 +35,7 @@
 # Database tasks
 #
 - include: backup-db.yml
+  when: "app_env is defined and not app_env.import"
 
 - include: sync-cur-db-from-source.yml
   when: "app_drush_source is defined and target != 'prod' and app_env.mode == 'sync' and not app_env.import"
