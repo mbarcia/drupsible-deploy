@@ -6,7 +6,15 @@
     state: present
     line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + git_repo_server) }}"
     regexp: "^{{ git_repo_server }}"
-  changed_when: False
+  when: "git_repo_protocol is defined and (git_repo_protocol == 'ssh' or git_repo_protocol == 'git')"
+
+- name: Make sure directory exists for the codebase dir.
+  file:
+    path: "{{ codebase_dir }}"
+    state: directory
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  sudo: yes
 
 - name: Git clone the app codebase (http/s w/o credentials)
   git:
@@ -19,7 +27,7 @@
   git:
     clone: yes
     dest: "{{ codebase_dir }}"
-    repo: '{{ git_repo_protocol }}://{{ git_repo_user }}@{{ git_repo_pass | default(lookup("password", secret + "/credentials/" + ansible_fqdn + "/git/" + git_repo_user + "/password")) }}{{ git_repo_server }}/{{ git_repo_path }}'
+    repo: '{{ git_repo_protocol }}://{{ git_repo_user }}:{{ git_repo_pass | default(lookup("password", secret + "/credentials/" + ansible_fqdn + "/git/" + git_repo_user + "/password")) }}@{{ git_repo_server }}/{{ git_repo_path }}'
   when: "(git_repo_protocol == 'https' or git_repo_protocol == 'http') and git_repo_user is defined"
 
 - name: Git clone the app codebase (ssh)
