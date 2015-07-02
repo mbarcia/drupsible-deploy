@@ -1,11 +1,9 @@
-/home/{{ app['user'] }}/drush-backups/archive-dump/logrotate/{{ webhost }}-ard.tar.gz {
+/home/{{ app_env['user'] }}/drush-backups/archive-dump/logrotate/{{ app_name }}-ard.tar.gz {
   daily
-  dateext
-  rotate 41
+  rotate 7
   nocompress
-  create 640 asm www-data
   missingok
   postrotate
-    drush @{{ webhost }}.cur archive-dump --tar-options="--exclude=.git" --description="Respaldo de {{ webhost }} conteniendo codebase, ficheros y BBDD." --destination=/home/{{ app['user'] }}/drush-backups/archive-dump/logrotate/{{ webhost }}-ard.tar.gz --overwrite
+    drush @{{ app_name }}.cur archive-dump --tar-options="--exclude=.git" --description="Backup of {{ app_name }} containing codebase, files and db." --destination=/home/{{ app_env['user'] }}/drush-backups/archive-dump/logrotate/{{ app_name }}-ard.tar.gz --overwrite
   endscript
 }
