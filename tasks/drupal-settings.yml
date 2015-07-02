@@ -3,18 +3,6 @@
   template:
     src: "settings.php.j2"
     dest: "{{ codebase_dir }}/sites/default/settings.php"
-
-- name: Set perms a-w on settings.php
-  file:
-    path: "{{ codebase_dir }}/sites/default/settings.php"
-    mode: 'a-w'
-    
-- name: Set perms u+w on settings.php
-  file:
-    path: "{{ codebase_dir }}/sites/default/settings.php"
-    mode: 'u+w'
-    
-- name: Set perms a-r on settings.php
-  file:
-    path: "{{ codebase_dir }}/sites/default/settings.php"
-    mode: 'a-r'
+    owner: "app_env['user']"
+    group: "app_env['group']"
+    mode: 444
