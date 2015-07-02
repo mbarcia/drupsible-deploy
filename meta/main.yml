@@ -2,17 +2,66 @@
 galaxy_info:
   author: "Mariano Barcia"
   license: 'GNU General Public License v3'
-  min_ansible_version: 1.4
+  min_ansible_version: 1.8
   platforms:
     - name: Ubuntu
       versions:
-        - precise
         - trusty
+        - vivid
     - name: Debian
       versions:
-        - squeeze
         - wheezy
+        - jessie
   categories:
     - web
+
 dependencies:
+  - role: debops.users
+    sudo: yes
+    users: True
+    users_host_list:
+    - users_drupsible
+    users_drupsible:
+    - name: "{{ app_env['user'] }}"
+      state: 'present'
+
+  - role: drupsible.mysql
+    sudo: yes
+    mysql_databases:
+    - name: "{{ app_name }}"
+      state: 'present'
+    mysql_users:
+    - name: "{{ app_env['db_user'] }}"
+      host: "%"
+      state: 'present'
+      password: "{{ app_env['db_password'] | default('') }}"
+      priv: '*.*:ALL'
+      append_privs: 'yes'
+
+  - role: drupsible.mysql
+    sudo: yes
+    when: "not app_env.import and app_env.mode == 'dup'"
+    mysql_databases:
+    - name: "{{ app_name }}_{{ build }}"
+      state: 'present'
+
+  - role: drupsible.apache2
+    sudo: yes
+
   - role: drupsible.drush
+  
+  - role: drupsible.newrelic
+    when: "'newrelic-php5' in php5_packages and apache2_mpm != 'prefork'"
+    sudo: yes
+
+  - role: drupsible.memcached
+    when: app_env.memcached
+    sudo: yes
+
+  - role: debops.php5
+    sudo: yes
+    when: "apache2_mpm != 'prefork'"
+    php5_pool_default:
+      enabled: True
+      name: "{{ app_name }}"
+      listen: "/var/run/php5-fpm-{{ app_name }}.sock"
