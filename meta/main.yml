@@ -40,10 +40,18 @@ dependencies:
 
   - role: drupsible.mysql
     sudo: yes
-    when: "not app_env.import and app_env.mode == 'dup'"
+    when: "app_env is defined and app_env.import == false and app_env.mode == 'dup'"
     mysql_databases:
     - name: "{{ app_name }}_{{ build }}"
       state: 'present'
+
+  - role: debops.php5
+    sudo: yes
+    when: "apache2_mpm != 'prefork'"
+    php5_pool_default:
+      enabled: True
+      name: "{{ app_name }}"
+      listen: "/var/run/php5-fpm-{{ app_name }}.sock"
 
   - role: drupsible.apache2
     sudo: yes
@@ -57,11 +65,3 @@ dependencies:
   - role: drupsible.memcached
     when: app_env.memcached
     sudo: yes
-
-  - role: debops.php5
-    sudo: yes
-    when: "apache2_mpm != 'prefork'"
-    php5_pool_default:
-      enabled: True
-      name: "{{ app_name }}"
-      listen: "/var/run/php5-fpm-{{ app_name }}.sock"
