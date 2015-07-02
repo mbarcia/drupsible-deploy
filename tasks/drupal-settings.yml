@@ -3,6 +3,6 @@
   template:
     src: "settings.php.j2"
     dest: "{{ codebase_dir }}/sites/default/settings.php"
-    owner: "app_env['user']"
-    group: "app_env['group']"
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
     mode: 444
