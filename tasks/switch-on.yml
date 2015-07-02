@@ -20,7 +20,7 @@
   command: "mv {{ webroot }}/{{ app_name }}/public_html {{ webroot }}/{{ app_name }}/public_html.bak"
   args:
     creates: "{{ webroot }}/{{ app_name }}/public_html.bak" 
-  removes: "{{ webroot }}/{{ app_name }}/public_html" 
+    removes: "{{ webroot }}/{{ app_name }}/public_html" 
   when: stat_public_html_symlink.stat.exists
 
 - name: Set new symlink to new live codebase
