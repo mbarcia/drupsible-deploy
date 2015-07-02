@@ -1,37 +1,44 @@
 ---
 - name: Ensure git host is a known host
   lineinfile:
-    dest: /home/{{ app['user'] }}/.ssh/known_hosts
+    dest: /home/{{ app_env['user'] }}/.ssh/known_hosts
     create: yes
     state: present
     line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + git_repo_server) }}"
     regexp: "^{{ git_repo_server }}"
   changed_when: False
 
-- name: Git clone the app codebase (http/s)
+- name: Git clone the app codebase (http/s w/o credentials)
   git:
     clone: yes
-    dest: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
+    dest: "{{ codebase_dir }}"
     repo: "{{ git_repo_protocol }}://{{ git_repo_server }}/{{ git_repo_path }}"
-  when: git_repo_protocol == 'https' or git_repo_protocol == 'http'
+  when: "(git_repo_protocol == 'https' or git_repo_protocol == 'http') and git_repo_user is not defined"
+
+- name: Git clone the app codebase (http/s w/credentials)
+  git:
+    clone: yes
+    dest: "{{ codebase_dir }}"
+    repo: '{{ git_repo_protocol }}://{{ git_repo_user }}@{{ git_repo_pass | default(lookup("password", secret + "/credentials/" + ansible_fqdn + "/git/" + git_repo_user + "/password")) }}{{ git_repo_server }}/{{ git_repo_path }}'
+  when: "(git_repo_protocol == 'https' or git_repo_protocol == 'http') and git_repo_user is defined"
 
 - name: Git clone the app codebase (ssh)
   git:
     clone: yes
-    dest: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
+    dest: "{{ codebase_dir }}"
     repo: "ssh://{{ git_repo_user }}@{{ git_repo_server }}/{{ git_repo_path }}"
   when: git_repo_protocol == 'ssh'
 
 - name: Git clone the app codebase (git)
   git:
     clone: yes
-    dest: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
+    dest: "{{ codebase_dir }}"
     repo: "git@{{ git_repo_server }}:{{ git_repo_user }}/{{ git_repo_path }}"
   when: git_repo_protocol == 'git'
 
 - name: Setting new build symlink to clone the new build
   file:
-    path: "{{ webroot }}/{{ webhost }}/public_html.build"
-    src: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
+    path: "{{ webroot }}/{{ app_name }}/public_html.build"
+    src: "{{ codebase_dir }}"
     state: link
   

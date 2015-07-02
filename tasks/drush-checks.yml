@@ -13,5 +13,5 @@
 
   - name: Ensure build symlink is absent
     file:
-      path: "{{ webroot }}/{{ webhost }}/public_html.build"
+      path: "{{ webroot }}/{{ app_name }}/public_html.build"
       state: absent

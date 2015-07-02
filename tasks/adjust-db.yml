@@ -1,0 +1,11 @@
+---
+- name: Run features revert.
+  command: drush @{{ app_name }}.bld fra -y
+  ignore_errors: yes
+
+- name: Run database updates.
+  command: drush @{{ app_name }}.bld updatedb -y
+
+- name: Run features revert again in case updb changed anything.
+  command: drush @{{ app_name }}.bld fra -y
+  ignore_errors: yes

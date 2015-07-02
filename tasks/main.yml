@@ -1,27 +1,121 @@
 ---
-# TODO Add feature local git clone
-# If we are local (git doesn't work in the remote)
-# push branch and tag from local directory
-# And don't forget to CLEAN it all UP
-- name: remove current build symlink and its contents, if any
+#
+# Preparation tasks
+#
+- fail: msg="Variable '{{ item }}' is required but not defined."
+  when: item not in vars
+  with_items:
+    - build
+    - app_name
+    - app_i18n
+    - app_env
+    - app_env['import']
+    - app_env['mode']
+
+- name: Remove current build symlink and its contents, if any.
   file:
-    path: "{{ webroot }}/{{ webhost }}/public_html.build"
+    path: "{{ webroot }}/{{ app_name }}/public_html.build"
     state: absent
     follow: yes
 
 - include: drush-checks.yml
 
-- include: defaults-check.yml
-
+#
+# Codebase tasks
+#
 - include: deploy-codebase.yml
   vars:
-    codebase_dir: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+
+- include: drupal-settings.yml
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+
+#
+# Database tasks
+#
+- include: backup-db.yml
+
+- include: sync-cur-db-from-source.yml
+  when: "app_drush_source is defined and target != 'prod' and app_env.mode == 'sync' and not app_env.import"
+
+- include: import-db.yml
+  when: "app_env.import"
+
+- include: duplicate-db.yml
+  when: "app_env.mode = 'dup' and not app_env.import"
+
+- include: site-offline.yml
+  vars:
+    offline_flag: 1
+  when: "app_env.mode = 'same' and not app_env.import"
+
+- include: readonly-mode.yml
+  vars:
+    readonly_flag: 1
+  when: "app_env.mode = 'dup' and not app_env.import"
+
+#
+# Drupal DB tasks
+#
+- include: enable-disable-modules.yml
+
+- include: adjust-db.yml
+
+- include: reset-admin-pass.yml
+  when: "target != 'prod'"
+
+- include: readonly-mode.yml
+  vars:
+    readonly_flag: 0
+  when: "app_env.mode = 'dup' and not app_env.import"
+
+- include: site-offline.yml
+  vars:
+    offline_flag: 0
+  when: "app_env.mode = 'same' and not app_env.import"
+
+#
+# Drupal files tasks
+#
+# Archive in the top folder of the project.
+# Supports tar, gzip, bzip2, and xz.
+# It must not be a tarbomb: it must unpack to a folder called "files".
+# If it does not exist in the local project folder, it will be looked up in the remote host
+# Defaults to {{ app_name }}-files.tar.gz  
+- include: unarchive-files.yml
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+    files_tarball_filename: "{{ app_env['files_tarball_filename'] }} | default(app_name + '-files.tar.gz')"
+  when: "app_env.import"
+
+- include: copy-files.yml
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+  when: "not app_env.import"
+
+- include: sync-files-from-source.yml
+  when: "app_drush_source is defined and target != 'prod'"
+
+- include: adjust-files-perms.yml
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+
+- include: copy-translations.yml
+  when: app.i18n
+
+#
+# Final tasks
+#
+- include: cc-all.yml
+
+- include: flush-image.yml
 
 - include: logrotate.yml
 
 - include: branch-tag.yml
   vars:
-    codebase_dir: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
-  when: target == 'prod'
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+  when: "target == 'prod'"
 
 - include: switch-on.yml

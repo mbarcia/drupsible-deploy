@@ -1,6 +1,6 @@
 ---
 - name: check user has database creation privilege
   ignore_errors: yes
-  command: "echo 'show grants;' | drush @{{ webhost }}.cur sql-cli"
+  command: "echo 'show grants;' | drush @{{ app_name }}.cur sql-cli"
   register: grants
   failed_when: "'ALL PRIVILEGES' not in grants.stdout and 'CREATE DATABASE' not in grants.stdout"

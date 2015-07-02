@@ -1,0 +1,36 @@
+---
+- name: Check translations are present in the current release.
+  stat:
+    path: "{{ webroot }}/{{ app_name }}/public_html/sites/all/translations"
+  register: translations_dir
+
+- name: Make sure translations directory exists under the codebase dir.
+  file:
+    path: "{{ codebase_dir }}/sites/all/translations"
+    state: directory
+  when: translations_dir.stat.isdir is defined and translations_dir.stat.isdir
+
+- name: Copy translation files from current release inside codebase dir.
+  command: "cp -pur {{ webroot }}/{{ app_name }}/public_html/sites/all/translations/* {{ codebase_dir }}/sites/all/translations/"
+  when: translations_dir.stat.isdir is defined and translations_dir.stat.isdir
+
+- name: Add group write permission to the translation files folder.
+  file: 
+    path: "{{ codebase_dir }}/sites/all/translations"
+    mode: "g+w"
+  sudo: yes 
+  when: translations_dir.stat.isdir is defined and translations_dir.stat.isdir
+
+- name: Add group ownership to the translation files folder.
+  file: 
+    path: "{{ codebase_dir }}/sites/all/translations"
+    group: "{{ app_env['user'] }}"
+  sudo: yes
+  when: translations_dir.stat.isdir is defined and translations_dir.stat.isdir
+
+- name: Update the latest translation files from the localization server.
+  command: "drush l10n-update" 
+  args:
+    chdir: "{{ codebase_dir }}"
+  when: translations_dir.stat.isdir is defined and translations_dir.stat.isdir
+  ignore_errors: yes

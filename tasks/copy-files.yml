@@ -1,0 +1,16 @@
+---
+- name: Copy files from existing release to codebase dir.
+  command: "cp -pur {{ webroot }}/{{ app_name }}/public_html/sites/default/files/* {{ codebase_dir }}/sites/default/files/"
+  register: copy_success
+
+- name: Add group write permission to the new files folder.
+  file: 
+    path: "{{ codebase_dir }}/sites/default/files"
+    mode: "g+w"
+  sudo: yes 
+
+- name: Add group ownership to the new files folder.
+  file: 
+    path: "{{ codebase_dir }}/sites/default/files"
+    group: "{{ app_env['group'] }}"
+  sudo: yes

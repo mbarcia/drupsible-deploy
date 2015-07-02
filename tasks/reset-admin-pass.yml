@@ -1,0 +1,3 @@
+---
+- name: Reset admin password.
+  command: drush @{{ app_name }}.bld upwd admin --password={{ drupal_admin_password }}

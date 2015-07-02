@@ -1,49 +1,51 @@
 ---
 - name: Check public_html.bak symlink exists
   stat: 
-    path: "{{ webroot }}/{{ webhost }}/public_html.bak"
+    path: "{{ webroot }}/{{ app_name }}/public_html.bak"
   register: stat_public_html_bak_symlink
 
 - name: Remove .bak symlink and its contents, if it exists
   file:
-    path: "{{ webroot }}/{{ webhost }}/public_html.bak"
+    path: "{{ webroot }}/{{ app_name }}/public_html.bak"
     follow: yes
     state: absent
   when: stat_public_html_bak_symlink.stat.exists
 
 - name: Check public_html symlink exists
   stat: 
-    path: "{{ webroot }}/{{ webhost }}/public_html"
+    path: "{{ webroot }}/{{ app_name }}/public_html"
   register: stat_public_html_symlink
 
 - name: Rename current symlink to .bak, if it exists
-  command: creates="{{ webroot }}/{{ webhost }}/public_html.bak" removes="{{ webroot }}/{{ webhost }}/public_html" mv {{ webroot }}/{{ webhost }}/public_html {{ webroot }}/{{ webhost }}/public_html.bak
+  command: mv {{ webroot }}/{{ app_name }}/public_html {{ webroot }}/{{ app_name }}/public_html.bak
+  creates: "{{ webroot }}/{{ app_name }}/public_html.bak" 
+  removes: "{{ webroot }}/{{ app_name }}/public_html" 
   when: stat_public_html_symlink.stat.exists
 
 - name: Set new symlink to new live codebase
   file:
-    dest: "{{ webroot }}/{{ webhost }}/public_html"
-    src: "{{ webroot }}/{{ webhost }}/public_html.{{ build }}"
-    owner: "{{ app['user'] }}"
-    group: "{{ app['group'] }}"
+    dest: "{{ webroot }}/{{ app_name }}/public_html"
+    src: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
     state: link
 
 - name: Remove current build symlink
   file:
-    path: "{{ webroot }}/{{ webhost }}/public_html.build"
+    path: "{{ webroot }}/{{ app_name }}/public_html.build"
     state: absent
     follow: no
 
 - name: Check user/public_html symlink already exists
   stat: 
-    path: "/home/{{ app['user'] }}/public_html"
+    path: "/home/{{ app_env['user'] }}/public_html"
   register: stat_public_symlink
 
 - name: Create user/public_html symlink
   file:
-    src: "{{ webroot }}/{{ webhost }}/public_html"
-    dest: "/home/{{ app['user'] }}/public_html"
+    src: "{{ webroot }}/{{ app_name }}/public_html"
+    dest: "/home/{{ app_env['user'] }}/public_html"
     state: link
-    owner: "{{ app['user'] }}"
-    group: "{{ app['group'] }}"
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
   when: not stat_public_symlink.stat.exists
