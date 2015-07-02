@@ -1,7 +1,7 @@
 ---
 - name: "Drop current database's tables."
   command: "drush @{{ app_name }}.cur sql-drop --yes" 
-  when: "app_env.mode == 'same'"
+  when: "app_env is defined and app_env.mode == 'same'"
   register: dropped
 
 - name: "Sync source database with current database."

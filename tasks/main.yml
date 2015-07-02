@@ -38,23 +38,23 @@
   when: "app_env is defined and not app_env.import"
 
 - include: sync-cur-db-from-source.yml
-  when: "app_drush_source is defined and target != 'prod' and app_env.mode == 'sync' and not app_env.import"
+  when: "app_env is defined and app_drush_source is defined and target != 'prod' and app_env.mode == 'sync' and not app_env.import"
 
 - include: import-db.yml
-  when: "app_env.import"
+  when: "app_env is defined and app_env.import"
 
 - include: duplicate-db.yml
-  when: "app_env.mode = 'dup' and not app_env.import"
+  when: "app_env is defined and app_env.mode = 'dup' and not app_env.import"
 
 - include: site-offline.yml
   vars:
     offline_flag: 1
-  when: "app_env.mode = 'same' and not app_env.import"
+  when: "app_env is defined and app_env.mode = 'same' and not app_env.import"
 
 - include: readonly-mode.yml
   vars:
     readonly_flag: 1
-  when: "app_env.mode = 'dup' and not app_env.import"
+  when: "app_env is defined and app_env.mode = 'dup' and not app_env.import"
 
 #
 # Drupal DB tasks
@@ -69,12 +69,12 @@
 - include: readonly-mode.yml
   vars:
     readonly_flag: 0
-  when: "app_env.mode = 'dup' and not app_env.import"
+  when: "app_env is defined and app_env.mode = 'dup' and not app_env.import"
 
 - include: site-offline.yml
   vars:
     offline_flag: 0
-  when: "app_env.mode = 'same' and not app_env.import"
+  when: "app_env is defined and app_env.mode = 'same' and not app_env.import"
 
 #
 # Drupal files tasks
@@ -88,12 +88,12 @@
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
     files_tarball_filename: "{{ app_env['files_tarball_filename'] }} | default(app_name + '-files.tar.gz')"
-  when: "app_env.import"
+  when: "app_env is defined and app_env.import"
 
 - include: copy-files.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: "not app_env.import"
+  when: "app_env is defined and not app_env.import"
 
 - include: sync-files-from-source.yml
   when: "app_drush_source is defined and target != 'prod'"
