@@ -4,10 +4,22 @@ build: "{{ ansible_date_time['year'] }}{{ ansible_date_time['month'] }}{{ ansibl
 
 # Version of the repository to check out (full 40-character SHA-1 hash, the literal string HEAD, a branch name, or a tag name).
 git_version: master
-# can be git, ssh, or http
+# can be git, ssh, http or https
 git_repo_protocol: "http"
 git_repo_server: git.example.com
 git_repo_path: ""
 git_repo_user: ""
-git_repo_pwd: ""
+git_repo_pass: ""
 accept_hostkey: no
+
+# Force this Drupal password, when target != prod
+drupal_admin_password: "drups1ble"
+
+# App variables per target environment
+app_env:
+  # sync, dup, same
+  mode: 'same'
+  # True looks for tarballs (file and DB) to upload and import
+  import: False
+  # Set to True if the target env has memcached available
+  memcached: False
