@@ -48,12 +48,18 @@
 
 - include: duplicate-db.yml
   when: "app_env is defined and app_env.db_clone"
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
 
 - include: import-db.yml
   when: "app_env is defined and app_env.db_import"
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
 
 - include: sync-db-from-source.yml
   when: "app_env is defined and app_drush_source is defined and target != 'prod' and app_env.db_sync"
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
 
 #
 # Drupal DB tasks

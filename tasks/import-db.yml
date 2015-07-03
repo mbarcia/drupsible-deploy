@@ -11,4 +11,6 @@
   when: "app_env is defined and app_env.db_dump_filename|regex_replace('^(.*)\\.(.*)$', '\\\\2') != 'gz'"
   
 - name: "Rebuild Drupal registry."
-  command: "drush @{{ app_name }}.bld registry-rebuild" 
+  command: "drush registry-rebuild"
+  args:
+    chdir: {{ codebase_dir }}
