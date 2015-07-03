@@ -1,4 +1,12 @@
 ---
+- name: Make sure logs dir exists
+  file:
+    path: "{{ webroot }}/{{ app_name }}/logs"
+    state: directory
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  sudo: yes
+
 - name: Stat public_html for cur vhost
   stat:
     path: "{{ webroot }}/{{ app_name }}/public_html"
