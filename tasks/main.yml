@@ -98,10 +98,10 @@
 - include: copy-files.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: "app_env is defined and not app_env.files_import"
+  when: "app_env is defined and app_env.files_copy"
 
 - include: sync-files-from-source.yml
-  when: "app_drush_source is defined and target != 'prod'"
+  when: "app_env is defined and app_env.files_sync and app_drush_source is defined and target != 'prod'"
 
 - include: adjust-files-perms.yml
   vars:
