@@ -6,3 +6,4 @@
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
     mode: 444
+  sudo: yes
