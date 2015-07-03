@@ -27,6 +27,7 @@ dependencies:
 
   - role: drupsible.mysql
     sudo: yes
+    mysql_mysqld_allow: [ "{{ ansible_host }}", "{{ ansible_host }}.{{ ansible_fqdn }}" ]
     mysql_databases:
     - name: "{{ app_name }}"
       state: 'present'
