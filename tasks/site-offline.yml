@@ -1,3 +1,4 @@
 ---
 - name: Go offline.
   command: drush @{{ app_name }}.cur vset site_offline {{ offline_flag }}
+  ignore_errors: True

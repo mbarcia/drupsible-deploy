@@ -1,3 +1,4 @@
 ---
 - name: Enter read-only mode.
   command: drush @{{ app_name }}.cur vset site_readonly {{ readonly_flag }}
+  ignore_errors: True
