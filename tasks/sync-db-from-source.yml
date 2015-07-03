@@ -2,6 +2,14 @@
 - name: "Prepare to sync, drop all tables."
   command: "drush @{{ app_name }}.bld sql-drop --yes" 
 
+- name: Prepare to sync, ensure remote host is a known host
+  lineinfile:
+    dest: /home/{{ app_env['user'] }}/.ssh/known_hosts
+    create: yes
+    state: present
+    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + app_drush_source.remote_host) }}"
+    regexp: "^{{ app_drush_source.remote_host }}"
+
 - name: "Sync source database."
   command: "drush -y sql-sync @{{ app_name }}.src @{{ app_name }}.bld" 
 
