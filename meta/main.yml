@@ -26,15 +26,23 @@ dependencies:
   - role: debops.php5
     sudo: yes
     when: "apache2_mpm != 'prefork'"
+    php5_packages:
+      - php-pear
+      - php-soap
+      - php5-curl
+      - php5-gd
+      - php5-gmp
+      - php5-mcrypt
+      - php5-memcache
+      - php5-mysql
+    php5_production: "{{ target == prod}}"
+    php5_post_max_size: '32M'
     php5_pool_default:
       enabled: True
       name: "{{ app_name }}"
       listen: "/var/run/php5-fpm-{{ app_name }}.sock"
       user: "{{ app_env['user'] }}"
       group: "{{ app_env['group'] }}"
-
-  - role: drupsible.apache2
-    sudo: yes
 
   - role: drupsible.drush
 
