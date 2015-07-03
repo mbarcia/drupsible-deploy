@@ -40,7 +40,7 @@ dependencies:
 
   - role: drupsible.mysql
     sudo: yes
-    when: "app_env is defined and app_env.import == false and app_env.mode == 'dup'"
+    when: "app_env is defined and app_env.db_clone"
     mysql_databases:
     - name: "{{ app_name }}_{{ build }}"
       state: 'present'

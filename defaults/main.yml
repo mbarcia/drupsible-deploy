@@ -17,9 +17,13 @@ drupal_admin_password: "drups1ble"
 
 # App variables per target environment
 app_env:
-  # sync, dup, same
-  mode: 'same'
-  # True looks for tarballs (file and DB) to upload and import
-  import: False
+  # True clones the cur database
+  db_clone: True
+  # True looks for a DB dump to upload and import
+  db_import: False
+  # True syncs with source DB
+  db_sync: False
+  # True looks for tarballs (files) to upload and import
+  files_import: False
   # Set to True if the target env has memcached available
   memcached: False

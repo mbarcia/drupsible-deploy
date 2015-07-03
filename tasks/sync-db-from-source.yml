@@ -1,0 +1,9 @@
+---
+- name: "Prepare to sync, drop all tables."
+  command: "drush @{{ app_name }}.bld sql-drop --yes" 
+
+- name: "Sync source database."
+  command: "drush -y sql-sync @{{ app_name }}.src @{{ app_name }}.bld" 
+
+- name: "Rebuild Drupal registry."
+  command: "drush @{{ app_name }}.bld registry-rebuild" 

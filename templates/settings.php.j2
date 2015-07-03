@@ -217,10 +217,14 @@
  #}
 $databases['default']['default'] = array(
   'driver' => 'mysql',
+{% if app_env is defined and app_env.db_clone %}
+  'database' => '{{ app_env['db_name'] }}_{{ build }}',
+{% else %}
   'database' => '{{ app_env['db_name'] }}',
+{% endif %}
   'username' => '{{ app_env['db_user'] }}',
   'password' => '{{ lookup("password", secret + "/credentials/" + ansible_fqdn + "/mysql/" + app_env['db_name'] + "/password") }}',
-{% if groups.debops_mysql is defined %}
+{% if groups.drupsible_mysql is defined %}
   'host' => '{{ groups.debops_mysql.0 }}',
 {% elif groups.debops_mariadb is defined %}
   'host' => '{{ groups.debops_mariadb.0 }}',

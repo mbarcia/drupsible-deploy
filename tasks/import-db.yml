@@ -1,14 +1,14 @@
 ---
 - name: "Drop current database's tables."
-  command: "drush @{{ app_name }}.cur sql-drop --yes" 
+  command: "drush @{{ app_name }}.bld sql-drop --yes" 
 
 - name: Import a SQL gzipped dump into the current database
-  command: "zcat {{ app_env.db_dump_filename }} | $(drush @{{ app_name }}.cur sql-connect)"
+  command: "zcat {{ app_env.db_dump_filename }} | $(drush @{{ app_name }}.bld sql-connect)"
   when: "app_env is defined and app_env.db_dump_filename|regex_replace('^(.*)\\.(.*)$', '\\\\2') == 'gz'"
 
 - name: Import a SQL dump (format other than gzip) into the current database
-  command: "$(drush @{{ app_name }}.cur sql-connect) < {{ app_env.db_dump_filename }}"
+  command: "$(drush @{{ app_name }}.bld sql-connect) < {{ app_env.db_dump_filename }}"
   when: "app_env is defined and app_env.db_dump_filename|regex_replace('^(.*)\\.(.*)$', '\\\\2') != 'gz'"
   
 - name: "Rebuild Drupal registry."
-  command: "drush @{{ app_name }}.cur registry-rebuild" 
+  command: "drush @{{ app_name }}.bld registry-rebuild" 
