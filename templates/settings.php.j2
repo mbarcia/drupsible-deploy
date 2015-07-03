@@ -1,5 +1,6 @@
-# {{ ansible_managed }}
 <?php
+
+// {{ ansible_managed }}
 
 {#
 /**
@@ -223,7 +224,7 @@ $databases['default']['default'] = array(
   'database' => '{{ app_env['db_name'] }}',
 {% endif %}
   'username' => '{{ app_env['db_user'] }}',
-  'password' => '{{ lookup("password", secret + "/credentials/" + ansible_fqdn + "/mysql/" + app_env['db_name'] + "/password") }}',
+  'password' => '{{ app_env["db_password"] | default(lookup("password", secret + "/credentials/" + ansible_fqdn + "/mysql/" + item.name + "/password length=" + mysql_password_length)) }}',
 {% if groups.drupsible_mysql is defined %}
   'host' => '{{ groups.drupsible_mysql.0 }}',
 {% elif groups.debops_mariadb is defined %}

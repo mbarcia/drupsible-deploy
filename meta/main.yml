@@ -34,7 +34,7 @@ dependencies:
     - name: "{{ app_env['db_user'] }}"
       host: "%"
       state: 'present'
-      password: "{{ app_env['db_password'] | default('') }}"
+      password: '{{ app_env["db_password"] | default(lookup("password", secret + "/credentials/" + ansible_fqdn + "/mysql/" + item.name + "/password length=" + mysql_password_length)) }}'
       priv: '*.*:ALL'
       append_privs: 'yes'
 
