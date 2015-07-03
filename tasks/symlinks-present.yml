@@ -9,7 +9,7 @@
     dest: "{{ webroot }}/{{ app_name }}/public_html"
     src: "/tmp"
     state: link
-  when: not public_html_symlink.exists
+  when: not public_html_symlink.stat.exists
 
 - name: Stat public_html for bak vhost
   stat:
@@ -21,4 +21,4 @@
     dest: "{{ webroot }}/{{ app_name }}/public_html.bak"
     src: "/tmp"
     state: link
-  when: not public_html_symlink_bak.exists
+  when: not public_html_symlink_bak.stat.exists
