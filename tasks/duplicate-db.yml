@@ -6,8 +6,3 @@
 - name: Sync source database to build database.
   command: drush sql-sync @{{ app_name }}.src @{{ app_name }}.bld --create-db -y
   when: "target != 'prod' and app_drush_source is defined"
-
-- name: "Rebuild Drupal registry."
-  command: "drush registry-rebuild"
-  args:
-    chdir: {{ codebase_dir }}

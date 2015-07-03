@@ -1,0 +1,5 @@
+---
+- name: "Rebuild Drupal registry."
+  command: "drush registry-rebuild"
+  args:
+    chdir: "{{ codebase_dir }}"
