@@ -1,5 +1,5 @@
 ---
-- name: "Prepare to sync, drop all tables."
+- name: Prepare to sync, drop all tables
   command: "drush @{{ app_name }}.bld sql-drop --yes" 
 
 - name: Prepare to sync, ensure remote host is a known host
@@ -9,6 +9,14 @@
     state: present
     line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + app_drush_source.remote_host) }}"
     regexp: "^{{ app_drush_source.remote_host }}"
+
+- name: Prepare to sync, ensure directory dbdumps exists 
+  file:
+    path: "/home/{{ app_env['user'] }}/.drush/dbdumps"
+    state: directory
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  sudo: yes
 
 - name: "Sync source database."
   command: "drush -y sql-sync @{{ app_name }}.src @{{ app_name }}.bld" 
