@@ -1,16 +1,16 @@
 ---
 - name: Enable project modules.
   command: "drush @{{ app_name }}.bld en {{ lookup('file', 'deploy/enable.txt') }} -y"
-  ignore_errors: yes
+  ignore_errors: True
 
 - name: Enable project modules for the environment/target.
   command: "drush @{{ app_name }}.bld en {{ lookup('file', 'deploy/enable- ' + target + '.txt') }} -y"
-  ignore_errors: yes
+  ignore_errors: True
 
 - name: Disable project modules.
   command: "drush @{{ app_name }}.bld dis {{ lookup('file', 'deploy/disable.txt') }} -y"
-  ignore_errors: yes
+  ignore_errors: True
 
 - name: Disable project modules for the environment/target.
   command: "drush @{{ app_name }}.bld dis {{ lookup('file', 'deploy/disable- ' + target + '.txt') }} -y"
-  ignore_errors: yes
+  ignore_errors: True
