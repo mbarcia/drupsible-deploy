@@ -28,7 +28,7 @@
     dest: "{{ webroot }}/{{ app_name }}/public_html.build/sites/default/settings.php"
     follow: yes
     state: present
-    line: {{ item }}
+    line: "{{ item }}"
     regexp: '^\$base_url =.*$' 
   with_lines:
     - echo "$base_url = '{{ webhost }}.{{ ansible_fqdn }}';  // NO trailing slash!"
