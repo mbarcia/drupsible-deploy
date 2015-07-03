@@ -23,6 +23,16 @@
     removes: "{{ webroot }}/{{ app_name }}/public_html" 
   when: stat_public_html_symlink.stat.exists
 
+- name: Set base_url in settings.php to point to the live host
+  lineinfile:
+    dest: "{{ webroot }}/{{ app_name }}/public_html.build/sites/default/settings.php"
+    follow: yes
+    state: present
+    line: {{ item }}
+    regexp: '^\$base_url =.*$' 
+  with_lines:
+    - echo "$base_url = '{{ webhost }}.{{ ansible_fqdn }}';  // NO trailing slash!"
+
 - name: Set new symlink to new live codebase
   file:
     dest: "{{ webroot }}/{{ app_name }}/public_html"
