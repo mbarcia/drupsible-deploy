@@ -25,27 +25,6 @@ dependencies:
     - name: "{{ app_env['user'] }}"
       state: 'present'
 
-  - role: drupsible.mysql
-    sudo: yes
-    mysql_mysqld_allow: [ "{{ ansible_host }}", "{{ ansible_host }}.{{ ansible_fqdn }}" ]
-    mysql_databases:
-    - name: "{{ app_name }}"
-      state: 'present'
-    mysql_users:
-    - name: "{{ app_env['db_user'] }}"
-      host: "%"
-      state: 'present'
-      password: '{{ app_env["db_password"] | default(lookup("password", secret + "/credentials/" + ansible_fqdn + "/mysql/" + item.name + "/password length=" + mysql_password_length)) }}'
-      priv: '*.*:ALL'
-      append_privs: 'yes'
-
-  - role: drupsible.mysql
-    sudo: yes
-    when: "app_env is defined and app_env.db_clone"
-    mysql_databases:
-    - name: "{{ app_name }}_{{ build }}"
-      state: 'present'
-
   - role: debops.php5
     sudo: yes
     when: "apache2_mpm != 'prefork'"
