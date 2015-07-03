@@ -12,6 +12,8 @@
     #- app_env['import']
     #- app_env['mode']
 
+- include: symlinks-present.yml
+
 - name: Remove current build symlink and its contents, if any.
   file:
     path: "{{ webroot }}/{{ app_name }}/public_html.build"

@@ -1,27 +1,12 @@
 ---
-- name: Check public_html.bak symlink exists
-  stat: 
-    path: "{{ webroot }}/{{ app_name }}/public_html.bak"
-  register: stat_public_html_bak_symlink
-
 - name: Remove .bak symlink and its contents, if it exists
   file:
     path: "{{ webroot }}/{{ app_name }}/public_html.bak"
     follow: yes
     state: absent
-  when: stat_public_html_bak_symlink.stat.exists
-
-- name: Check public_html symlink exists
-  stat: 
-    path: "{{ webroot }}/{{ app_name }}/public_html"
-  register: stat_public_html_symlink
 
 - name: Rename current symlink to .bak, if it exists
   command: "mv {{ webroot }}/{{ app_name }}/public_html {{ webroot }}/{{ app_name }}/public_html.bak"
-  args:
-    creates: "{{ webroot }}/{{ app_name }}/public_html.bak" 
-    removes: "{{ webroot }}/{{ app_name }}/public_html" 
-  when: stat_public_html_symlink.stat.exists
 
 - name: Set base_url in settings.php to point to the live host
   lineinfile:
@@ -59,4 +44,4 @@
     state: link
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-  when: not stat_public_symlink.stat.exists
+  when: stat_public_symlink.stat is not defined or not stat_public_symlink.stat.exists

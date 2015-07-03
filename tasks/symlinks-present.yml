@@ -1,0 +1,24 @@
+---
+- name: Stat public_html for cur vhost
+  stat:
+    path: "{{ webroot }}/{{ app_name }}/public_html"
+  register: public_html_symlink
+
+- name: Create temp public_html symlink for cur vhost if missing
+  file:
+    dest: "{{ webroot }}/{{ app_name }}/public_html"
+    src: "/tmp"
+    state: link
+  when: not public_html_symlink.exists
+
+- name: Stat public_html for bak vhost
+  stat:
+    path: "{{ webroot }}/{{ app_name }}/public_html.bak"
+  register: public_html_symlink_bak
+
+- name: Create temp public_html symlink for bak vhost if missing
+  file:
+    dest: "{{ webroot }}/{{ app_name }}/public_html.bak"
+    src: "/tmp"
+    state: link
+  when: not public_html_symlink_bak.exists
