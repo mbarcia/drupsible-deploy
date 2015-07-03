@@ -19,9 +19,7 @@ dependencies:
   - role: debops.users
     sudo: yes
     users: True
-    users_host_list:
-    - users_drupsible
-    users_drupsible:
+    users_list:
     - name: "{{ app_env['user'] }}"
       state: 'present'
 
@@ -32,12 +30,14 @@ dependencies:
       enabled: True
       name: "{{ app_name }}"
       listen: "/var/run/php5-fpm-{{ app_name }}.sock"
+      user: "{{ app_env['user'] }}"
+      group: "{{ app_env['group'] }}"
 
   - role: drupsible.apache2
     sudo: yes
 
   - role: drupsible.drush
-  
+
   - role: drupsible.newrelic
     when: "'newrelic-php5' in php5_packages and apache2_mpm != 'prefork'"
     sudo: yes
