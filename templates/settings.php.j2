@@ -288,7 +288,7 @@ $update_free_access = FALSE;
  * for you.
  */
  #}
-$base_url = '{{ webhost }}';  // NO trailing slash!
+$base_url = '{{ webhost }}.build.{{ ansible_fqdn }}';  // NO trailing slash!
 
 {#
 /**
