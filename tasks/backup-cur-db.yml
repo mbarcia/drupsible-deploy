@@ -11,4 +11,5 @@
   command: "drush @{{ app_name }}.cur sql-dump > ~/.drush/dbdumps/{{ app_name }}-before-{{ build }}.sql"
 
 - name: Gzip database backup.  
-  command: "gzip ~/.drush/dbdumps/{{ app_name }}-before-{{ build }}.sql"
+  command: "gzip -f ~/.drush/dbdumps/{{ app_name }}-before-{{ build }}.sql"
+  ignore_errors: True
