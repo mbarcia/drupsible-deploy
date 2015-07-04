@@ -36,8 +36,14 @@ dependencies:
     php5_production: False
 
   - role: drupsible.newrelic
-    when: "'newrelic-php5' in php5_packages and apache2_mpm != 'prefork'"
+    when: provision_new_relic
     sudo: yes
+
+  - role: debops.php5
+    when: "provision_new_relic and target == 'prod'"
+    sudo: yes
+    php5_packages:
+    - newrelic-php5
 
   - role: drupsible.memcached
     when: app_env.memcached
