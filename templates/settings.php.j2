@@ -288,7 +288,7 @@ $update_free_access = FALSE;
  * for you.
  */
  #}
-$base_url = '{{ webhost }}.build.{{ ansible_fqdn }}';  // NO trailing slash!
+$base_url = 'http://{{ webhost }}.{{ webdomain }}';
 
 {#
 /**
@@ -599,3 +599,31 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
  */
 #}
 $conf['allow_authorize_operations'] = FALSE;
+
+{% if app_env is defined and app_env.memcached %}
+#
+# Memcache Storage
+#
+$conf['cache_backends'][] = 'sites/all/modules/memcache_storage/memcache_storage.inc';
+$conf['cache_default_class'] = 'MemcacheStorage';
+
+$conf['cache_class_cache_update'] = 'DrupalDatabaseCache';
+
+$conf['lock_inc'] = 'sites/all/modules/memcache_storage/includes/lock.inc';
+$conf['memcache_extension'] = 'Memcached';
+
+$conf['memcache_options'] = array(
+  Memcached::OPT_COMPRESSION => FALSE,
+  Memcached::OPT_DISTRIBUTION => Memcached::DISTRIBUTION_CONSISTENT,
+);
+
+$conf['memcache_options'] = array(
+  Memcached::OPT_TCP_NODELAY => TRUE,
+  Memcached::OPT_BINARY_PROTOCOL => TRUE,
+);
+
+$conf['memcache_storage_persistent_connection'] = TRUE;
+$conf['session_inc'] = 'sites/all/modules/memcache_storage/includes/session.inc';
+
+$conf['memcache_prefix'] = '{{ app_name }}';
+{% endif %}
