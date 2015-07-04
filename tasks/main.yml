@@ -108,7 +108,7 @@
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
 
 - include: copy-translations.yml
-  when: app.i18n
+  when: app_i18n
 
 #
 # Final tasks
