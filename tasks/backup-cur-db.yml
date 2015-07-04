@@ -1,5 +1,5 @@
 ---
-- name: Make sure directory exists for the backup.
+- name: Make sure directory exists for the backup
   file:
     path: "~/.drush/dbdumps/"
     state: directory
@@ -7,7 +7,7 @@
     group: "{{ app_env['group'] }}"
   sudo: yes
 
-- name: Backup current database.
+- name: Backup current database
   command: "drush @{{ app_name }}.cur sql-dump > ~/.drush/dbdumps/{{ app_name }}-before-{{ build }}.sql"
 
 - name: Gzip database backup.  
