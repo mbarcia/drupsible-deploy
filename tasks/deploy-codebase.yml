@@ -53,3 +53,9 @@
     path: "{{ webroot }}/{{ app_name }}/public_html.build"
     src: "{{ codebase_dir }}"
     state: link
+
+- name: Download memcache_storage module
+  command: drush @{{ app_name }}.bld dl memcache_storage -y
+  when: app_env.memcached
+  ignore_errors: yes
+    
