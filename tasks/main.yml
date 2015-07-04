@@ -2,15 +2,23 @@
 #
 # Preparation tasks
 #
-#- fail: msg="Variable '{{ item }}' is required but not defined."
-#  when: item not in vars
-  #with_items:
-    #- build
-    #- app_name
-    #- app_i18n
-    #- app_env
-    #- app_env['import']
-    #- app_env['mode']
+- fail: msg="Variable '{{ item }}' is required but not defined."
+  when: item is not defined
+  with_items:
+    - build
+    - app_name
+    - app_i18n
+    - app_env
+    - app_env['user']
+    - app_env['group']
+    - app_env['db_user']
+    - app_env['db_name']
+    - app_env['db_import']
+    - app_env['db_clone']
+    - app_env['db_sync']
+    - app_env['files_import']
+    - app_env['files_copy']
+    - app_env['files_sync']
 
 - include: symlinks-present.yml
 
@@ -64,6 +72,9 @@
 #
 # Drupal DB tasks
 #
+- include: enable-memcached.yml
+  when: app_env.memcached
+
 - include: enable-disable-modules.yml
 
 - include: adjust-db.yml
