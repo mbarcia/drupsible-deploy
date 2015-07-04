@@ -8,7 +8,7 @@
 - name: Rename current symlink to .bak, if it exists
   command: "mv {{ webroot }}/{{ app_name }}/public_html {{ webroot }}/{{ app_name }}/public_html.bak"
 
-- name: Set base_url in settings.php to point to the live host
+- name: Set base_url in settings.php to point to the host of the new release
   lineinfile:
     dest: "{{ webroot }}/{{ app_name }}/public_html.build/sites/default/settings.php"
     follow: yes
@@ -16,7 +16,7 @@
     line: "{{ item }}"
     regexp: '^\$base_url =.*$' 
   with_lines:
-    - echo "$base_url = '{{ webhost }}.{{ ansible_fqdn }}';  // NO trailing slash!"
+    - echo "$base_url = '{{ ansible_fqdn }}';"
 
 - name: Set new symlink to new live codebase
   file:
@@ -25,12 +25,14 @@
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
     state: link
+  sudo: yes
 
 - name: Remove current build symlink
   file:
     path: "{{ webroot }}/{{ app_name }}/public_html.build"
     state: absent
     follow: no
+  sudo: yes
 
 - name: Check user/public_html symlink already exists
   stat: 
@@ -44,4 +46,5 @@
     state: link
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
+  sudo: yes
   when: stat_public_symlink.stat is not defined or not stat_public_symlink.stat.exists
