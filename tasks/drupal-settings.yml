@@ -5,5 +5,5 @@
     dest: "{{ codebase_dir }}/sites/default/settings.php"
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-    mode: 444
+    mode: 644
   sudo: yes
