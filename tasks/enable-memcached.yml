@@ -1,0 +1,4 @@
+---
+- name: Enable memcache_storage module
+  command: drush @{{ app_name }}.bld en memcache_storage -y
+  ignore_errors: yes
