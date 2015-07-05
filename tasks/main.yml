@@ -49,21 +49,21 @@
 - include: readonly-mode.yml
   vars:
     readonly_flag: 1
-  when: "app_env is defined and app_env.db_clone and not app_env.db_import"
+  when: "app_env.db_clone and not app_env.db_import"
 
 - include: site-offline.yml
   vars:
     offline_flag: 1
-  when: "app_env is defined and not app_env.db_clone and not app_env.db_import"
+  when: "not app_env.db_clone and not app_env.db_import"
 
-- include: duplicate-db.yml
-  when: "app_env is defined and app_env.db_clone"
+- include: clone-db.yml
+  when: "app_env.db_clone"
 
 - include: import-db.yml
-  when: "app_env is defined and app_env.db_import"
+  when: "app_env.db_import"
 
 - include: sync-db-from-source.yml
-  when: "app_env is defined and app_drush_source is defined and target != 'prod' and app_env.db_sync"
+  when: "app_drush_source is defined and target != 'prod' and app_env.db_sync"
 
 - include: registry-rebuild.yml
   vars:
