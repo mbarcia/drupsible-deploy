@@ -11,7 +11,7 @@
   when: translations_dir.stat.isdir is defined and translations_dir.stat.isdir
 
 - name: Copy translation files from current release inside codebase dir.
-  command: "cp -pur {{ webroot }}/{{ app_name }}/public_html/sites/all/translations/* {{ codebase_dir }}/sites/all/translations/"
+  command: "cp -pur {{ webroot }}/{{ app_name }}/public_html/sites/all/translations {{ codebase_dir }}/sites/all/"
   when: translations_dir.stat.isdir is defined and translations_dir.stat.isdir
 
 - name: Add group write permission to the translation files folder.
