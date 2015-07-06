@@ -1,5 +1,5 @@
 ---
 - name: Sync the additional/latest files from source.
-  command: "drush -y rsync @{{ app_name }}.src:%%files @{{ app_name }}.bld:%%files"
+  command: "drush -y rsync @{{ app_name }}.src:%files @{{ app_name }}.bld:%files"
   when: app_drush_source is defined
   ignore_errors: yes
