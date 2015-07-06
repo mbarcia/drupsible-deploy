@@ -2,10 +2,13 @@
 - name: "Drop current database's tables."
   command: "drush @{{ app_name }}.bld sql-drop --yes" 
 
+- name: Set fact extension of the DB dump
+  set_fact: dbdump_extension="{{ app_env.db_dump_filename|regex_replace('^(.*)\\.(.*)$', '\\2') }}"
+
 - name: Import a SQL gzipped dump into the current database
   command: "zcat {{ app_env.db_dump_filename }} | $(drush @{{ app_name }}.bld sql-connect)"
-  when: "app_env is defined and app_env.db_dump_filename|regex_replace('^(.*)\\.(.*)$', '\\\\2') == 'gz'"
+  when: dbdump_extension == 'gz'
 
 - name: Import a SQL dump (format other than gzip) into the current database
   command: "$(drush @{{ app_name }}.bld sql-connect) < {{ app_env.db_dump_filename }}"
-  when: "app_env is defined and app_env.db_dump_filename|regex_replace('^(.*)\\.(.*)$', '\\\\2') != 'gz'"
+  when: dbdump_extension != 'gz'
