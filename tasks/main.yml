@@ -120,6 +120,8 @@
 
 - include: copy-translations.yml
   when: app_i18n
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
 
 #
 # Final tasks
