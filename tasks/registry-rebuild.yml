@@ -3,4 +3,6 @@
   command: "drush @{{ app_name }}.bld php-eval 'views_invalidate_cache();'"
 
 - name: "Rebuild Drupal registry"
-  command: "drush @{{ app_name }}.bld drush registry-rebuild"
+  command: "drush registry-rebuild"
+  args:
+    chdir: "{{ codebase_dir }}"
