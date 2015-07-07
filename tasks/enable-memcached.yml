@@ -2,3 +2,8 @@
 - name: Enable memcache_storage module
   command: drush @{{ app_name }}.bld en memcache_storage -y
   ignore_errors: yes
+
+- name: Disable memcache module
+  command: drush @{{ app_name }}.bld dis memcache -y
+  ignore_errors: yes
+  
