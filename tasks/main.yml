@@ -46,6 +46,7 @@
 # Database tasks
 #
 - include: backup-cur-db.yml
+  when: "app_env.db_clone or app_env.db_import or app_env.db_sync"
 
 - include: readonly-mode.yml
   vars:
