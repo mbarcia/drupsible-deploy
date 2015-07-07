@@ -8,6 +8,7 @@
 
 - name: Rename current symlink to .bak, if it exists
   command: "mv {{ webroot }}/{{ app_name }}/public_html {{ webroot }}/{{ app_name }}/public_html.bak"
+  sudo: yes
 
 - name: Set new symlink to new live codebase
   file:
