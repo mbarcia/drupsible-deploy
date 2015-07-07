@@ -18,6 +18,7 @@
     src: "/tmp"
     state: link
   when: not public_html_symlink.stat.exists
+  sudo: yes
 
 - name: Stat public_html for bak vhost
   stat:
