@@ -1,14 +1,13 @@
 ---
-- name: "Drop current database's tables."
+- name: "Drop current database's tables"
   command: "drush @{{ app_name }}.bld sql-drop --yes" 
 
-- name: Set fact extension of the DB dump
-  set_fact: dbdump_extension="{{ app_env.db_dump_filename|regex_replace('^(.*)\\.(.*)$', '\\2') }}"
+- name: Copy and decompress (unarchive) an archived SQL dump
+  unarchive:
+    src: "{{ app_env.db_dump_filename }}"
+    dest: "/home/{{ app['user'] }}/.drush/dbdumps"
+    user: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
 
-- name: Import a SQL gzipped dump into the current database
-  shell: "zcat {{ app_env.db_dump_filename }} | `drush @{{ app_name }}.bld sql-connect`"
-  when: dbdump_extension == 'gz'
-
-- name: Import a SQL dump (format other than gzip) into the current database
-  shell: "$(drush @{{ app_name }}.bld sql-connect) < {{ app_env.db_dump_filename }}"
-  when: dbdump_extension != 'gz'
+- name: Import the SQL dump into the current database
+  shell: "$(drush @{{ app_name }}.bld sql-connect) < /home/{{ app['user'] }}/.drush/dbdumps/{{ app_env.db_dump_filename }}"
