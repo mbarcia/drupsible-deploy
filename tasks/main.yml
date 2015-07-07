@@ -27,7 +27,8 @@
     path: "{{ webroot }}/{{ app_name }}/public_html.build"
     state: absent
     follow: yes
-
+  sudo: yes
+ 
 - include: drush-checks.yml
 
 #
