@@ -4,6 +4,7 @@
     path: "{{ webroot }}/{{ app_name }}/public_html.bak"
     follow: yes
     state: absent
+  sudo: yes
 
 - name: Rename current symlink to .bak, if it exists
   command: "mv {{ webroot }}/{{ app_name }}/public_html {{ webroot }}/{{ app_name }}/public_html.bak"
