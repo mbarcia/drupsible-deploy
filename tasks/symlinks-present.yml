@@ -30,3 +30,4 @@
     src: "/tmp"
     state: link
   when: not public_html_symlink_bak.stat.exists
+  sudo: yes
