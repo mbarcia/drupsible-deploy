@@ -34,6 +34,7 @@ dependencies:
       listen: "/var/run/php5-fpm-{{ app_name }}.sock"
       user: "{{ app_env['user'] }}"
       group: "{{ app_env['group'] }}"
+    php5_socket_listen_owner: "{{ app_env['user'] }}"
     php5_production: True
 
   - role: debops.php5
@@ -45,6 +46,7 @@ dependencies:
       listen: "/var/run/php5-fpm-{{ app_name }}.sock"
       user: "{{ app_env['user'] }}"
       group: "{{ app_env['group'] }}"
+    php5_socket_listen_owner: "{{ app_env['user'] }}"
     php5_production: False
 
   - role: drupsible.newrelic
