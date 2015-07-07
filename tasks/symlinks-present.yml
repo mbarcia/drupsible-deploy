@@ -17,6 +17,8 @@
     dest: "{{ webroot }}/{{ app_name }}/public_html"
     src: "/tmp"
     state: link
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
   when: not public_html_symlink.stat.exists
   sudo: yes
 
@@ -30,5 +32,7 @@
     dest: "{{ webroot }}/{{ app_name }}/public_html.bak"
     src: "/tmp"
     state: link
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
   when: not public_html_symlink_bak.stat.exists
   sudo: yes

@@ -53,6 +53,9 @@
     path: "{{ webroot }}/{{ app_name }}/public_html.build"
     src: "{{ codebase_dir }}"
     state: link
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  sudo: yes
 
 - name: Download memcache_storage module
   command: drush @{{ app_name }}.bld dl memcache_storage -y
