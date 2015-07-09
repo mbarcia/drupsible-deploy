@@ -121,7 +121,7 @@
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
 
 - include: copy-translations.yml
-  when: app_i18n
+  when: app_i18n is defined and app_i18n
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
 
