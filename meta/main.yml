@@ -62,3 +62,6 @@ dependencies:
   - role: drupsible.memcached
     when: app_env.memcached
     sudo: yes
+
+  - role: drupsible.samba
+    when: target == 'local'
