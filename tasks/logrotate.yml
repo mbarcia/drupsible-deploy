@@ -4,3 +4,8 @@
     src: "logrotate.d/backup.j2"
     dest: "/etc/logrotate.d/{{ app_name }}-backup"
   sudo: yes
+
+- name: Make sure the archive dir is present
+  file:
+    path: "/home/{{ app_env['user'] }}/drush-backups/archive-dump/logrotate"
+    state: directory
