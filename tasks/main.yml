@@ -87,12 +87,12 @@
 - include: readonly-mode.yml
   vars:
     readonly_flag: 0
-  when: "app_env is defined and app_env.db_clone and not app_env.db_import"
+  when: "app_env.db_clone and not app_env.db_import"
 
 - include: site-offline.yml
   vars:
     offline_flag: 0
-  when: "app_env is defined and not app_env.db_clone and not app_env.db_import"
+  when: "not app_env.db_clone and not app_env.db_import"
 
 #
 # Drupal files tasks
@@ -106,12 +106,12 @@
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
     files_tarball_filename: "{{ app_env['files_tarball_filename'] }} | default(app_name + '-files.tar.gz')"
-  when: "app_env is defined and app_env.files_import"
+  when: "app_env.files_import"
 
 - include: copy-files.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: "app_env is defined and app_env.files_copy"
+  when: "app_env.files_copy"
 
 - include: sync-files-from-source.yml
   when: "app_env.files_sync and app_drush_source is defined and target != 'prod'"
