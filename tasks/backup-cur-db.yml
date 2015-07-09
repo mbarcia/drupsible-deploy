@@ -7,8 +7,20 @@
     group: "{{ app_env['group'] }}"
   sudo: yes
 
+- name: Check a previous SQL dump for the build does not exist
+  stat: 
+    path: "/home/{{ app_env['user'] }}/.drush/dbdumps/{{ app_name }}-before-{{ build }}.sql"
+  register: stat_build_dump
+
 - name: Backup current database
   command: "drush @{{ app_name }}.cur sql-dump > /home/{{ app_env['user'] }}/.drush/dbdumps/{{ app_name }}-before-{{ build }}.sql"
+  when: not stat_build_dump.stat.exists
+
+- name: Now check the SQL dump has been made
+  stat: 
+    path: "/home/{{ app_env['user'] }}/.drush/dbdumps/{{ app_name }}-before-{{ build }}.sql"
+  register: stat_build_dump
 
 - name: Gzip database backup
   command: "gzip -f /home/{{ app_env['user'] }}/.drush/dbdumps/{{ app_name }}-before-{{ build }}.sql"
+  when: stat_build_dump.stat.exists
