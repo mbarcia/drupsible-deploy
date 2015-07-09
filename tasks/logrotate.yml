@@ -9,3 +9,8 @@
   file:
     path: "/home/{{ app_env['user'] }}/drush-backups/archive-dump/logrotate"
     state: directory
+
+- name: Make sure an archive exists to kick-off the log rotation
+  file:
+    path: "/home/{{ app_env['user'] }}/drush-backups/archive-dump/logrotate/{{ app_name }}-ard.tar.gz"
+    state: touch
