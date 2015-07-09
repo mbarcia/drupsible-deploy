@@ -1,13 +1,27 @@
 ---
+- name: Make sure dbdumps dir exists
+  file:
+    path: "/home/{{ app_env['user'] }}/.drush/dbdumps"
+    state: directory
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  sudo: yes
+
+- name: Set fact extension of the DB dump
+  set_fact: dbdump_extension="{{ app_env.db_dump_filename|regex_replace('^(.*)\\.(.*)$', '\\2') }}"
+
+- name: Copy archived SQL dump
+  copy:
+    src: "dbdumps/{{ app_env.db_dump_filename }}"
+    dest: "/home/{{ app_env['user'] }}/.drush/dbdumps"
+
 - name: "Drop current database's tables"
   command: "drush @{{ app_name }}.bld sql-drop --yes" 
 
-- name: Copy and decompress (unarchive) an archived SQL dump
-  unarchive:
-    src: "{{ app_env.db_dump_filename }}"
-    dest: "/home/{{ app['user'] }}/.drush/dbdumps"
-    user: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+- name: Import gzipped SQL dump into the current database
+  shell: "zcat /home/{{ app_env['user'] }}/.drush/dbdumps/{{ app_env.db_dump_filename }} | $(drush @{{ app_name }}.bld sql-connect)"
+  when: dbdump_extension == 'gz'
 
-- name: Import the SQL dump into the current database
-  shell: "$(drush @{{ app_name }}.bld sql-connect) < /home/{{ app['user'] }}/.drush/dbdumps/{{ app_env.db_dump_filename }}"
+- name: Import SQL dump into the current database
+  shell: "$(drush @{{ app_name }}.bld sql-connect) < /home/{{ app_env['user'] }}/.drush/dbdumps/{{ app_env.db_dump_filename }}"
+  when: dbdump_extension != 'gz'
