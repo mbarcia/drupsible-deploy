@@ -13,12 +13,6 @@
     - app_env['group']
     - app_env['db_user']
     - app_env['db_name']
-    - app_env['db_import']
-    - app_env['db_clone']
-    - app_env['db_sync']
-    - app_env['files_import']
-    - app_env['files_copy']
-    - app_env['files_sync']
 
 - include: symlinks-present.yml
 
