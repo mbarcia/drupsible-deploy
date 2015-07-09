@@ -65,3 +65,4 @@ dependencies:
 
   - role: drupsible.samba
     when: target == 'local'
+    sudo: yes
