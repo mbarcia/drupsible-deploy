@@ -1,4 +1,12 @@
 ---
+- name: Prepare to sync, ensure remote host is a known host
+  lineinfile:
+    dest: /home/{{ app_env['user'] }}/.ssh/known_hosts
+    create: yes
+    state: present
+    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + app_drush_source.remote_host) }}"
+    regexp: "^{{ app_drush_source.remote_host }}"
+
 - name: Sync the additional/latest files from source.
   command: "drush -y rsync @{{ app_name }}.src:%files @{{ app_name }}.bld:%files"
   when: app_drush_source is defined
