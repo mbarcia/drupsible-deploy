@@ -32,6 +32,7 @@ dependencies:
   - role: debops.php5
     when: "provision_new_relic and target == 'prod'"
     sudo: yes
+    php5_socket_listen_mode: 0666
     php5_packages:
     - newrelic-php5
 
@@ -45,6 +46,7 @@ dependencies:
       user: "{{ app_env['user'] }}"
       group: "{{ app_env['group'] }}"
     php5_socket_listen_owner: "{{ app_env['user'] }}"
+    php5_socket_listen_mode: 0666
     php5_production: True
 
   - role: debops.php5
@@ -57,6 +59,7 @@ dependencies:
       user: "{{ app_env['user'] }}"
       group: "{{ app_env['group'] }}"
     php5_socket_listen_owner: "{{ app_env['user'] }}"
+    php5_socket_listen_mode: 0666
     php5_production: False
 
   - role: drupsible.memcached
