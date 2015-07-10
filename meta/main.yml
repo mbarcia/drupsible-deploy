@@ -30,9 +30,8 @@ dependencies:
     sudo: yes
 
   - role: debops.php5
-    when: "provision_new_relic and target == 'prod'"
+    when: "apache2_mpm != 'prefork' and provision_new_relic and target == 'prod'"
     sudo: yes
-    php5_socket_listen_mode: 0666
     php5_packages:
     - newrelic-php5
 
@@ -43,10 +42,6 @@ dependencies:
       enabled: True
       name: "{{ app_name }}"
       listen: "/var/run/php5-fpm-{{ app_name }}.sock"
-      user: "{{ app_env['user'] }}"
-      group: "{{ app_env['group'] }}"
-    php5_socket_listen_owner: "{{ app_env['user'] }}"
-    php5_socket_listen_mode: 0666
     php5_production: True
 
   - role: debops.php5
@@ -56,10 +51,6 @@ dependencies:
       enabled: True
       name: "{{ app_name }}"
       listen: "/var/run/php5-fpm-{{ app_name }}.sock"
-      user: "{{ app_env['user'] }}"
-      group: "{{ app_env['group'] }}"
-    php5_socket_listen_owner: "{{ app_env['user'] }}"
-    php5_socket_listen_mode: 0666
     php5_production: False
 
   - role: drupsible.memcached
