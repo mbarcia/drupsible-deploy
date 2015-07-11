@@ -99,7 +99,6 @@
 - include: unarchive-files.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    files_tarball_filename: "{{ app_env['files_tarball_filename'] }} | default(app_name + '-files.tar.gz')"
   when: "app_env.files_import"
 
 - include: copy-files.yml
