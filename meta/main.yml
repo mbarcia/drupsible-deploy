@@ -42,6 +42,8 @@ dependencies:
       enabled: True
       name: "{{ app_name }}"
       listen: "/var/run/php5-fpm-{{ app_name }}.sock"
+      user: "{{ app_env['user'] }}"
+      group: "{{ app_env['group'] }}"
     php5_production: True
 
   - role: debops.php5
@@ -51,6 +53,8 @@ dependencies:
       enabled: True
       name: "{{ app_name }}"
       listen: "/var/run/php5-fpm-{{ app_name }}.sock"
+      user: "{{ app_env['user'] }}"
+      group: "{{ app_env['group'] }}"
     php5_production: False
 
   - role: drupsible.memcached

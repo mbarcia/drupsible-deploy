@@ -133,3 +133,8 @@
   when: "target == 'prod'"
 
 - include: switch-on.yml
+
+- name: Restart php5-fpm
+  service: 
+    name: php5-fpm 
+    state: restarted
