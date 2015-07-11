@@ -43,10 +43,18 @@
 - name: Git clone the app codebase (git)
   git:
     clone: yes
-    force: yes
     dest: "{{ codebase_dir }}"
     repo: "git@{{ git_repo_server }}:{{ git_repo_user }}/{{ git_repo_path }}"
   when: git_repo_protocol == 'git'
+
+- name: Ensuring user/group of codebase dir
+  file:
+    path: "{{ codebase_dir }}"
+    state: directory
+    recurse: yes
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  sudo: yes
 
 - name: Setting new build symlink to clone the new build
   file:
