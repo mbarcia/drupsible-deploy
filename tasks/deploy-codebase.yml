@@ -20,6 +20,7 @@
   git:
     clone: yes
     force: yes
+    version: {{ git_version }}
     dest: "{{ codebase_dir }}"
     repo: "{{ git_repo_protocol }}://{{ git_repo_server }}/{{ git_repo_path }}"
   when: "(git_repo_protocol == 'https' or git_repo_protocol == 'http') and git_repo_user is not defined"
@@ -28,6 +29,7 @@
   git:
     clone: yes
     force: yes
+    version: {{ git_version }}
     dest: "{{ codebase_dir }}"
     repo: '{{ git_repo_protocol }}://{{ git_repo_user }}:{{ git_repo_pass | default(lookup("password", secret + "/credentials/" + ansible_fqdn + "/git/" + git_repo_user + "/password")) }}@{{ git_repo_server }}/{{ git_repo_path }}'
   when: "(git_repo_protocol == 'https' or git_repo_protocol == 'http') and git_repo_user is defined"
@@ -36,6 +38,7 @@
   git:
     clone: yes
     force: yes
+    version: {{ git_version }}
     dest: "{{ codebase_dir }}"
     repo: "ssh://{{ git_repo_user }}@{{ git_repo_server }}/{{ git_repo_path }}"
   when: git_repo_protocol == 'ssh'
@@ -43,6 +46,7 @@
 - name: Git clone the app codebase (git)
   git:
     clone: yes
+    version: {{ git_version }}
     dest: "{{ codebase_dir }}"
     repo: "git@{{ git_repo_server }}:{{ git_repo_user }}/{{ git_repo_path }}"
   when: git_repo_protocol == 'git'
