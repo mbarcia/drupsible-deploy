@@ -29,3 +29,5 @@ app_env:
   files_import: False
   # Set to True if the target env has memcached available
   memcached: False
+  # Set to False to skip installing syslog module and skip configuring the system rsyslog
+  syslog: True

@@ -13,6 +13,7 @@
     - app_env['group']
     - app_env['db_user']
     - app_env['db_name']
+    - app_env['syslog']
 
 - include: symlinks-present.yml
 
@@ -114,7 +115,7 @@
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
 
 - include: copy-translations.yml
-  when: app_i18n is defined and app_i18n
+  when: app_i18n
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
 
@@ -126,6 +127,9 @@
 - include: flush-image.yml
 
 - include: logrotate.yml
+
+- include: rsyslog.yml
+  when: app_env.syslog
 
 - include: branch-tag.yml
   vars:
