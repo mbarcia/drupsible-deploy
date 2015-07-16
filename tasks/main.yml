@@ -13,6 +13,7 @@
     - app_env['group']
     - app_env['db_user']
     - app_env['db_name']
+    - app_env['do_cur_backup']
 
 - include: symlinks-present.yml
 
@@ -40,7 +41,7 @@
 # Database tasks
 #
 - include: backup-cur-db.yml
-  when: "app_env.db_clone or app_env.db_import or app_env.db_sync"
+  when: "app_env.do_cur_backup and (app_env.db_clone or app_env.db_import or app_env.db_sync)"
 
 - include: readonly-mode.yml
   vars:

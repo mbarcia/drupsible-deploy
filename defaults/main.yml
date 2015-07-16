@@ -29,3 +29,5 @@ app_env:
   files_import: False
   # Set to True if the target env has memcached available
   memcached: False
+  # Do backup of the current database by default
+  do_cur_backup: True
