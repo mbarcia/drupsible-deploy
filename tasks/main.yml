@@ -14,6 +14,7 @@
     - app_env['db_user']
     - app_env['db_name']
     - app_env['do_cur_backup']
+    - app_env.['adjust_db']
 
 - include: symlinks-present.yml
 
@@ -75,6 +76,7 @@
 - include: enable-disable-modules.yml
 
 - include: adjust-db.yml
+  when: app_env.adjust_db
 
 - include: reset-admin-pass.yml
   when: "target != 'prod'"

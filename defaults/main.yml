@@ -31,3 +31,6 @@ app_env:
   memcached: False
   # Do backup of the current database by default
   do_cur_backup: True
+  # Do adjustments to the DB (features revert and updb) 
+  adjust_db: True
+  
