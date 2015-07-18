@@ -8,7 +8,7 @@
   - name: Check drush min version
     shell: "drush --version | cut -c 21"
     register: drush_version
-    failed_when: "drush_version.stdout <= {{ drush_min_version }}"
+    failed_when: "drush_version.stdout < {{ drush_min_version }}"
     changed_when: false
 
   - name: Ensure build symlink is absent
