@@ -196,7 +196,7 @@
     - deploy.logrotate
 
 - include: rsyslog.yml
-  when: app_env.syslog
+  when: "app_env.syslog is defined and app_env.syslog"
   tags:
     - deploy.rsyslog
 
