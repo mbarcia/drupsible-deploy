@@ -31,3 +31,7 @@ app_env:
   memcached: False
   # Set to False to skip installing syslog module and skip configuring the system rsyslog
   syslog: True
+  # Do backup of the current database by default
+  do_cur_backup: True
+  # Do adjustments to the DB (features revert and updb) 
+  adjust_db: True
