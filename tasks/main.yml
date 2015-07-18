@@ -18,6 +18,8 @@
     - app_env.['adjust_db']
 
 - include: symlinks-present.yml
+  tags:
+    - deploy.init
 
 - name: Remove current build symlink and its contents, if any.
   file:
@@ -25,8 +27,13 @@
     state: absent
     follow: yes
   sudo: yes
+  tags:
+    - deploy.init
  
 - include: drush-checks.yml
+  tags:
+    - deploy.init
+
 
 #
 # Codebase tasks
@@ -34,63 +41,93 @@
 - include: deploy-codebase.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+  tags:
+    - deploy.drupal.codebase
 
 - include: drupal-settings.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+  tags:
+    - deploy.drupal.settings
 
 #
 # Database tasks
 #
 - include: backup-cur-db.yml
   when: "app_env.do_cur_backup and (app_env.db_clone or app_env.db_import or app_env.db_sync)"
+  tags:
+    - deploy.provision.database
 
 - include: readonly-mode.yml
   vars:
     readonly_flag: 1
   when: "app_env.db_clone and not app_env.db_import"
+  tags:
+    - deploy.provision.database
 
 - include: site-offline.yml
   vars:
     offline_flag: 1
   when: "not app_env.db_clone and not app_env.db_import"
+  tags:
+    - deploy.provision.database
 
 - include: clone-db.yml
   when: "app_env.db_clone"
+  tags:
+    - deploy.provision.database
 
 - include: import-db.yml
   when: "app_env.db_import"
+  tags:
+    - deploy.provision.database
 
 - include: sync-db-from-source.yml
   when: "app_drush_source is defined and target != 'prod' and app_env.db_sync"
-
-- include: registry-rebuild.yml
-  vars:
-    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+  tags:
+    - deploy.provision.database
 
 #
 # Drupal DB tasks
 #
+- include: registry-rebuild.yml
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+  tags:
+    - deploy.config.database
+
 - include: enable-memcached.yml
   when: app_env.memcached
+  tags:
+    - deploy.config.database
 
 - include: enable-disable-modules.yml
+  tags:
+    - deploy.config.database
 
 - include: adjust-db.yml
   when: app_env.adjust_db
+  tags:
+    - deploy.config.database
 
 - include: reset-admin-pass.yml
   when: "target != 'prod'"
+  tags:
+    - deploy.config.database
 
 - include: readonly-mode.yml
   vars:
     readonly_flag: 0
   when: "app_env.db_clone and not app_env.db_import"
+  tags:
+    - deploy.config.database
 
 - include: site-offline.yml
   vars:
     offline_flag: 0
   when: "not app_env.db_clone and not app_env.db_import"
+  tags:
+    - deploy.config.database
 
 #
 # Drupal files tasks
@@ -104,42 +141,64 @@
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   when: "app_env.files_import"
+  tags:
+    - deploy.provision.files
 
 - include: copy-files.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   when: "app_env.files_copy"
+  tags:
+    - deploy.provision.files
 
 - include: sync-files-from-source.yml
   when: "app_env.files_sync and app_drush_source is defined and target != 'prod'"
+  tags:
+    - deploy.provision.files
 
 - include: adjust-files-perms.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+  tags:
+    - deploy.provision.files
 
 - include: copy-translations.yml
   when: app_i18n is defined and app_i18n
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+  tags:
+    - deploy.provision.translation.files
 
 #
 # Final tasks
 #
 - include: cc-all.yml
+  tags:
+    - deploy.final
 
 - include: flush-image.yml
-
-- include: logrotate.yml
-
-- include: rsyslog.yml
-  when: app_env.syslog
+  tags:
+    - deploy.final
 
 - include: branch-tag.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   when: "target == 'prod'"
+  tags:
+    - deploy.final
 
 - include: switch-on.yml
+  tags:
+    - deploy.final
+
+- include: logrotate.yml
+  tags:
+    - deploy.logrotate
+
+- include: rsyslog.yml
+  when: app_env.syslog
+  tags:
+    - deploy.rsyslog
 
 - name: Restart php5-fpm
   service: 
