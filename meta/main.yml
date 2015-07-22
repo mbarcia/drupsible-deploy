@@ -63,7 +63,7 @@ dependencies:
       listen: "/var/run/php5-fpm-{{ app_name }}.sock"
       user: "{{ app_env['user'] }}"
       group: "{{ app_env['group'] }}"
-      php_flag: "{{ php_flags }}"
+      php_flag: "{{ php_flag }}"
       php_value: "{{ php_value }}"
     php5_pools: [ '{{ php5_app_pool }}' ]
     php5_production: False

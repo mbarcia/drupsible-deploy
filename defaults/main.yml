@@ -15,6 +15,12 @@ accept_hostkey: no
 # Force this Drupal password, when target != prod
 drupal_admin_password: "drups1ble"
 
+php_value:
+  memory_limit: 192M
+
+php_flag:
+  cgi.fix_path_info: 1
+
 provision_new_relic: False
 
 # App variables per target environment
