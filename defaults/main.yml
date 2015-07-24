@@ -17,6 +17,7 @@ drupal_admin_password: "drups1ble"
 
 php_value:
   memory_limit: 192M
+  newrelic_appname: "{{ app_name }}"
 
 php_flag:
   cgi.fix_path_info: 1

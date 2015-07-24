@@ -33,14 +33,15 @@ dependencies:
     tags: newrelic
 
   - role: debops.php5
-    when: "apache2_mpm != 'prefork' and provision_new_relic and target == 'prod'"
+    when: "apache2_mpm != 'prefork' and provision_new_relic"
     sudo: yes
     php5_packages:
     - newrelic-php5
     tags: config.php5
+    php5_production: {{ target == 'prod' }}
 
   - role: debops.php5
-    when: "apache2_mpm != 'prefork' and target == 'prod'"
+    when: "apache2_mpm != 'prefork'"
     sudo: yes
     php5_app_pool:
       enabled: True
@@ -51,22 +52,6 @@ dependencies:
       php_flag: "{{ php_flag }}"
       php_value: "{{ php_value }}"
     php5_pools: [ '{{ php5_app_pool }}' ]
-    php5_production: True
-    tags: config.php5
-
-  - role: debops.php5
-    when: "apache2_mpm != 'prefork' and target != 'prod'"
-    sudo: yes
-    php5_app_pool:
-      enabled: True
-      name: "{{ app_name }}"
-      listen: "/var/run/php5-fpm-{{ app_name }}.sock"
-      user: "{{ app_env['user'] }}"
-      group: "{{ app_env['group'] }}"
-      php_flag: "{{ php_flag }}"
-      php_value: "{{ php_value }}"
-    php5_pools: [ '{{ php5_app_pool }}' ]
-    php5_production: False
     tags: config.php5
 
   - role: drupsible.memcached
