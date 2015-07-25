@@ -15,7 +15,7 @@ accept_hostkey: no
 # Force this Drupal password, when target != prod
 drupal_admin_password: "drups1ble"
 
-app_php5_production: {{ (target == "prod") | ternary(true, false) }}
+app_php5_production: "{{ (target == 'prod') | ternary(true, false) }}"
 
 php_value:
   memory_limit: 192M
