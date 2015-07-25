@@ -8,12 +8,7 @@
   sudo: yes
 
 - name: Make sure drupal log file exists
-  file:
-    path: "{{ webroot }}/{{ app_name }}/logs/drupal.log"
-    state: touch
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
-  sudo: yes
+  shell: touch {{ webroot }}/{{ app_name }}/logs/drupal.log creates="{{ webroot }}/{{ app_name }}/logs/drupal.log"
 
 - name: Install rsyslog config for Drupal syslog module
   template:
@@ -21,9 +16,6 @@
     dest: /etc/rsyslog.d/drupal.conf
   sudo: yes
   notify: Restart rsyslog
-
-- name: Enable syslog drupal module
-  command: "drush @{{ app_name }}.bld en syslog -y"
 
 - name: setup logrotate.d script for drupal log rotation
   template:
