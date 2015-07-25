@@ -38,7 +38,7 @@ dependencies:
     php5_packages:
     - newrelic-php5
     tags: config.php5
-    php5_production: {{ app_php5_production }}
+    php5_production: "{{ app_php5_production }}"
 
   - role: debops.php5
     when: "apache2_mpm != 'prefork'"
