@@ -11,7 +11,7 @@
   set_fact: dbdump_extension="{{ app_env.db_dump_filename|regex_replace('^(.*)\\.(.*)$', '\\2') }}"
 
 - name: Register connection string variable
-  shell: "drush @cnc.bld sql-connect"
+  shell: "drush @{{ app_name }}.bld sql-connect"
   register: sql_connect
 
 - name: Copy archived SQL dump
