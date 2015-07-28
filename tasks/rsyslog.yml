@@ -10,6 +10,14 @@
 - name: Make sure drupal log file exists
   shell: touch {{ webroot }}/{{ app_name }}/logs/drupal.log creates="{{ webroot }}/{{ app_name }}/logs/drupal.log"
 
+- name: Set proper permissions to drupal.log
+  file:
+    path: "{{ webroot }}/{{ app_name }}/logs/drupal.log"
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+    mode: 0664
+  sudo: yes
+
 - name: Install rsyslog config for Drupal syslog module
   template:
     src: rsyslog/drupal.conf
