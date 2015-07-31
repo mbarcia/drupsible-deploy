@@ -2,6 +2,9 @@
 - name: Set proper permissions to files.
   file:
     path: "{{ codebase_dir }}/sites/default/files"
-    mode: 'a+rwx'
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+    mode: 'ug+rwx'
     recurse: yes
     state: directory
+  sudo: yes
