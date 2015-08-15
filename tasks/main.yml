@@ -199,6 +199,7 @@
   when: "app_env.syslog is defined and app_env.syslog"
   tags:
     - deploy.rsyslog
+  sudo: yes
 
 - name: Restart php5-fpm
   service: 
