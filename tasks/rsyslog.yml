@@ -23,8 +23,9 @@
   notify: Restart rsyslog
 
 - name: Enable syslog drupal module
-  command: "drush @{{ app_name }}.cur en syslog -y"
-
+  shell: "drush @{{ app_name }}.cur en syslog -y"
+  sudo: no
+  
 - name: setup logrotate.d script for drupal log rotation
   template:
     src: "logrotate.d/drupal.j2"
