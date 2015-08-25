@@ -21,11 +21,12 @@
     src: rsyslog/drupal.conf
     dest: /etc/rsyslog.d/drupal.conf
   notify: Restart rsyslog
+  sudo: yes
 
 - name: Enable syslog drupal module
-  shell: "drush @{{ app_name }}.cur en syslog -y"
+  command: "drush @{{ app_name }}.cur en syslog -y"
   sudo: no
-  
+
 - name: setup logrotate.d script for drupal log rotation
   template:
     src: "logrotate.d/drupal.j2"
