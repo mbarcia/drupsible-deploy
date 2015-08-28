@@ -6,7 +6,7 @@
     state: present
     line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + git_repo_server) }}"
     regexp: "^{{ git_repo_server }}"
-  when: "git_repo_protocol is defined and (git_repo_protocol == 'ssh' or git_repo_protocol == 'git')"
+  when: "not accept_hostkey and git_repo_protocol is defined and (git_repo_protocol == 'ssh' or git_repo_protocol == 'git')"
 
 - name: Make sure directory exists for the codebase dir.
   file:
