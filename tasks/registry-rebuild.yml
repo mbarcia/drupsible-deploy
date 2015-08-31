@@ -1,9 +1,12 @@
 ---
 - name: "Invalidate Views cache first (https://www.drupal.org/node/2297647)"
-  command: "drush @{{ app_name }}.bld php-eval 'views_invalidate_cache();'"
+  command: "drush php-eval 'views_invalidate_cache();'"
+  args:
+    chdir: "{{ codebase_dir }}"
   ignore_errors: true
 
 - name: "Rebuild Drupal registry"
   command: "drush registry-rebuild"
   args:
     chdir: "{{ codebase_dir }}"
+  ignore_errors: true

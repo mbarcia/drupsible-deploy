@@ -21,7 +21,7 @@
   tags:
     - deploy.init
 
-- name: Remove current build symlink and its contents, if any.
+- name: Remove current build symlink and its contents, if any
   file:
     path: "{{ webroot }}/{{ app_name }}/public_html.build"
     state: absent
@@ -34,11 +34,32 @@
   tags:
     - deploy.init
 
-
 #
 # Codebase tasks
 #
+- include: deploy-drupal7.yml
+  when: "fresh_install is defined and fresh_install"
+  vars:
+    codebase_basepath: "{{ webroot }}/{{ app_name }}"
+    project_name: "public_html.{{ build }}"
+  tags:
+    - deploy.drupal.codebase
+
+- include: deploy-install-profile.yml
+  when: "fresh_install is defined and fresh_install and app_profile is defined"
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+  tags:
+    - deploy.drupal.codebase
+
 - include: deploy-codebase.yml
+  when: "fresh_install is not defined or not fresh_install"
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+  tags:
+    - deploy.drupal.codebase
+
+- include: deploy-final.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
@@ -49,6 +70,21 @@
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
     - deploy.drupal.settings
+
+#
+# Fresh site install
+#
+- include: deploy-site-install.yml
+  when: "fresh_install is defined and fresh_install"
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+    locale: "{{ app_locale|default('en') }}"
+    name: "{{ app_name }}"
+    email: "{{ app_env['admin_email'] }}"
+    pass: "{{ drupal_admin_password }}" 
+    profile: "{{ app_profile|default('standard') }}"
+  tags:
+    - deploy.drupal.si
 
 #
 # Database tasks

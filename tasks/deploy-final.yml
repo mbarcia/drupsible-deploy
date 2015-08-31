@@ -1,0 +1,23 @@
+---
+- name: Ensuring user/group of codebase dir
+  file:
+    path: "{{ codebase_dir }}"
+    state: directory
+    recurse: yes
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  sudo: yes
+
+- name: Setting new build symlink to clone the new build
+  file:
+    path: "{{ webroot }}/{{ app_name }}/public_html.build"
+    src: "{{ codebase_dir }}"
+    state: link
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  sudo: yes
+
+- name: Download memcache_storage module
+  command: drush @{{ app_name }}.bld dl memcache_storage -y
+  when: app_env.memcached
+  ignore_errors: yes
