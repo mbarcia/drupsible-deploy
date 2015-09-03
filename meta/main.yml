@@ -22,6 +22,7 @@ dependencies:
     users_list:
     - name: "{{ app_env['user'] }}"
       state: 'present'
+    users_admins: [ "{{ app_env['user'] }}" ]
     tags: config.users
     
   - role: drupsible.drush
