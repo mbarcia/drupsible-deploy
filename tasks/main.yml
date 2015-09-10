@@ -56,6 +56,7 @@
   when: "fresh_install is not defined or not fresh_install"
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+    cached_copy_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/cached-copy"
   tags:
     - deploy.drupal.codebase
 
