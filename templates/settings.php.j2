@@ -430,7 +430,7 @@ $conf['reverse_proxy'] = TRUE;
 {% if varnish_enabled is defined and varnish_enabled %}
 $conf['reverse_proxy_addresses'] = array(
 {% for host in groups.drupsible_varnish %}
-  '{{ host.ansible_eth0.ipv4.address }}',
+  '"{{ hostvars[host].ansible_eth0.ipv4.address }}"',
 {% endfor %}
 );
 {% endif %}

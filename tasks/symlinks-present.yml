@@ -1,5 +1,5 @@
 ---
-- name: Make sure logs dir exists
+- name: Make sure app logs dir exists
   file:
     path: "{{ webroot }}/{{ app_name }}/logs"
     state: directory
