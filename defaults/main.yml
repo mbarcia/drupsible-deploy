@@ -16,6 +16,7 @@ accept_hostkey: no
 drupal_admin_password: "drups1ble"
 
 varnish_drupal_module: 'varnish'
+varnish_mgmt_port: 2000
 
 provision_new_relic: False
 
