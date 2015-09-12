@@ -15,7 +15,7 @@ accept_hostkey: no
 # Force this Drupal password, when target != prod
 drupal_admin_password: "drups1ble"
 
-varnish_drupal_module: 'varnish-7.x-1.x-dev'
+varnish_drupal_module: 'varnish'
 
 provision_new_relic: False
 
