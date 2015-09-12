@@ -138,6 +138,11 @@
   tags:
     - deploy.config.database
 
+- include: enable-varnish.yml
+  when: varnish_enabled and varnish_drupal_module == 'varnish-7.x-1.x-dev'
+  tags:
+    - deploy.config.database
+
 - include: enable-disable-modules.yml
   tags:
     - deploy.config.database
