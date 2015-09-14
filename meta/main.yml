@@ -62,6 +62,7 @@ dependencies:
     tags: memcached
 
   - role: drupsible.samba
+    samba_webhost: "{{ webhost }}"
     when: target == 'local'
     sudo: yes
     tags: samba

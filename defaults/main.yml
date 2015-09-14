@@ -12,7 +12,7 @@ git_repo_user: ""
 git_repo_pass: ""
 accept_hostkey: no
 
-# Force this Drupal password, when target != prod
+# Drupal admin password, when applicable
 drupal_admin_password: "drups1ble"
 
 varnish_drupal_module: 'varnish'
