@@ -418,7 +418,7 @@ $cookie_domain = '.{{ webdomain }}';
  * address spoofing unless more advanced precautions are taken.
  */
 #}
-{% if varnish_enabled is defined and varnish_enabled %}
+{% if deploy_varnish_enabled is defined and deploy_varnish_enabled %}
 $conf['reverse_proxy'] = TRUE;
 {% endif %}
 {#
@@ -427,7 +427,7 @@ $conf['reverse_proxy'] = TRUE;
  * This setting is required if $conf['reverse_proxy'] is TRUE.
  */
 #}
-{% if varnish_enabled is defined and varnish_enabled %}
+{% if deploy_varnish_enabled is defined and deploy_varnish_enabled %}
 $conf['reverse_proxy_addresses'] = array(
 {% for host in groups.drupsible_varnish %}
   '"{{ hostvars[host].ansible_eth0.ipv4.address }}"',
