@@ -225,7 +225,7 @@
 - include: branch-tag.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: "target == 'prod'"
+  when: "target == 'prod' and (fresh_install is not defined or not fresh_install)"
   tags:
     - deploy.final
 
