@@ -288,7 +288,18 @@ $update_free_access = FALSE;
  * for you.
  */
  #}
-$base_url = 'http://{{ deploy_webhost }}.{{ webdomain }}';
+{% if app_env.https_enabled|default(False)|bool %}
+$conf['https'] = TRUE;
+{% endif %}
+
+if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') {
+  $protocol = 'https';
+}
+else {
+  $protocol = 'http';
+}
+
+$base_url = $protocol . '://{{ deploy_webhost }}.{{ webdomain }}';
 
 {#
 /**
@@ -633,4 +644,7 @@ $conf['memcache_options'] = array(
 );
 
 $conf['memcache_prefix'] = '{{ app_name }}';
+{% endif %}
+{% if app_env.https_enabled|default(False)|bool and deploy_target == 'local' %}
+$conf['drupal_http_request_fails'] = FALSE;
 {% endif %}

@@ -126,6 +126,13 @@
   tags:
     - deploy.config.database
 
+- include: enable-securepages.yml
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+  when: app_env.https_enabled|default(False)|bool and app_env.https_enabled|bool
+  tags:
+    - deploy.config.database
+  
 - include: enable-disable-modules.yml
   tags:
     - deploy.config.database

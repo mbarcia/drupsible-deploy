@@ -1,5 +1,5 @@
 ---
-- name: Enable varnish module
+- name: Download varnish module
   command: drush @{{ app_name }}.bld dl {{ varnish_drupal_module }}-7.x-1.x-dev -y
   ignore_errors: yes
 
