@@ -1,5 +1,5 @@
 ---
 - name: Drush site-install
-  command: "drush site-install --locale={{ locale }} --site-name={{ name }} --site-mail={{ email }} --account-pass={{ site_pass }} --yes {{ profile }}"
+  command: "drush site-install --locale={{ locale }} --site-name={{ name }} --site-mail={{ email }} --account-pass={{ site_pass }} --yes {{ install_profile }}"
   args:
     chdir: "{{ codebase_dir }}"

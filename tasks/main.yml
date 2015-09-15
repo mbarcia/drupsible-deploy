@@ -20,7 +20,7 @@
 # Codebase tasks
 #
 - include: deploy-drupal7.yml
-  when: fresh_install|default(False)
+  when: deploy_site_install
   vars:
     codebase_basepath: "{{ webroot }}/{{ app_name }}"
     project_name: "public_html.{{ build }}"
@@ -28,14 +28,15 @@
     - deploy.drupal.codebase
 
 - include: deploy-install-profile.yml
-  when: fresh_install|default(False) and app_profile is defined
+  when: deploy_site_install and deploy_install_profile is defined
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+    install_profile: "{{ deploy_install_profile }}"
   tags:
     - deploy.drupal.codebase
 
 - include: deploy-codebase.yml
-  when: fresh_install is not defined or not fresh_install
+  when: deploy_site_install is not defined or not deploy_site_install
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
     cached_copy_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/cached-copy"
@@ -55,17 +56,17 @@
     - deploy.drupal.settings
 
 #
-# Fresh site install
+# Install profile/distribution
 #
 - include: deploy-site-install.yml
-  when: fresh_install|default(False)
+  when: deploy_site_install
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
     locale: "{{ app_locale|default('en') }}"
     name: "{{ app_name }}"
     email: "{{ app_env['admin_email'] }}"
     site_pass: "{{ drupal_admin_password }}" 
-    profile: "{{ app_profile|default('standard') }}"
+    install_profile: "{{ depoy_install_profile }}"
   tags:
     - deploy.drupal.si
 
@@ -207,7 +208,7 @@
 - include: branch-tag.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: deploy_target == 'prod' and fresh_install|default(False)
+  when: deploy_target == 'prod' and deploy_site_install
   tags:
     - deploy.final
 
