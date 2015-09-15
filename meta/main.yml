@@ -30,7 +30,7 @@ dependencies:
     tags: drush
   
   - role: drupsible.newrelic
-    when: provision_new_relic
+    when: provision_new_relic|bool
     sudo: yes
     tags: newrelic
 
@@ -57,7 +57,7 @@ dependencies:
     tags: config.php5
 
   - role: drupsible.memcached
-    when: app_env.memcached
+    when: app_env.memcached|bool
     sudo: yes
     tags: memcached
 

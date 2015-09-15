@@ -19,5 +19,5 @@
 
 - name: Download memcache_storage module
   command: drush @{{ app_name }}.bld dl memcache_storage -y
-  when: app_env.memcached
+  when: app_env.memcached|bool
   ignore_errors: yes
