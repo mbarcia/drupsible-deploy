@@ -208,7 +208,7 @@
 - include: branch-tag.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: deploy_target == 'prod' and deploy_site_install|bool
+  when: deploy_target == 'prod' and not deploy_site_install|bool
   tags:
     - deploy.final
 
