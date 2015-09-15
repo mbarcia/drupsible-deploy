@@ -24,6 +24,15 @@ provision_new_relic: False
 
 # App variables per target environment
 app_env:
+  aliases: []
+  user: 'vagrant'
+  group: 'www-data'
+  admin_email: admin@{{ webdomain }}
+  fpm_listen: '/var/run/php5-fpm-{{ app_name }}.sock'
+  files_tarball_filename: '{{ app_name }}.tar.gz'
+  db_dump_filename: '{{ app_name }}.sql.gz'
+  db_name: "{{ app_name }}"
+  db_user: "{{ app_name }}"
   # True clones the cur database
   db_clone: True
   # True looks for a DB dump to upload and import
@@ -32,6 +41,8 @@ app_env:
   db_sync: False
   # True looks for tarballs (files) to upload and import
   files_import: False
+  files_sync: False
+  files_copy: False
   # Set to True if the target env has memcached available
   memcached: False
   # Set to False to skip installing syslog module and skip configuring the system rsyslog
@@ -40,3 +51,7 @@ app_env:
   do_cur_backup: True
   # Do adjustments to the DB (features revert and updb) 
   adjust_db: True
+  syslog: True
+  https_enabled: no
+  varnish_enabled: yes
+  varnish_mgmt_port: 6082
