@@ -66,7 +66,7 @@
     name: "{{ app_name }}"
     email: "{{ app_env['admin_email'] }}"
     site_pass: "{{ drupal_admin_password }}" 
-    install_profile: "{{ depoy_install_profile }}"
+    install_profile: "{{ deploy_install_profile }}"
   tags:
     - deploy.drupal.si
 
