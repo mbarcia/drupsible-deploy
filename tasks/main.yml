@@ -1,22 +1,4 @@
 ---
-#
-# Preparation tasks
-#
-- fail: msg="Variable '{{ item }}' is required but not defined."
-  when: item is not defined
-  with_items:
-    - build
-    - app_name
-    - app_i18n
-    - app_env
-    - app_env['user']
-    - app_env['group']
-    - app_env['db_user']
-    - app_env['db_name']
-    - app_env['syslog']
-    - app_env['do_cur_backup']
-    - app_env.['adjust_db']
-
 - include: symlinks-present.yml
   tags:
     - deploy.init
@@ -38,7 +20,7 @@
 # Codebase tasks
 #
 - include: deploy-drupal7.yml
-  when: "fresh_install is defined and fresh_install"
+  when: fresh_install|default(False)
   vars:
     codebase_basepath: "{{ webroot }}/{{ app_name }}"
     project_name: "public_html.{{ build }}"
@@ -46,14 +28,14 @@
     - deploy.drupal.codebase
 
 - include: deploy-install-profile.yml
-  when: "fresh_install is defined and fresh_install and app_profile is defined"
+  when: fresh_install|default(False) and app_profile is defined
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
     - deploy.drupal.codebase
 
 - include: deploy-codebase.yml
-  when: "fresh_install is not defined or not fresh_install"
+  when: fresh_install is not defined or not fresh_install
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
     cached_copy_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/cached-copy"
@@ -76,13 +58,13 @@
 # Fresh site install
 #
 - include: deploy-site-install.yml
-  when: "fresh_install is defined and fresh_install"
+  when: fresh_install|default(False)
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
     locale: "{{ app_locale|default('en') }}"
     name: "{{ app_name }}"
     email: "{{ app_env['admin_email'] }}"
-    pass: "{{ drupal_admin_password }}" 
+    site_pass: "{{ drupal_admin_password }}" 
     profile: "{{ app_profile|default('standard') }}"
   tags:
     - deploy.drupal.si
@@ -91,36 +73,36 @@
 # Database tasks
 #
 - include: backup-cur-db.yml
-  when: "app_env.do_cur_backup and (app_env.db_clone or app_env.db_import or app_env.db_sync)"
+  when: app_env.do_cur_backup|default(True) and (app_env.db_clone|default(False) or app_env.db_import|default(False) or app_env.db_sync|default(False))
   tags:
     - deploy.provision.database
 
 - include: readonly-mode.yml
   vars:
     readonly_flag: 1
-  when: "app_env.db_clone and not app_env.db_import"
+  when: app_env.db_clone|default(False) and not app_env.db_import|default(False)
   tags:
     - deploy.provision.database
 
 - include: site-offline.yml
   vars:
     offline_flag: 1
-  when: "not app_env.db_clone and not app_env.db_import"
+  when: not app_env.db_clone|default(False) and not app_env.db_import|default(False)
   tags:
     - deploy.provision.database
 
 - include: clone-db.yml
-  when: "app_env.db_clone"
+  when: app_env.db_clone|default(False)
   tags:
     - deploy.provision.database
 
 - include: import-db.yml
-  when: "app_env.db_import"
+  when: app_env.db_import|default(False)
   tags:
     - deploy.provision.database
 
 - include: sync-db-from-source.yml
-  when: "app_drush_source is defined and target != 'prod' and app_env.db_sync"
+  when: app_drush_source is defined and deploy_target != 'prod' and app_env.db_sync|default(False)
   tags:
     - deploy.provision.database
 
@@ -134,12 +116,12 @@
     - deploy.config.database
 
 - include: enable-memcached.yml
-  when: app_env.memcached
+  when: app_env.memcached|default(True)
   tags:
     - deploy.config.database
 
 - include: enable-varnish.yml
-  when: deploy_varnish_enabled and varnish_drupal_module == 'varnish'
+  when: deploy_varnish_enabled|default(True) and varnish_drupal_module == 'varnish'
   tags:
     - deploy.config.database
 
@@ -148,26 +130,26 @@
     - deploy.config.database
 
 - include: adjust-db.yml
-  when: app_env.adjust_db
+  when: app_env.adjust_db|default(True)
   tags:
     - deploy.config.database
 
 - include: reset-admin-pass.yml
-  when: "target != 'prod'"
+  when: deploy_target != 'prod'
   tags:
     - deploy.config.database
 
 - include: readonly-mode.yml
   vars:
     readonly_flag: 0
-  when: "app_env.db_clone and not app_env.db_import"
+  when: app_env.db_clone|default(False) and not app_env.db_import|default(False)"
   tags:
     - deploy.config.database
 
 - include: site-offline.yml
   vars:
     offline_flag: 0
-  when: "not app_env.db_clone and not app_env.db_import"
+  when: not app_env.db_clone|default(False) and not app_env.db_import|default(False)
   tags:
     - deploy.config.database
 
@@ -182,19 +164,19 @@
 - include: unarchive-files.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: "app_env.files_import"
+  when: app_env.files_import|default(False)
   tags:
     - deploy.provision.files
 
 - include: copy-files.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: "app_env.files_copy"
+  when: app_env.files_copy|default(False)
   tags:
     - deploy.provision.files
 
 - include: sync-files-from-source.yml
-  when: "app_env.files_sync and app_drush_source is defined and target != 'prod'"
+  when: app_env.files_sync|default(False) and app_drush_source is defined and deploy_target != 'prod'
   tags:
     - deploy.provision.files
 
@@ -205,7 +187,7 @@
     - deploy.provision.files
 
 - include: copy-translations.yml
-  when: app_i18n is defined and app_i18n
+  when: app_i18n|default(False)
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
@@ -225,7 +207,7 @@
 - include: branch-tag.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: "target == 'prod' and (fresh_install is not defined or not fresh_install)"
+  when: deploy_target == 'prod' and fresh_install|default(False)
   tags:
     - deploy.final
 
@@ -238,7 +220,7 @@
     - deploy.logrotate
 
 - include: rsyslog.yml
-  when: "app_env.syslog is defined and app_env.syslog"
+  when: app_env.syslog|default(False)
   tags:
     - deploy.rsyslog
   sudo: yes

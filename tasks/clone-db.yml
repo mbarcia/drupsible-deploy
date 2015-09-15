@@ -1,8 +1,8 @@
 ---
 - name: Sync current database to build database.
   command: drush sql-sync @{{ app_name }}.cur @{{ app_name }}.bld --create-db -y
-  when: "target == 'prod'"
+  when: "deploy_target == 'prod'"
   
 - name: Sync source database to build database.
   command: drush sql-sync @{{ app_name }}.src @{{ app_name }}.bld --create-db -y
-  when: "target != 'prod' and app_drush_source is defined"
+  when: "deploy_target != 'prod' and app_drush_source is defined"

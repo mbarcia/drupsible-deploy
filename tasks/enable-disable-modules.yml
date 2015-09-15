@@ -5,7 +5,7 @@
 
 - name: Enable project modules for the environment/target
   command: "drush @{{ app_name }}.bld en {{ lookup('file', 'deploy/enable-prod.txt') }} -y"
-  when: target == 'prod'
+  when: deploy_target == 'prod'
   ignore_errors: yes
 
 - name: Disable project modules
@@ -14,5 +14,5 @@
 
 - name: Disable project modules for the environment/target
   command: "drush @{{ app_name }}.bld dis {{ lookup('file', 'deploy/disable-prod.txt') }} -y"
-  when: target == 'prod'
+  when: deploy_target == 'prod'
   ignore_errors: yes
