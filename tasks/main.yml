@@ -35,6 +35,13 @@
   tags:
     - deploy.drupal.codebase
 
+- include: unarchive-codebase.yml
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+  when: codebase_import|default(False)|bool
+  tags:
+    - deploy.drupal.codebase
+
 - include: deploy-codebase.yml
   when: deploy_site_install|bool is not defined or not deploy_site_install
   vars:

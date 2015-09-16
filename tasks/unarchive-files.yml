@@ -1,5 +1,5 @@
 ---
-- name: Copy and decompress (unarchive) files tarball.
+- name: Copy and decompress files tarball
   unarchive:
     src: "files-tarballs/{{ app_env['files_tarball_filename'] }}"
     dest: "{{ codebase_dir }}/sites/default/"
