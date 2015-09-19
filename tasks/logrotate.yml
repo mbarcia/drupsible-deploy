@@ -10,7 +10,11 @@
     path: "/home/{{ app_env['user'] }}/drush-backups/archive-dump/logrotate"
     state: directory
 
-- name: Make sure an archive exists to kick-off the log rotation
+- name: Make sure a first empty archive exists
   file:
     path: "/home/{{ app_env['user'] }}/drush-backups/archive-dump/logrotate/{{ app_name }}-ard.tar.gz"
     state: touch
+
+- name: Force postrotate on the empty archive to kick-off the log rotation
+  command: logrotate -f /etc/logrotate.d/{{ app_name }}-backup
+  sudo: yes

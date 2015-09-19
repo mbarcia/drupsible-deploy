@@ -230,15 +230,15 @@
   tags:
     - deploy.final
 
-- include: logrotate.yml
-  tags:
-    - deploy.logrotate
-
 - include: rsyslog.yml
   when: app_env.syslog|default(False)|bool
   tags:
     - deploy.rsyslog
   sudo: yes
+
+- include: logrotate.yml
+  tags:
+    - deploy.logrotate
 
 - name: Restart php5-fpm
   service: 
