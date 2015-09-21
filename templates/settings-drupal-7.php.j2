@@ -215,7 +215,7 @@
  *   );
  * @endcode
  */
- #}
+#}
 $databases['default']['default'] = array(
   'driver' => 'mysql',
 {% if app_env is defined and app_env.db_clone %}
@@ -263,10 +263,12 @@ $update_free_access = FALSE;
  * with any backups of your Drupal files and database.
  *
  * Example:
- *   $drupal_hash_salt = file_get_contents('/home/example/salt.txt');
  *
  */
- #}{#
+ #}
+$drupal_hash_salt = '{{ deploy_hash_salt | default(default(lookup("password", secret + "/credentials/" + ansible_domain + "/deploy/hash_salt chars=ascii_letters,digits,hexdigits"))) }}';
+
+{#
  /**
  * Base URL (optional).
  *
@@ -576,8 +578,12 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
  * above. Make sure that you understand the effects of this feature before
  * uncommenting the line below.
  */
-# drupal_fast_404();
-#}{#
+#}
+{% if deploy_drupal_fast_404 is defined and deploy_drupal_fast_404|bool %}
+drupal_fast_404();
+{% endif %}
+
+{#
 /**
  * External access proxy settings:
  *
@@ -589,13 +595,21 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
  * proxy_exceptions variable is an array of host names to be accessed directly,
  * not via proxy.
  */
-# $conf['proxy_server'] = '';
-# $conf['proxy_port'] = 8080;
-# $conf['proxy_username'] = '';
-# $conf['proxy_password'] = '';
-# $conf['proxy_user_agent'] = '';
-# $conf['proxy_exceptions'] = array('127.0.0.1', 'localhost');
-#}{#
+#}
+{% if deploy_proxy_server is defined and deploy_proxy_server != '' %}
+$conf['proxy_server'] = '{{ deploy_proxy_server }}';
+$conf['proxy_port'] = {{ deploy_proxy_port }};
+$conf['proxy_username'] = '{{ deploy_proxy_username }}';
+$conf['proxy_password'] = '{{ deploy_proxy_password }}';
+$conf['proxy_user_agent'] = '{{ deploy_proxy_user_agent }}';
+$conf['proxy_exceptions'] = array(
+{% for exception in deploy_proxy_exceptions %}
+  '{{ exception }}',
+{% endfor %}
+);
+{% endif %}
+
+{#
 /**
  * Authorized file system operations:
  *
@@ -628,10 +642,13 @@ $conf['allow_authorize_operations'] = FALSE;
 $conf['cache_backends'][] = 'sites/all/modules/memcache_storage/memcache_storage.inc';
 $conf['cache_default_class'] = 'MemcacheStorage';
 
+$conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
 $conf['cache_class_cache_update'] = 'DrupalDatabaseCache';
 
 $conf['lock_inc'] = 'sites/all/modules/memcache_storage/includes/lock.inc';
 $conf['memcache_extension'] = 'Memcached';
+
+$conf['memcache_storage_persistent_connection'] = TRUE;
 
 $conf['memcache_options'] = array(
   Memcached::OPT_COMPRESSION => FALSE,
@@ -643,7 +660,7 @@ $conf['memcache_options'] = array(
   Memcached::OPT_BINARY_PROTOCOL => TRUE,
 );
 
-$conf['memcache_prefix'] = '{{ app_name }}';
+$conf['memcache_storage_key_prefix'] = '{{ app_name }}';
 {% endif %}
 {% if app_env.https_enabled|default(False)|bool and deploy_target == 'local' %}
 $conf['drupal_http_request_fails'] = FALSE;

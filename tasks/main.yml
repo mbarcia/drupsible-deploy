@@ -19,11 +19,12 @@
 #
 # Codebase tasks
 #
-- include: deploy-drupal7.yml
+- include: deploy-drupal.yml
   when: deploy_site_install|bool
   vars:
     codebase_basepath: "{{ webroot }}/{{ app_name }}"
     project_name: "public_html.{{ build }}"
+    deploy_drupal_version: "{{ drupal_version }}"
   tags:
     - deploy.drupal.codebase
 
@@ -59,6 +60,7 @@
 - include: drupal-settings.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+    deploy_drupal_version: "{{ drupal_version }}"
   tags:
     - deploy.drupal.settings
 

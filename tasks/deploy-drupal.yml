@@ -7,12 +7,12 @@
     group: "{{ app_env['group'] }}"
   sudo: yes
 
-- name: Deploy Drupal 7 core codebase
-  command: "drush dl drupal-7 --drupal-project-rename='{{ project_name }}' --yes"
+- name: Deploy Drupal core codebase
+  command: "drush dl drupal-{{ deploy_drupal_version }} --drupal-project-rename='{{ project_name }}' --yes"
   args:
     chdir: "{{ codebase_basepath }}"
     creates: "{{ codebase_basepath }}/{{ project_name }}/CHANGELOG.txt"
-
+ 
 - name: Make sure files directory exists
   file:
     path: "{{ codebase_basepath }}/{{ project_name }}/sites/default/files"
@@ -20,4 +20,3 @@
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
   sudo: yes
-
