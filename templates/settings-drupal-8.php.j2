@@ -264,9 +264,11 @@ $databases['default']['default'] = array(
  */
  #}
 $config_directories = array(
+{% if deploy_config_dirs is defined %}
 {% for confdir in deploy_config_dirs %}
 '{{ confdir }}',
 {% endfor %}
+{% endif %}
 );
 
 {#
@@ -314,7 +316,7 @@ $settings['install_profile'] = '{{ deploy_install_profile | default(omit) }}';
  * @endcode
  */
 #}
-$settings['hash_salt'] = '{{ deploy_hash_salt | default(default(lookup("password", secret + "/credentials/" + ansible_domain + "/deploy/hash_salt chars=ascii_letters,digits,hexdigits"))) }}';
+$settings['hash_salt'] = '{{ deploy_hash_salt | default(lookup("password", secret + "/credentials/" + ansible_domain + "/deploy/hash_salt chars=ascii_letters,digits,hexdigits")) }}';
 
 {#
 /**
@@ -782,10 +784,11 @@ $settings['container_base_class'] = '{{ deploy_container_base_class }}';
  * example.org, with all subdomains included.
  */
 #}
+{% if trusted_host_pattern is defined %}
 $settings['trusted_host_patterns'] = array(
   '{{ trusted_host_pattern }}',
 )
-
+{% endif %}
 {#
 /**
  * Load local development override configuration, if available.

@@ -60,7 +60,6 @@
 - include: drupal-settings.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    deploy_drupal_version: "{{ drupal_version }}"
   tags:
     - deploy.drupal.settings
 

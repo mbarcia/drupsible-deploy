@@ -1,7 +1,7 @@
 ---
 - name: Copy templated settings.php
   template:
-    src: "settings-drupal-{{ deploy_drupal_version }}.php.j2"
+    src: "settings-drupal-{{ drupal_version }}.php.j2"
     dest: "{{ codebase_dir }}/sites/default/settings.php"
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"

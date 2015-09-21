@@ -266,7 +266,7 @@ $update_free_access = FALSE;
  *
  */
  #}
-$drupal_hash_salt = '{{ deploy_hash_salt | default(default(lookup("password", secret + "/credentials/" + ansible_domain + "/deploy/hash_salt chars=ascii_letters,digits,hexdigits"))) }}';
+$drupal_hash_salt = '{{ deploy_hash_salt | default(lookup("password", secret + "/credentials/" + ansible_domain + "/deploy/hash_salt chars=ascii_letters,digits,hexdigits")) }}';
 
 {#
  /**
