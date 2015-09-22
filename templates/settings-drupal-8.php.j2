@@ -784,11 +784,11 @@ $settings['container_base_class'] = '{{ deploy_container_base_class }}';
  * example.org, with all subdomains included.
  */
 #}
-{% if trusted_host_pattern is defined %}
 $settings['trusted_host_patterns'] = array(
+{% for trusted_host_pattern in trusted_host_patterns %}
   '{{ trusted_host_pattern }}',
+{% endfor %}
 )
-{% endif %}
 {#
 /**
  * Load local development override configuration, if available.
