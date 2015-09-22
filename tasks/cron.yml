@@ -1,0 +1,4 @@
+---
+- name: Run cron
+  command: drush @{{ app_name }}.cur cron
+  ignore_errors: yes

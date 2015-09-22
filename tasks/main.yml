@@ -24,12 +24,11 @@
   vars:
     codebase_basepath: "{{ webroot }}/{{ app_name }}"
     project_name: "public_html.{{ build }}"
-    deploy_drupal_version: "{{ drupal_version }}"
   tags:
     - deploy.drupal.codebase
 
 - include: deploy-install-profile.yml
-  when: deploy_site_install|bool and deploy_install_profile is defined
+  when: deploy_site_install|bool and deploy_install_profile is defined and drupal_version == '7'
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
     install_profile: "{{ deploy_install_profile }}"
@@ -124,20 +123,20 @@
   tags:
     - deploy.config.database
 
-- include: enable-memcached.yml
-  when: app_env.memcached|default(True)|bool
+- include: enable-memcached.yml and drupal_version == '7'
+  when: app_env.memcached|default(True)|bool and drupal_version == '7'
   tags:
     - deploy.config.database
 
 - include: enable-varnish.yml
-  when: deploy_varnish_enabled|default(True)|bool and varnish_drupal_module == 'varnish'
+  when: deploy_varnish_enabled|default(True)|bool and varnish_drupal_module == 'varnish' and drupal_version == '7'
   tags:
     - deploy.config.database
 
 - include: enable-securepages.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: app_env.https_enabled|default(False)|bool and app_env.https_enabled|bool
+  when: app_env.https_enabled|default(False)|bool and app_env.https_enabled|bool and drupal_version == '7'
   tags:
     - deploy.config.database
   
@@ -230,6 +229,10 @@
 - include: switch-on.yml
   tags:
     - deploy.final
+
+- include: cron.yml
+  tags:
+    - deploy.cron
 
 - include: rsyslog.yml
   when: app_env.syslog|default(False)|bool

@@ -4,3 +4,4 @@
   args:
     chdir: "{{ codebase_dir }}"
     creates: "{{ codebase_dir }}/profiles/{{ install_profile }}"
+  when: install_profile != 'standard' and install_profile != 'minimal' and install_profile != 'testing'
