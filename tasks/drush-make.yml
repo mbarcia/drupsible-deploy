@@ -1,0 +1,11 @@
+---
+- name: Look for app_name.make
+  stat:
+    path: "{{ codebase_dir }}/{{ app_name }}.make"
+  register: makefile
+
+- name: Run drush make, if app_name.make exists
+  command: drush make {{ deploy_drush_make_options }} {{ app_name }}.make -y
+  when: makefile.stat.exists 
+  args:
+    chdir: "{{ codebase_dir }}"

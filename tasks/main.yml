@@ -50,6 +50,12 @@
   tags:
     - deploy.drupal.codebase
 
+- include: drush-make.yml
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+  tags:
+    - deploy.drupal.codebase
+
 - include: deploy-final.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
