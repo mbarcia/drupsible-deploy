@@ -1,11 +1,12 @@
 ---
-- name: Look for app_name.make
+- name: Look for the makefile given
   stat:
-    path: "{{ codebase_dir }}/{{ app_name }}.make"
+    path: "{{ codebase_dir }}/{{ deploy_makefile }}"
+  when: deploy_makefile is defined
   register: makefile
 
-- name: Run drush make, if app_name.make exists
-  command: drush make {{ deploy_drush_make_options }} {{ app_name }}.make -y
-  when: makefile.stat.exists 
+- name: Run drush make if makefile found
+  command: drush make {{ deploy_drush_make_options }} {{ deploy_makefile }} -y
+  when: deploy_makefile is defined and makefile.stat.exists 
   args:
     chdir: "{{ codebase_dir }}"
