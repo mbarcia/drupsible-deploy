@@ -48,7 +48,7 @@ dependencies:
     php5_app_pool:
       enabled: True
       name: "{{ app_name }}"
-      listen: "/var/run/php5-fpm-{{ app_name }}.sock"
+      listen: "{{ app_env['fpm_listen'] }}"
       user: "{{ app_env['user'] }}"
       group: "{{ app_env['group'] }}"
       php_flag: "{{ php_flag }}"
