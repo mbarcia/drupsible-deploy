@@ -21,6 +21,7 @@ deploy_site_install: False
 deploy_install_profile: 'standard'
 
 provision_new_relic: False
+deploy_multiple_domains: False
 
 # App variables per target environment
 app_env:
