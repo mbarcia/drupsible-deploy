@@ -294,6 +294,7 @@ $drupal_hash_salt = '{{ deploy_hash_salt | default(lookup("password", secret + "
 $conf['https'] = TRUE;
 {% endif %}
 
+{% if not deploy_multiple_domains|bool %}
 if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') {
   $protocol = 'https';
 }
@@ -302,6 +303,7 @@ else {
 }
 
 $base_url = $protocol . '://{{ deploy_webhost }}.{{ webdomain }}';
+{% endif %}
 
 {#
 /**
@@ -363,7 +365,7 @@ ini_set('session.cookie_lifetime', 2000000);
  * with a leading dot, as per RFC 2109.
  */
  #}
-{% if webdomain is defined %}
+{% if webdomain is defined and not deploy_multiple_domains|bool %}
 $cookie_domain = '.{{ webdomain }}';
 
 {% endif %}

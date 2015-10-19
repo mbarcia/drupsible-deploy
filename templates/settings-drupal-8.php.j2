@@ -618,6 +618,7 @@ if ($settings['hash_salt']) {
 $conf['https'] = TRUE;
 {% endif %}
 
+{% if not deploy_multiple_domains|bool %}
 if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') {
   $protocol = 'https';
 }
@@ -626,6 +627,7 @@ else {
 }
 
 $base_url = $protocol . '://{{ deploy_webhost }}.{{ webdomain }}';
+{% endif %}
 
 {#
 /**
