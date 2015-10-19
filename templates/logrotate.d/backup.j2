@@ -1,10 +1,10 @@
 /home/{{ app_env['user'] }}/drush-backups/archive-dump/logrotate/{{ app_name }}-ard.tar.gz {
-  daily
-  rotate 7
+  {{ app_env['deploy_backup_frequency']|default('daily') }}
+  rotate {{ app_env['deploy_backup_qty']|default('7') }}
   nocompress
   missingok
   postrotate
     su {{ app_env['user'] }} -c 'drush @{{ app_name }}.cur archive-dump --tar-options="--exclude=.git" --description="Backup of {{ app_name }} containing codebase, files and db." --destination=/home/{{ app_env['user'] }}/drush-backups/archive-dump/logrotate/{{ app_name }}-ard.tar.gz --overwrite'
   endscript
-  su {{ app_env['user'] }} {{ app_env['group'] }}
+  su {{ app_env['user'] }} {{ app_env['user'] }}
 }
