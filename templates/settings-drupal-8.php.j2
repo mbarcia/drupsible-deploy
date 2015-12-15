@@ -428,7 +428,9 @@ $settings['reverse_proxy_addresses'] = array(
  * other than X-Forwarded-For.
  */
 #}
+{% if deploy_varnish_enabled is defined and deploy_varnish_enabled and deploy_reverse_proxy_header != 'HTTP_X_FORWARDED_FOR' %}
 $settings['reverse_proxy_header'] = '{{ deploy_reverse_proxy_header }}';
+{% endif %}
 
 {#
 /**

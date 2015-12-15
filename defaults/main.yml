@@ -59,3 +59,4 @@ app_env:
   app_apache2_alt_port: 8080
   deploy_backup_frequency: daily
   deploy_backup_qty: 7
+  deploy_reverse_proxy_header: 'HTTP_X_FORWARDED_FOR'
