@@ -241,6 +241,7 @@
   sudo: yes
 
 - include: logrotate.yml
+  when: deploy_target == 'prod'
   tags:
     - deploy.logrotate
 
