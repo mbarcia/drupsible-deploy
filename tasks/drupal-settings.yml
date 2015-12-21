@@ -7,3 +7,35 @@
     group: "{{ app_env['group'] }}"
     mode: 0640
   sudo: yes
+
+- name: Copy templated custom settings when provided
+  template:
+    src: "{{ deploy_custom_settings }}"
+    dest: "{{ codebase_dir }}/sites/default/custom-settings.php"
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+    mode: 0640
+  sudo: yes
+  when: deploy_custom_settings is defined
+
+- name: Include custom settings when provided
+  lineinfile: 
+    dest: "{{ codebase_dir }}/sites/default/settings.php"
+    insertafter: EOF 
+    line: "require_once 'custom-settings.php';"
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+    mode: 0640
+  sudo: yes
+  when: deploy_custom_settings is defined
+
+- name: Make sure custom settings are absent when not provided
+  lineinfile: 
+    dest: "{{ codebase_dir }}/sites/default/settings.php"
+    line: "require_once 'custom-settings.php';"
+    state: absent
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+    mode: 0640
+  sudo: yes
+  when: deploy_custom_settings is not defined

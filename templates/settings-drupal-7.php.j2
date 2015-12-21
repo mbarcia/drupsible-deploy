@@ -640,7 +640,7 @@ $conf['proxy_exceptions'] = array(
 #}
 $conf['allow_authorize_operations'] = FALSE;
 
-{% if app_env is defined and app_env.memcached is defined and app_env.memcached %}
+{% if app_env is defined and app_env.memcached is defined and app_env.memcached|bool %}
 #
 # Memcache Storage
 #
