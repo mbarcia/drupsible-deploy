@@ -809,7 +809,7 @@ $settings['trusted_host_patterns'] = array(
 #   include __DIR__ . '/settings.local.php';
 # }
 
-{% if app_env is defined and app_env.memcached is defined and app_env.memcached %}
+{% if app_env is defined and app_env.memcached is defined and app_env.memcached|bool %}
 #
 # Memcache Storage
 #
