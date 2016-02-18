@@ -21,6 +21,8 @@ deploy_site_install: False
 deploy_install_profile: 'standard'
 
 deploy_drush_make_options: '--shallow-clone'
+deploy_makefile: "{{ app_name }}.make"
+deploy_make: no
 
 provision_new_relic: True
 deploy_multiple_domains: False
