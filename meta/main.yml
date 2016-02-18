@@ -30,12 +30,12 @@ dependencies:
     tags: drush
   
   - role: drupsible.newrelic
-    when: provision_new_relic|bool
+    when: provision_new_relic|default(False)|bool
     sudo: yes
     tags: newrelic
 
   - role: debops.php5
-    when: apache2_mpm != 'prefork' and provision_new_relic|bool
+    when: apache2_mpm != 'prefork' and provision_new_relic|default(False)|bool
     sudo: yes
     php5_packages:
     - 'newrelic-php5'
