@@ -5,7 +5,7 @@
     state: directory
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-  sudo: yes
+  become: yes
 
 - name: Stat public_html for cur vhost
   stat:
@@ -20,7 +20,7 @@
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
   when: not public_html_symlink.stat.exists
-  sudo: yes
+  become: yes
 
 - name: Stat public_html for bak vhost
   stat:
@@ -35,4 +35,4 @@
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
   when: not public_html_symlink_bak.stat.exists
-  sudo: yes
+  become: yes

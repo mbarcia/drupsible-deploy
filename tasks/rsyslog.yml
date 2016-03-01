@@ -21,7 +21,7 @@
     src: rsyslog/drupal.conf
     dest: /etc/rsyslog.d/drupal.conf
   notify: Restart rsyslog
-  sudo: yes
+  become: yes
 
 - name: Enable syslog drupal module
   command: "drush @{{ app_name }}.cur en syslog -y"

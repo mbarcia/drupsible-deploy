@@ -14,14 +14,14 @@
     state: directory
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-  sudo: yes
+  become: yes
 
 - name: Make sure directory exists for the cached copy dir.
   file:
     path: "{{ cached_copy_dir }}"
     state: directory
     owner: "{{ app_env['user'] }}"
-  sudo: yes
+  become: yes
 
 - name: Git clone the app codebase (http/s w/o credentials)
   git:
@@ -61,3 +61,11 @@
 
 - name: Copy the updated codebase
   command: "cp -pr {{ cached_copy_dir }}/. {{ codebase_dir }}"
+
+- name: Make sure files directory exists
+  file:
+    path: "{{ codebase_basepath }}/{{ project_name }}/sites/default/files"
+    state: directory
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  become: yes

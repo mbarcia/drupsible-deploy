@@ -6,7 +6,7 @@
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
     mode: 0640
-  sudo: yes
+  become: yes
 
 - name: Copy templated custom settings when provided
   template:
@@ -15,7 +15,7 @@
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
     mode: 0640
-  sudo: yes
+  become: yes
   when: deploy_custom_settings is defined
 
 - name: Include custom settings when provided
@@ -26,7 +26,7 @@
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
     mode: 0640
-  sudo: yes
+  become: yes
   when: deploy_custom_settings is defined
 
 - name: Make sure custom settings are absent when not provided
@@ -37,5 +37,5 @@
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
     mode: 0640
-  sudo: yes
+  become: yes
   when: deploy_custom_settings is not defined

@@ -16,7 +16,7 @@
     state: directory
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-  sudo: yes
+  become: yes
 
 - name: "Sync source database."
   command: "drush -y sql-sync @{{ app_name }}.src @{{ app_name }}.bld" 

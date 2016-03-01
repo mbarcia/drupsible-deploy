@@ -5,7 +5,7 @@
     state: directory
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-  sudo: yes
+  become: yes
 
 - name: Deploy Drupal core codebase
   command: "drush dl drupal-{{ drupal_version }} --drupal-project-rename='{{ project_name }}' --yes"
@@ -19,4 +19,4 @@
     state: directory
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-  sudo: yes
+  become: yes

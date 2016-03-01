@@ -5,7 +5,7 @@
     state: directory
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-  sudo: yes
+  become: yes
 
 - name: Copy and decompress codebase tarball
   unarchive:
@@ -13,4 +13,4 @@
     dest: "{{ codebase_dir }}"
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-  sudo: yes
+  become: yes
