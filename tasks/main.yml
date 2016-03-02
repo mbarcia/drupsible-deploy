@@ -241,7 +241,7 @@
   become: yes
 
 - include: logrotate.yml
-  when: deploy_target == 'prod'
+  when: app_env['deploy_backup_enabled']|default(False)|bool
   tags:
     - deploy.logrotate
 
