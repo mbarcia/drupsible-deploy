@@ -3,4 +3,4 @@
   service:
     name: rsyslog
     state: restarted
-  sudo: yes
+  become: yes

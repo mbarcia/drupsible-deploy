@@ -5,10 +5,10 @@
     state: directory
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-  sudo: yes
+  become: yes
 
 - name: Deploy Drupal core codebase
-  command: "drush dl drupal-{{ drupal_version }} --drupal-project-rename='{{ project_name }}' --yes"
+  command: "drush dl drupal-{{ drupal_version }} --destination='{{ codebase_basepath }}' --drupal-project-rename='{{ project_name }}' --yes"
   args:
     chdir: "{{ codebase_basepath }}"
     creates: "{{ codebase_basepath }}/{{ project_name }}/CHANGELOG.txt"
@@ -19,4 +19,4 @@
     state: directory
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-  sudo: yes
+  become: yes

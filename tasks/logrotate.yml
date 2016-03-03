@@ -3,7 +3,7 @@
   template:
     src: "logrotate.d/backup.j2"
     dest: "/etc/logrotate.d/{{ app_name }}-backup"
-  sudo: yes
+  become: yes
 
 - name: Make sure the archive dir is present
   file:
@@ -17,4 +17,4 @@
 
 - name: Force postrotate on the empty archive to kick-off the log rotation
   command: logrotate -f /etc/logrotate.d/{{ app_name }}-backup
-  sudo: yes
+  become: yes

@@ -27,6 +27,9 @@ deploy_make: no
 provision_new_relic: False
 deploy_multiple_domains: False
 
+# Add prod if you would like Xdebug to also be present in Production
+deploy_xdebug_targets: [ 'local', 'test', 'uat' ]
+
 # App variables per target environment
 app_env:
   aliases: []
@@ -56,11 +59,11 @@ app_env:
   do_cur_backup: True
   # Do adjustments to the DB (features revert and updb) 
   adjust_db: True
-  syslog: True
   https_enabled: no
   varnish_enabled: yes
   varnish_mgmt_port: 6082
   app_apache2_alt_port: 8080
+  deploy_backup_enabled: False
   deploy_backup_frequency: daily
   deploy_backup_qty: 7
   deploy_reverse_proxy_header: 'HTTP_X_FORWARDED_FOR'

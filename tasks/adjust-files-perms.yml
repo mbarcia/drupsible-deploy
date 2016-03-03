@@ -7,4 +7,4 @@
     mode: 'ug+rwx'
     recurse: yes
     state: directory
-  sudo: yes
+  become: yes

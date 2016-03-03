@@ -8,7 +8,7 @@
     path: "{{ webroot }}/{{ app_name }}/public_html.build"
     state: absent
     follow: yes
-  sudo: yes
+  become: yes
   tags:
     - deploy.init
  
@@ -244,10 +244,10 @@
   when: app_env.syslog|default(False)|bool
   tags:
     - deploy.rsyslog
-  sudo: yes
+  become: yes
 
 - include: logrotate.yml
-  when: deploy_target == 'prod'
+  when: app_env['deploy_backup_enabled']|default(False)|bool
   tags:
     - deploy.logrotate
 
@@ -255,4 +255,4 @@
   service: 
     name: php5-fpm 
     state: restarted
-  sudo: yes
+  become: yes

@@ -4,11 +4,11 @@
     path: "{{ webroot }}/{{ app_name }}/public_html.bak"
     follow: yes
     state: absent
-  sudo: yes
+  become: yes
 
 - name: Rename current symlink to .bak, if it exists
   command: "mv {{ webroot }}/{{ app_name }}/public_html {{ webroot }}/{{ app_name }}/public_html.bak"
-  sudo: yes
+  become: yes
 
 - name: Set new symlink to new live codebase
   file:
@@ -17,14 +17,14 @@
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
     state: link
-  sudo: yes
+  become: yes
 
 - name: Remove current build symlink
   file:
     path: "{{ webroot }}/{{ app_name }}/public_html.build"
     state: absent
     follow: no
-  sudo: yes
+  become: yes
 
 - name: Check user/public_html symlink already exists
   stat: 
@@ -38,5 +38,5 @@
     state: link
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-  sudo: yes
+  become: yes
   when: stat_public_symlink.stat is not defined or not stat_public_symlink.stat.exists

@@ -5,7 +5,7 @@
     state: directory
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-  sudo: yes
+  become: yes
 
 - name: Set fact extension of the DB dump
   set_fact: dbdump_extension="{{ app_env.db_dump_filename|regex_replace('^(.*)\\.(.*)$', '\\2') }}"

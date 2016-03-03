@@ -1,6 +1,6 @@
 ---
 - name: Deploy install profile
-  command: "drush dl {{ install_profile }} -y"
+  command: "drush dl {{ install_profile }} --destination='{{ codebase_dir }}/profiles' -y"
   args:
     chdir: "{{ codebase_dir }}"
     creates: "{{ codebase_dir }}/profiles/{{ install_profile }}"
