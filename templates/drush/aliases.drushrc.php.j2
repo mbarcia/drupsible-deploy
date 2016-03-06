@@ -1,0 +1,52 @@
+<?php
+
+// {{ ansible_managed }}
+
+$aliases['cur'] = array(
+  'root' => '{{ webroot }}/{{ app_name }}/public_html',
+  'path-aliases' => array(
+    '%dump-dir' => '/home/{{ app_env['user'] }}/.drush/dbdumps',
+    '%ard-dir' => '/home/{{ app_env['user'] }}/drush-backups/archive-dump/logrotate/',
+    '%files' => '{{ webroot }}/{{ app_name }}/public_html/sites/default/files',
+    '%modules' => '{{ webroot }}/{{ app_name }}/public_html/sites/all/modules',
+    '%themes' => '{{ webroot }}/{{ app_name }}/public_html/sites/all/themes',
+  ),
+);
+
+$aliases['bld'] = array(
+  'root' => '{{ webroot }}/{{ app_name }}/public_html.build',
+  'path-aliases' => array(
+    '%dump-dir' => '/home/{{ app_env['user'] }}/.drush/dbdumps',
+    '%ard-dir' => '/home/{{ app_env['user'] }}/drush-backups/archive-dump/logrotate/',
+    '%files' => '{{ webroot }}/{{ app_name }}/public_html.build/sites/default/files',
+    '%modules' => '{{ webroot }}/{{ app_name }}/public_html.build/sites/all/modules',
+    '%themes' => '{{ webroot }}/{{ app_name }}/public_html.build/sites/all/themes',
+  ),
+);
+
+{% if app_drush_source is defined and app_drush_source.remote_host is defined %}
+$aliases['src'] = array(
+  'remote-host' => "{{ app_drush_source.remote_host }}",
+  'remote-user' => "{{ app_drush_source.remote_user }}",
+  {% if app_drush_source.docroot is defined %}
+  'root' => "{{ app_drush_source.docroot }}",
+  'path-aliases' => array(
+    '%files' => "{{ app_drush_source.docroot }}/sites/default/files",
+  ),
+  {% endif  %}
+  {% if app_drush_source.proxy_credentials is defined %}
+    {% if app_drush_source.proxy_port is defined %}
+  'ssh-options' => '-o "ProxyCommand ssh -p {{ app_drush_source.proxy_port }} {{ app_drush_source.proxy_credentials }} nc %h %p"',
+    {% else %}
+  'ssh-options' => '-o "ProxyCommand ssh {{ app_drush_source.proxy_credentials }} nc %h %p"',
+    {% endif  %}
+  {% endif  %}
+  {% if app_drush_source.ssh_options is defined %}
+    {% if app_drush_source.remote_port|default("") != '' %}
+  'ssh-options' => '-p {{ app_drush_source.remote_port }} {{app_drush_source.ssh_options }}',
+    {% else %}
+  'ssh-options' => '{{ app_drush_source.ssh_options }}',
+    {% endif  %}
+  {% endif  %}
+);
+{% endif  %}

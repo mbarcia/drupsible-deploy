@@ -16,6 +16,14 @@
   tags:
     - deploy.init
 
+- name: Create Drush aliases (current, build and source)
+  template:
+    src: drush/aliases.drushrc.php.j2
+    dest: /home/{{ app_env['user'] }}/.drush/{{ app_name }}.aliases.drushrc.php
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  become: yes
+
 #
 # Codebase tasks
 #
