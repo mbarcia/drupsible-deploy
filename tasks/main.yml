@@ -27,14 +27,6 @@
 #
 # Codebase tasks
 #
-- name: Make sure codebase dir exists
-  file:
-    path: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    state: directory
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
-  become: yes
-
 - include: download-install-profile.yml
   when: deploy_install_profile_enabled|default(False)|bool and deploy_d_o_install_profile != ''
   vars:
