@@ -1,7 +1,14 @@
 ---
+- name: Deploy Drupal core if applicable
+  command: "drush dl drupal-{{ drupal_version }} --destination='{{ codebase_basepath }}' --drupal-project-rename='{{ project_name }}' --yes"
+  args:
+    chdir: "{{ codebase_basepath }}"
+    creates: "{{ codebase_dir }}/index.php"
+  when: install_profile == 'standard' or install_profile == 'minimal' or install_profile|match(match('(^testing$|^testing_.+$)'))
+
 - name: Deploy install profile
   command: "drush dl {{ install_profile }} --destination='{{ codebase_dir }}/profiles' -y"
   args:
     chdir: "{{ codebase_dir }}"
     creates: "{{ codebase_dir }}/profiles/{{ install_profile }}"
-  when: install_profile != 'standard' and install_profile != 'minimal' and install_profile != 'testing'
+  when: install_profile != 'standard' and install_profile != 'minimal' and not install_profile|match(match('(^testing$|^testing_.+$)'))

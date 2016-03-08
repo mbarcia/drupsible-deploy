@@ -7,6 +7,14 @@
     group: "{{ app_env['group'] }}"
   sudo: yes
 
+- name: Make sure files directory exists
+  file:
+    path: "{{ codebase_dir }}/sites/default/files"
+    state: directory
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  become: yes
+
 - name: Copy templated settings.php
   template:
     src: "settings-drupal-{{ drupal_version }}.php.j2"

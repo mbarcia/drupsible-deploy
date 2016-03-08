@@ -17,12 +17,12 @@ drupal_admin_password: "drups1ble"
 
 varnish_drupal_module: 'varnish'
 
-deploy_site_install: False
-deploy_install_profile: 'standard'
+deploy_install_profile_enabled: False
+deploy_custom_install_profile: ''
+deploy_d_o_install_profile: ''
 
-deploy_drush_make_options: '--shallow-clone'
-deploy_makefile: "{{ app_name }}.make"
-deploy_make: no
+deploy_drush_make_enabled: False
+deploy_drush_makefile: "{{ app_name }}.make"
 
 provision_new_relic: False
 deploy_multiple_domains: False

@@ -27,69 +27,57 @@
 #
 # Codebase tasks
 #
-- include: deploy-drupal.yml
-  when: deploy_site_install|bool
+- name: Make sure codebase dir exists
+  file:
+    path: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+    state: directory
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  become: yes
+
+- include: deploy-install-profile.yml
+  when: deploy_install_profile_enabled|default(False)|bool and deploy_d_o_install_profile != ''
   vars:
     codebase_basepath: "{{ webroot }}/{{ app_name }}"
     project_name: "public_html.{{ build }}"
+    codebase_dir: "{{ codebase_basepath }}/{{ project_name }}"
+    install_profile: "{{ deploy_d_o_install_profile }}"
   tags:
-    - deploy.drupal.codebase
+    - deploy.app.codebase
 
-- include: deploy-install-profile.yml
-  when: deploy_site_install|bool and deploy_install_profile is defined and drupal_version == '7'
+- include: deploy-codebase.yml
+  when: not deploy_install_profile_enabled|default(False)|bool or (deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '')
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    install_profile: "{{ deploy_install_profile }}"
+    cached_copy_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/cached-copy"
   tags:
-    - deploy.drupal.codebase
+    - deploy.app.codebase
 
 - include: unarchive-codebase.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   when: codebase_import|default(False)|bool
   tags:
-    - deploy.drupal.codebase
-
-- include: deploy-codebase.yml
-  when: deploy_site_install|bool is not defined or not deploy_site_install
-  vars:
-    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    cached_copy_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/cached-copy"
-  tags:
-    - deploy.drupal.codebase
+    - deploy.app.codebase
 
 - include: drush-make.yml
+  when: deploy_drush_make_enabled|default(False)|bool
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
-    - deploy.drupal.codebase
+    - deploy.app.codebase
 
 - include: deploy-final.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
-    - deploy.drupal.codebase
+    - deploy.app.codebase
 
 - include: drupal-settings.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
     - deploy.drupal.settings
-
-#
-# Install profile/distribution
-#
-- include: deploy-site-install.yml
-  when: deploy_site_install|bool
-  vars:
-    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    locale: "{{ app_locale|default('en') }}"
-    name: "{{ app_name }}"
-    email: "{{ app_env['admin_email'] }}"
-    site_pass: "{{ drupal_admin_password }}" 
-    install_profile: "{{ deploy_install_profile }}"
-  tags:
-    - deploy.drupal.si
 
 #
 # Database tasks
@@ -112,6 +100,21 @@
   when: not app_env.db_clone|default(False)|bool and not app_env.db_import|default(False)|bool
   tags:
     - deploy.provision.database
+
+#
+# For when setting up a profile/distribution
+#
+- include: deploy-site-install.yml
+  when: app_env['site_install']|default(False)|bool
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+    locale: "{{ app_locale|default('en') }}"
+    name: "{{ app_name }}"
+    email: "{{ app_env['admin_email'] }}"
+    site_pass: "{{ drupal_admin_password }}" 
+    install_profile: "{{ deploy_install_profile }}"
+  tags:
+    - deploy.provision.si
 
 - include: clone-db.yml
   when: app_env.db_clone|default(False)|bool
