@@ -53,12 +53,16 @@
   tags:
     - deploy.app.codebase
 
+- name: Set fact for install profile selected
+  set_fact:
+    install_profile_param: "{{ (deploy_custom_install_profile != '')|ternary(deploy_custom_install_profile, deploy_d_o_install_profile) }}"
+
 - include: drush-make.yml
   when: deploy_drush_make_enabled|default(False)|bool
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
     profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/profiles"
-    install_profile: "{{ deploy_d_o_install_profile }}"
+    install_profile: "{{ install_profile_param }}"
   tags:
     - deploy.app.codebase
 
@@ -107,7 +111,7 @@
     name: "{{ app_name }}"
     email: "{{ app_env['admin_email'] }}"
     site_pass: "{{ drupal_admin_password }}" 
-    install_profile: "{{ deploy_custom_install_profile|default(deploy_d_o_install_profile) }}"
+    install_profile: "{{ install_profile_param }}"
   tags:
     - deploy.provision.si
 
