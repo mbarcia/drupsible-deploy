@@ -99,15 +99,15 @@
 #
 # For when setting up a profile/distribution
 #
-- include: deploy-site-install.yml
-  when: app_env['site_install']|default(False)|bool
+- include: drush-site-install.yml
+  when: deploy_install_profile_enabled|default(False)|bool and app_env['site_install']|default(False)|bool
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
     locale: "{{ app_locale|default('en') }}"
     name: "{{ app_name }}"
     email: "{{ app_env['admin_email'] }}"
     site_pass: "{{ drupal_admin_password }}" 
-    install_profile: "{{ deploy_install_profile }}"
+    install_profile: "{{ deploy_custom_install_profile|default(deploy_d_o_install_profile) }}"
   tags:
     - deploy.provision.si
 
