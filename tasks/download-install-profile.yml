@@ -17,5 +17,5 @@
 - name: Download install profile
   command: "drush dl {{ install_profile }} --variant=profile-only --destination='{{ profiles_dir }}/{{ install_profile }}' -y"
   args:
-    creates: "{{ {{ profiles_dir }}/{{ install_profile }}"
+    creates: "{{ profiles_dir }}/{{ install_profile }}"
   when: install_profile != 'standard' and install_profile != 'minimal' and not install_profile|match('(^testing$|^testing_.+$)')
