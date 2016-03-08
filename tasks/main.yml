@@ -35,12 +35,13 @@
     group: "{{ app_env['group'] }}"
   become: yes
 
-- include: deploy-install-profile.yml
+- include: download-install-profile.yml
   when: deploy_install_profile_enabled|default(False)|bool and deploy_d_o_install_profile != ''
   vars:
     codebase_basepath: "{{ webroot }}/{{ app_name }}"
     project_name: "public_html.{{ build }}"
     codebase_dir: "{{ codebase_basepath }}/{{ project_name }}"
+    profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/profiles"
     install_profile: "{{ deploy_d_o_install_profile }}"
   tags:
     - deploy.app.codebase
@@ -64,6 +65,7 @@
   when: deploy_drush_make_enabled|default(False)|bool
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+    install_profile: "{{ deploy_d_o_install_profile }}"
   tags:
     - deploy.app.codebase
 

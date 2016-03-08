@@ -6,9 +6,16 @@
     creates: "{{ codebase_dir }}/index.php"
   when: install_profile == 'standard' or install_profile == 'minimal' or install_profile|match('(^testing$|^testing_.+$)')
 
+- name: Make sure directory exists for the profiles dir.
+  file:
+    path: "{{ profiles_dir }}/{{ install_profile }}"
+    state: directory
+    owner: "{{ app_env['user'] }}"
+  become: yes
+  when: install_profile != 'standard' and install_profile != 'minimal' and not install_profile|match('(^testing$|^testing_.+$)')
+
 - name: Download install profile
-  command: "drush dl {{ install_profile }} --destination='{{ codebase_dir }}/profiles' -y"
+  command: "drush dl {{ install_profile }} --variant=profile-only --destination='{{ profiles_dir }}/{{ install_profile }}' -y"
   args:
-    chdir: "{{ codebase_dir }}"
-    creates: "{{ codebase_dir }}/profiles/{{ install_profile }}"
+    creates: "{{ {{ profiles_dir }}/{{ install_profile }}"
   when: install_profile != 'standard' and install_profile != 'minimal' and not install_profile|match('(^testing$|^testing_.+$)')
