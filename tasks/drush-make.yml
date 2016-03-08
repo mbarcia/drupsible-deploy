@@ -7,6 +7,4 @@
 
 - name: Run drush make makefile if makefile has been found
   command: drush make --shallow-clone "{{ profiles_dir }}/{{ install_profile }}/{{ deploy_drush_makefile }}" "{{ codebase_dir }}" -y
-  when: profile_makefile_chosen.stat.exists 
-  args:
-    chdir: "{{ codebase_dir }}/profiles/{{ install_profile }}"
+  when: profile_makefile_chosen.stat.exists
