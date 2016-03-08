@@ -64,7 +64,7 @@
 - include: drush-make.yml
   when: deploy_drush_make_enabled|default(False)|bool
   vars:
-    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+    profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/profiles"
     install_profile: "{{ deploy_d_o_install_profile }}"
   tags:
     - deploy.app.codebase

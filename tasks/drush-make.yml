@@ -1,12 +1,12 @@
 ---
 - name: Look for the makefile given
   stat:
-    path: "{{ codebase_dir }}/profiles/{{ install_profile }}/{{ deploy_drush_makefile }}"
+    path: "{{ profiles_dir }}/{{ install_profile }}/{{ deploy_drush_makefile }}"
   when: deploy_drush_make_enabled|default(False)|bool
   register: profile_makefile_chosen
 
 - name: Run drush make makefile if makefile has been found
-  command: drush make --shallow-clone "{{ codebase_dir }}/profiles/{{ install_profile }}/{{ deploy_drush_makefile }}" "{{ codebase_dir }}" -y
+  command: drush make --shallow-clone "{{ profiles_dir }}/{{ install_profile }}/{{ deploy_drush_makefile }}" "{{ codebase_dir }}" -y
   when: profile_makefile_chosen.stat.exists 
   args:
     chdir: "{{ codebase_dir }}/profiles/{{ install_profile }}"
