@@ -63,6 +63,7 @@
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
     profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/profiles"
     install_profile: "{{ install_profile_param }}"
+    locale: "{{ app_locale_available|default([ 'en' ]) }}"
   tags:
     - deploy.app.codebase
 
@@ -107,7 +108,7 @@
   when: deploy_install_profile_enabled|default(False)|bool and app_env['site_install']|default(False)|bool
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    locale: "{{ app_locale|default('en') }}"
+    locale: "{{ app_locale_default|default('en') }}"
     name: "{{ app_name }}"
     email: "{{ app_env['admin_email'] }}"
     site_pass: "{{ drupal_admin_password }}" 
