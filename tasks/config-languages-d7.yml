@@ -8,6 +8,11 @@
   command: drush @{{ app_name }}.bld dl drush_language -y
   when: not drush_language_check.stat.exists
 
+- name: Clear drush cache
+  command: drush cc drush
+  register: drush_cc_drush_result
+  failed_when: "drush_cc_drush_result.rc != 0"
+
 - name: Add all app languages
   command: drush @{{ app_name }}.bld language-add {{ item }}
   with_items: "{{ app_languages }}"
