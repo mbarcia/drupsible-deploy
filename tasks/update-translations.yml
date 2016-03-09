@@ -47,5 +47,8 @@
   command: drush @{{ app_name }}.bld en l10n_update -y
   when: "l10n_update_pm_info.rc == 1"
 
-- name: Refresh translations for all enabled languages
-  command: drush @{{ app_name }}.bld l10n-update-refresh; drush @{{ app_name }}.bld l10n-update
+- name: Refresh translations information for all enabled languages
+  command: drush @{{ app_name }}.bld l10n-update-refresh
+
+- name: Update translations for all enabled languages
+  command: drush @{{ app_name }}.bld l10n-update
