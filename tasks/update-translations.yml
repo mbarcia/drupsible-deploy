@@ -41,10 +41,11 @@
   shell: drush @{{ app_name }}.bld pm-info l10n_update | grep "was not found"
   register: l10n_update_pm_info
   changed_when: false
+  ignore_errors: yes
 
 - name: Enable l10n_update module
   command: drush @{{ app_name }}.bld en l10n_update -y
-  when: "l10n_update_pm_info.rc == 0"
+  when: "l10n_update_pm_info.rc == 1"
 
 - name: Refresh translations for all enabled languages
   command: drush @{{ app_name }}.bld l10n-update-refresh; drush @{{ app_name }}.bld l10n-update
