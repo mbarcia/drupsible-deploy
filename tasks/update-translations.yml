@@ -31,7 +31,6 @@
 - name: Check if l10n_update is present
   stat:
     path: "{{ codebase_dir}}/sites/all/l10n_update"
-    type: directory
   register: l10n_update_check
 
 - name: Download l10n_update module

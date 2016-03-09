@@ -2,7 +2,6 @@
 - name: Check if drush_language is present
   stat:
     path: "{{ codebase_dir}}/sites/all/drush_language"
-    type: directory
   register: drush_language_check
 
 - name: Download drush_language module
