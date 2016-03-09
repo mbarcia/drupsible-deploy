@@ -173,6 +173,8 @@
 
 - include: config-languages.yml
   when: app_env['site_install']|default(False)|bool and app_i18n|default(False)|bool
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
     - deploy.config.database
 
