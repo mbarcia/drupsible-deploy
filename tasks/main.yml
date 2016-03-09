@@ -63,7 +63,7 @@
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
     profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/profiles"
     install_profile: "{{ install_profile_param }}"
-    locale: "{{ app_locale_available|default([ 'en' ]) }}"
+    locale: "{{ app_languages|default([ 'en' ]) }}"
   tags:
     - deploy.app.codebase
 
@@ -105,10 +105,10 @@
 # For when setting up a profile/distribution
 #
 - include: drush-site-install.yml
-  when: deploy_install_profile_enabled|default(False)|bool and app_env['site_install']|default(False)|bool
+  when: app_env['site_install']|default(False)|bool
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    locale: "{{ app_locale_default|default('en') }}"
+    locale: "{{ app_languages_default|default('en') }}"
     name: "{{ app_name }}"
     email: "{{ app_env['admin_email'] }}"
     site_pass: "{{ drupal_admin_password }}" 
@@ -171,6 +171,11 @@
   tags:
     - deploy.config.database
 
+- include: config-languages.yml
+  when: app_env['site_install']|default(False)|bool and app_i18n|default(False)|bool
+  tags:
+    - deploy.config.database
+
 - include: readonly-mode.yml
   vars:
     readonly_flag: 0
@@ -218,8 +223,8 @@
   tags:
     - deploy.provision.files
 
-- include: copy-translations.yml
-  when: app_i18n|default(False)|bool
+- include: update-translations.yml
+  when: app_i18n|default(False)|bool or app_languages_default|default('en') != 'en'
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:

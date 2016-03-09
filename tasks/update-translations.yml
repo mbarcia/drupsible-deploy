@@ -1,0 +1,51 @@
+---
+- name: Check if sites/all/translations are present in the current release
+  stat:
+    path: "{{ webroot }}/{{ app_name }}/public_html/sites/all/translations"
+  register: translations_dir
+
+- name: Make sure sites/all/translations directory exists under the codebase dir
+  file:
+    path: "{{ codebase_dir }}/sites/all/translations"
+    state: directory
+  when: translations_dir.stat.isdir is defined and translations_dir.stat.isdir
+
+- name: Copy translation files from current release inside codebase dir
+  command: "cp -pur {{ webroot }}/{{ app_name }}/public_html/sites/all/translations {{ codebase_dir }}/sites/all/"
+  when: translations_dir.stat.isdir is defined and translations_dir.stat.isdir
+
+- name: Add group write permission to the translation files folder
+  file: 
+    path: "{{ codebase_dir }}/sites/all/translations"
+    mode: "g+w"
+  become: yes 
+  when: translations_dir.stat.isdir is defined and translations_dir.stat.isdir
+
+- name: Add group ownership to the translation files folder
+  file: 
+    path: "{{ codebase_dir }}/sites/all/translations"
+    group: "{{ app_env['user'] }}"
+  become: yes
+  when: translations_dir.stat.isdir is defined and translations_dir.stat.isdir
+
+- name: Check if l10n_update is present
+  stat:
+    path: "{{ codebase_dir}}/sites/all/l10n_update"
+    type: directory
+  register: l10n_update_check
+
+- name: Download l10n_update module
+  command: drush @{{ app_name }}.bld dl l10n_update -y
+  when: not l10n_update_check.stat.exists
+
+- name: Check l10n_update is disabled
+  shell: drush pm-info l10n_update | grep "was not found"
+  register: l10n_update_pm_info
+  changed_when: false
+
+- name: Enable l10n_update module
+  command: drush @{{ app_name }}.bld en l10n_update -y
+  when: "l10n_update_pm_info.rc == 0"
+
+- name: Refresh translations for all enabled languages
+  command: drush @{{ app_name }}.bld l10n-update-refresh; drush @{{ app_name }}.bld l10n-update
