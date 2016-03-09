@@ -1,12 +1,12 @@
 ---
-- name: Look for the makefile given
+- name: Check for the makefile given
   stat:
     path: "{{ profiles_dir }}/{{ install_profile }}/{{ deploy_drush_makefile }}"
   when: deploy_drush_make_enabled|default(False)|bool
   register: profile_makefile_chosen
 
-- name: Run drush make makefile if makefile has been found
-  command: drush make "{{ profiles_dir }}/{{ install_profile }}/{{ deploy_drush_makefile }}" "{{ codebase_dir }}" --shallow-clone --yes
+- name: Run drush make makefile
+  command: drush make "{{ profiles_dir }}/{{ install_profile }}/{{ deploy_drush_makefile }}" "{{ codebase_dir }}" --translations="{{ locale|join(',') }}" --shallow-clone --yes
   when: profile_makefile_chosen.stat.exists
 
 - name: Look for the profile project in the build dir
@@ -17,3 +17,24 @@
 - name: Make sure the profile project is present inside the build dir
   command: cp -pr "{{ profiles_dir }}/{{ install_profile }}" "{{ codebase_dir }}/profiles/"
   when: not profile_project_included.stat.exists
+
+- name: Look for libraries inside the profile project
+  stat:
+    path: "{{ profiles_dir }}/{{ install_profile }}/libraries"
+  register: profile_libraries
+
+- name: Make sure sites/all/libraries exists in the codebase dir.
+  file:
+    path: "{{ codebase_dir }}/sites/all/libraries"
+    state: directory
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  become: yes
+  when: profile_libraries.stat.exists
+
+- name: Sync libraries between the profile and sites/all/libraries
+  synchronize:
+    src: "{{ profiles_dir }}/{{ install_profile }}/libraries/"
+    dest: "{{ codebase_dir }}/sites/all/libraries/"
+  delegate_to: "{{ ansible_fqdn }}"
+  when: profile_libraries.stat.exists
