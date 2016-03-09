@@ -11,11 +11,11 @@
 
 - name: Look for the profile project in the build dir
   stat:
-    path: "{{ codebase_dir }}/profiles/{{ install_profile }}"
+    path: "{{ codebase_dir }}{{ drupal_profiles_base_folder }}/{{ install_profile }}"
   register: profile_project_included
 
 - name: Make sure the profile project is present inside the build dir
-  command: cp -pr "{{ profiles_dir }}/{{ install_profile }}" "{{ codebase_dir }}/profiles/"
+  command: cp -pr "{{ profiles_dir }}/{{ install_profile }}" "{{ codebase_dir }}{{ drupal_profiles_base_folder }}/"
   when: not profile_project_included.stat.exists
 
 - name: Look for libraries inside the profile project

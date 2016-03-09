@@ -33,7 +33,7 @@
     codebase_basepath: "{{ webroot }}/{{ app_name }}"
     project_name: "public_html.{{ build }}"
     codebase_dir: "{{ codebase_basepath }}/{{ project_name }}"
-    profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/profiles"
+    profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}{{ drupal_profiles_base_folder }}"
     install_profile: "{{ deploy_d_o_install_profile }}"
   tags:
     - deploy.app.codebase
@@ -61,7 +61,7 @@
   when: deploy_drush_make_enabled|default(False)|bool
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/profiles"
+    profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}{{ drupal_profiles_base_folder }}"
     install_profile: "{{ install_profile_param }}"
     locale: "{{ app_languages|default([ 'en' ]) }}"
   tags:
