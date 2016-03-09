@@ -38,7 +38,7 @@
   when: not l10n_update_check.stat.exists
 
 - name: Check l10n_update is disabled
-  shell: drush pm-info l10n_update | grep "was not found"
+  shell: drush @{{ app_name }}.bldpm-info l10n_update | grep "was not found"
   register: l10n_update_pm_info
   changed_when: false
 
