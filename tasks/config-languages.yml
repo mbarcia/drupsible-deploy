@@ -8,16 +8,6 @@
   command: drush @{{ app_name }}.bld dl drush_language -y
   when: not drush_language_check.stat.exists
 
-- name: Check drush_language is disabled
-  shell: drush pm-info drush_language | grep "was not found"
-  register: drush_language_pm_info
-  changed_when: false
-  ignore_errors: yes
-
-- name: Enable drush_language module
-  command: drush @{{ app_name }}.bld en drush_language -y
-  when: "drush_language_pm_info.rc == 1"
-
 - name: Add all app languages
   command: drush @{{ app_name }}.bld language-add {{ item }}
   with_items: "{{ app_languages }}"
