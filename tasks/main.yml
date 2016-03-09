@@ -108,7 +108,7 @@
   when: app_env['site_install']|default(False)|bool
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    locale: "{{ app_languages_default|default('en') }}"
+    locale: "{{ app_languages[0]|default('en') }}"
     name: "{{ app_name }}"
     email: "{{ app_env['admin_email'] }}"
     site_pass: "{{ drupal_admin_password }}" 
@@ -226,7 +226,7 @@
     - deploy.provision.files
 
 - include: update-translations.yml
-  when: drupal_version|default('8') == '7' and (app_i18n|default(False)|bool or app_languages_default|default('en') != 'en')
+  when: drupal_version|default('8') == '7' and (app_i18n|default(False)|bool or app_languages[0]|default('en') != 'en')
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
