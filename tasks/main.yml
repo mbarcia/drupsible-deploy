@@ -153,7 +153,7 @@
 - include: enable-securepages.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: app_env.https_enabled|default(False)|bool and app_env.https_enabled|bool and drupal_version == '7'
+  when: app_env.https_enabled|default(False)|bool and app_env.https_enabled|bool and drupal_version|default('8') == '7'
   tags:
     - deploy.config.database
   
@@ -172,7 +172,7 @@
     - deploy.config.database
 
 - include: config-languages-d7.yml
-  when: app_env['site_install']|default(False)|bool and app_i18n|default(False)|bool and drupal_version|default(8) == 7
+  when: app_env['site_install']|default(False)|bool and app_i18n|default(False)|bool and drupal_version|default('8') == '7'
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
@@ -226,7 +226,7 @@
     - deploy.provision.files
 
 - include: update-translations.yml
-  when: drupal_version|default(8) == 7 and (app_i18n|default(False)|bool or app_languages_default|default('en') != 'en')
+  when: drupal_version|default('8') == '7' and (app_i18n|default(False)|bool or app_languages_default|default('en') != 'en')
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
