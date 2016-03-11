@@ -1,4 +1,7 @@
 ---
+# Default language, fallback value
+app_languages: ['en']
+
 # String to identify the build based on today's date like 20201224_1824
 build: "{{ ansible_date_time['year'] }}{{ ansible_date_time['month'] }}{{ ansible_date_time['day'] }}_{{ ansible_date_time['hour'] }}{{ ansible_date_time['minute'] }}"
 
@@ -17,8 +20,12 @@ drupal_admin_password: "drups1ble"
 
 varnish_drupal_module: 'varnish'
 
-deploy_site_install: False
-deploy_install_profile: 'standard'
+deploy_install_profile_enabled: False
+deploy_custom_install_profile: ''
+deploy_d_o_install_profile: ''
+
+deploy_drush_make_enabled: False
+deploy_drush_makefile: "{{ app_name }}.make"
 
 provision_new_relic: False
 deploy_multiple_domains: False
@@ -34,6 +41,7 @@ app_env:
   admin_email: admin@{{ webdomain }}
   fpm_listen: '/var/run/php5-fpm-{{ app_name }}.sock'
   files_tarball_filename: '{{ app_name }}.tar.gz'
+  site_install: no
   db_dump_filename: '{{ app_name }}.sql.gz'
   db_name: "{{ app_name }}"
   db_user: "{{ app_name }}"

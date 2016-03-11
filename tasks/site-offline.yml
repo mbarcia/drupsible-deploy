@@ -1,4 +1,9 @@
 ---
-- name: Go offline.
-  command: drush @{{ app_name }}.cur vset site_offline {{ offline_flag }}
+- name: Take site into maintenance mode (D7)
+  command: drush @{{ app_name }}.cur config-set site.offline {{ offline_flag }}
+  ignore_errors: True
+  when: drupal_version == '7'
+
+- name: Take site into maintenance mode
+  command: drush @{{ app_name }}.cur sset system.maintenance_mode {{ offline_flag }}
   ignore_errors: True

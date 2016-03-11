@@ -27,63 +27,57 @@
 #
 # Codebase tasks
 #
-- include: deploy-drupal.yml
-  when: deploy_site_install|bool
+- include: download-install-profile.yml
+  when: deploy_install_profile_enabled|default(False)|bool and deploy_d_o_install_profile != ''
   vars:
     codebase_basepath: "{{ webroot }}/{{ app_name }}"
     project_name: "public_html.{{ build }}"
+    codebase_dir: "{{ codebase_basepath }}/{{ project_name }}"
+    profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}{{ drupal_profiles_base_folder }}"
+    install_profile: "{{ deploy_d_o_install_profile }}"
   tags:
-    - deploy.drupal.codebase
+    - deploy.app.codebase
 
-- include: deploy-install-profile.yml
-  when: deploy_site_install|bool and deploy_install_profile is defined and drupal_version == '7'
+- include: deploy-codebase.yml
+  when: not deploy_install_profile_enabled|default(False)|bool or (deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '')
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    install_profile: "{{ deploy_install_profile }}"
+    cached_copy_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/cached-copy"
   tags:
-    - deploy.drupal.codebase
+    - deploy.app.codebase
 
 - include: unarchive-codebase.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   when: codebase_import|default(False)|bool
   tags:
-    - deploy.drupal.codebase
+    - deploy.app.codebase
 
-- include: deploy-codebase.yml
-  when: deploy_site_install|bool is not defined or not deploy_site_install
+- name: Set fact for install profile selected
+  set_fact:
+    install_profile_param: "{{ (deploy_custom_install_profile != '')|ternary(deploy_custom_install_profile, deploy_d_o_install_profile) }}"
+
+- include: drush-make.yml
+  when: deploy_drush_make_enabled|default(False)|bool
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    cached_copy_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/cached-copy"
+    profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}{{ drupal_profiles_base_folder }}"
+    install_profile: "{{ install_profile_param }}"
+    locale: "{{ app_languages|default([ 'en' ]) }}"
   tags:
-    - deploy.drupal.codebase
+    - deploy.app.codebase
 
 - include: deploy-final.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
-    - deploy.drupal.codebase
+    - deploy.app.codebase
 
 - include: drupal-settings.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
     - deploy.drupal.settings
-
-#
-# Install profile/distribution
-#
-- include: deploy-site-install.yml
-  when: deploy_site_install|bool
-  vars:
-    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    locale: "{{ app_locale|default('en') }}"
-    name: "{{ app_name }}"
-    email: "{{ app_env['admin_email'] }}"
-    site_pass: "{{ drupal_admin_password }}" 
-    install_profile: "{{ deploy_install_profile }}"
-  tags:
-    - deploy.drupal.si
 
 #
 # Database tasks
@@ -107,6 +101,21 @@
   tags:
     - deploy.provision.database
 
+#
+# For when setting up a profile/distribution
+#
+- include: drush-site-install.yml
+  when: app_env['site_install']|default(False)|bool
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+    locale: "{{ app_languages[0]|default('en') }}"
+    name: "{{ app_name }}"
+    email: "{{ app_env['admin_email'] }}"
+    site_pass: "{{ drupal_admin_password }}" 
+    install_profile: "{{ install_profile_param }}"
+  tags:
+    - deploy.provision.si
+
 - include: clone-db.yml
   when: app_env.db_clone|default(False)|bool
   tags:
@@ -126,6 +135,7 @@
 # Drupal DB tasks
 #
 - include: registry-rebuild.yml
+  when: drupal_version == '7'
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
@@ -144,7 +154,7 @@
 - include: enable-securepages.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: app_env.https_enabled|default(False)|bool and app_env.https_enabled|bool and drupal_version == '7'
+  when: app_env.https_enabled|default(False)|bool and app_env.https_enabled|bool and drupal_version|default('8') == '7'
   tags:
     - deploy.config.database
   
@@ -159,6 +169,13 @@
 
 - include: reset-admin-pass.yml
   when: deploy_target != 'prod'
+  tags:
+    - deploy.config.database
+
+- include: config-languages-d7.yml
+  when: app_env['site_install']|default(False)|bool and app_i18n|default(False)|bool and drupal_version|default('8') == '7'
+  vars:
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
     - deploy.config.database
 
@@ -209,8 +226,8 @@
   tags:
     - deploy.provision.files
 
-- include: copy-translations.yml
-  when: app_i18n|default(False)|bool
+- include: update-translations.yml
+  when: drupal_version|default('8') == '7' and (app_i18n|default(False)|bool or app_languages[0]|default('en') != 'en')
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
@@ -219,7 +236,7 @@
 #
 # Final tasks
 #
-- include: cc-all.yml
+- include: clear-cache.yml
   tags:
     - deploy.final
 
@@ -246,7 +263,6 @@
   when: app_env.syslog|default(False)|bool
   tags:
     - deploy.rsyslog
-  become: yes
 
 - include: logrotate.yml
   when: app_env['deploy_backup_enabled']|default(False)|bool

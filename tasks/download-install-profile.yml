@@ -1,0 +1,21 @@
+---
+- name: Download Drupal core project
+  command: "drush dl drupal-{{ drupal_version }} --destination='{{ codebase_basepath }}' --drupal-project-rename='{{ project_name }}' --yes"
+  args:
+    chdir: "{{ codebase_basepath }}"
+    creates: "{{ codebase_dir }}/index.php"
+  when: install_profile == 'standard' or install_profile == 'minimal' or install_profile|match('(^testing$|^testing_.+$)')
+
+- name: Make sure directory exists for the profiles dir.
+  file:
+    path: "{{ profiles_dir }}/{{ install_profile }}"
+    state: directory
+    owner: "{{ app_env['user'] }}"
+  become: yes
+  when: install_profile != 'standard' and install_profile != 'minimal' and not install_profile|match('(^testing$|^testing_.+$)')
+
+- name: Download install profile
+  command: "drush dl {{ install_profile }} --variant=profile-only --destination='{{ profiles_dir }}' -y"
+  args:
+    creates: "{{ profiles_dir }}/{{ install_profile }}/{{ install_profile }}.profile"
+  when: install_profile != 'standard' and install_profile != 'minimal' and not install_profile|match('(^testing$|^testing_.+$)')

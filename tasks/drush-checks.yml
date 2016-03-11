@@ -1,11 +1,11 @@
 ---
-  - name: Check drush is installed
-    shell: "drush --help | grep Drush"
-    register: drush_help_result
-    failed_when: "drush_help_result.rc != 0"
-    changed_when: false
+- name: Check drush is installed
+  shell: "drush --help | grep Drush"
+  register: drush_help_result
+  failed_when: "drush_help_result.rc != 0"
+  changed_when: false
 
-  - name: Ensure build symlink is absent
-    file:
-      path: "{{ webroot }}/{{ app_name }}/public_html.build"
-      state: absent
+- name: Ensure build symlink is absent
+  file:
+    path: "{{ webroot }}/{{ app_name }}/public_html.build"
+    state: absent

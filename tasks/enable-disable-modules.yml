@@ -8,11 +8,22 @@
   when: deploy_target == 'prod'
   ignore_errors: yes
 
-- name: Disable project modules
+- name: Disable project modules (D7)
   command: "drush @{{ app_name }}.bld dis {{ lookup('file', 'deploy/disable.txt') }} -y"
   ignore_errors: yes
+  when: drupal_version == '7'
 
-- name: Disable project modules for the environment/target
+- name: Disable project modules
+  command: "drush @{{ app_name }}.bld pm-uninstall {{ lookup('file', 'deploy/disable.txt') }} -y"
+  ignore_errors: yes
+  when: drupal_version == '8'
+
+- name: Disable project modules in prod (D7)
   command: "drush @{{ app_name }}.bld dis {{ lookup('file', 'deploy/disable-prod.txt') }} -y"
-  when: deploy_target == 'prod'
+  when: deploy_target == 'prod' and drupal_version == '7'
+  ignore_errors: yes
+
+- name: Uninstall project modules in prod
+  command: "drush @{{ app_name }}.bld pm-uninstall {{ lookup('file', 'deploy/disable-prod.txt') }} -y"
+  when: deploy_target == 'prod' and drupal_version == '8'
   ignore_errors: yes
