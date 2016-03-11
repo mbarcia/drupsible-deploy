@@ -135,6 +135,7 @@
 # Drupal DB tasks
 #
 - include: registry-rebuild.yml
+  when: drupal_version == '7'
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
@@ -235,7 +236,7 @@
 #
 # Final tasks
 #
-- include: cc-all.yml
+- include: clear-cache.yml
   tags:
     - deploy.final
 
@@ -262,7 +263,6 @@
   when: app_env.syslog|default(False)|bool
   tags:
     - deploy.rsyslog
-  become: yes
 
 - include: logrotate.yml
   when: app_env['deploy_backup_enabled']|default(False)|bool

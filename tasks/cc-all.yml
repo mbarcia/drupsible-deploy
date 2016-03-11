@@ -1,4 +1,0 @@
----
-- name: Cache clear all
-  command: drush @{{ app_name }}.cur cc all
-  ignore_errors: yes

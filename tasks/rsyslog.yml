@@ -5,6 +5,7 @@
     state: directory
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
+  become: yes
 
 - name: Make sure drupal log file exists
   shell: touch {{ webroot }}/{{ app_name }}/logs/drupal.log creates="{{ webroot }}/{{ app_name }}/logs/drupal.log"
@@ -15,6 +16,7 @@
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
     mode: 0664
+  become: yes
 
 - name: Install rsyslog config for Drupal syslog module
   template:
@@ -24,9 +26,10 @@
   become: yes
 
 - name: Enable syslog drupal module
-  command: "drush @{{ app_name }}.cur en syslog -y"
+  command: drush @{{ app_name }}.cur en syslog -y
 
 - name: setup logrotate.d script for drupal log rotation
   template:
     src: "logrotate.d/drupal.j2"
     dest: "/etc/logrotate.d/drupal"
+  become: yes
