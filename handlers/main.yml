@@ -1,3 +1,4 @@
 ---
 - include: apache2.yml
 - include: rsyslog.yml
+- include: php5.yml

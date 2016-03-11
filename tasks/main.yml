@@ -79,6 +79,13 @@
   tags:
     - deploy.drupal.settings
 
+- include: c-extension-twig.yml
+  when: drupal_version == '8'
+  vars:
+    working_dir: "/home/{{ app_env['user'] }}/{{ app_name }}"
+  tags:
+    - deploy.c-extension
+
 #
 # Database tasks
 #
