@@ -64,7 +64,7 @@
 
 - name: Make sure files directory exists
   file:
-    path: "{{ codebase_basepath }}/{{ project_name }}/sites/default/files"
+    path: "{{ codebase_dir }}/sites/default/files"
     state: directory
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
