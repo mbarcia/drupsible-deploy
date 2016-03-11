@@ -25,7 +25,6 @@
 
 - name: Enable syslog drupal module
   command: "drush @{{ app_name }}.cur en syslog -y"
-  sudo: no
 
 - name: setup logrotate.d script for drupal log rotation
   template:

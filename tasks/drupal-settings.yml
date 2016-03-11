@@ -5,7 +5,7 @@
     state: directory
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
-  sudo: yes
+  become: yes
 
 - name: Make sure files directory exists
   file:
