@@ -2,6 +2,13 @@
 # Default language, fallback value
 app_languages: ['en']
 
+# Modules to enable/disable/uninstall per app deployment
+deploy_modules_present_app: []
+deploy_modules_absent_app: []
+# Modules to enable/disable/uninstall per app environment
+deploy_modules_present_env: []
+deploy_modules_absent_env: []
+
 # String to identify the build based on today's date like 20201224_1824
 build: "{{ ansible_date_time['year'] }}{{ ansible_date_time['month'] }}{{ ansible_date_time['day'] }}_{{ ansible_date_time['hour'] }}{{ ansible_date_time['minute'] }}"
 
