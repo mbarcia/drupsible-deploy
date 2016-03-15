@@ -44,7 +44,7 @@ app_env:
   site_install: no
   db_dump_filename: '{{ app_name }}.sql.gz'
   db_name: "{{ app_name }}"
-  db_user: "{{ app_name }}"
+  db_user: "{{ app_name|truncate(16) }}"
   # True clones the cur database
   db_clone: True
   # True looks for a DB dump to upload and import
