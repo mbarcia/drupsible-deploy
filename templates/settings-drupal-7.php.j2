@@ -225,11 +225,7 @@ $databases['default']['default'] = array(
 {% endif %}
   'username' => '{{ app_env['db_user'] }}',
   'password' => '{{ app_env["db_password"] | default(lookup("password", secret + "/credentials/" + ansible_fqdn + "/mysql/" + app_env.db_user + "/password chars=ascii_letters,digits,hexdigits")) }}',
-{% if groups.drupsible_mysql is defined %}
-  'host' => '{{ groups.drupsible_mysql.0 }}',
-{% elif groups.debops_mariadb is defined %}
-  'host' => '{{ groups.debops_mariadb.0 }}',
-{% endif %}
+  'host' => '{{ deploy_mysql_host }}',
   'prefix' => '',
 );
 

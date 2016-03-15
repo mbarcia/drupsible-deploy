@@ -72,5 +72,5 @@ app_env:
   deploy_backup_qty: 7
   deploy_reverse_proxy_header: 'HTTP_X_FORWARDED_FOR'
 
-deploy_varnish_servers: "{{ groups[ app_name + '-' + app_target + '_varnish' ] }}"
- 
+deploy_varnish_servers: "{{ groups[ app_name + '-' + app_target + '_varnish' ]|default([ 'localhost' ]) }}"
+deploy_mysql_host: "{{ groups[ app_name + '-' + app_target + '_mysql' ][0]|default('localhost') }}"
