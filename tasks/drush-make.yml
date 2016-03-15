@@ -14,6 +14,15 @@
     path: "{{ codebase_dir }}{{ drupal_profiles_base_folder }}/{{ install_profile }}"
   register: profile_project_included
 
+- name: Make sure build_dir exists (if profile not found)
+  file:
+    path: "{{ codebase_dir }}"
+    state: directory
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  become: yes
+  when: not profile_project_included.stat.exists
+
 - name: Make sure the profile project is present inside the build dir
   command: cp -pr "{{ profiles_dir }}/{{ install_profile }}" "{{ codebase_dir }}{{ drupal_profiles_base_folder }}/"
   when: not profile_project_included.stat.exists
@@ -23,7 +32,7 @@
     path: "{{ profiles_dir }}/{{ install_profile }}/libraries"
   register: profile_libraries
 
-- name: Make sure sites/all/libraries exists in the codebase dir.
+- name: Make sure sites/all/libraries exists in the codebase dir
   file:
     path: "{{ codebase_dir }}/sites/all/libraries"
     state: directory
