@@ -71,3 +71,6 @@ app_env:
   deploy_backup_frequency: daily
   deploy_backup_qty: 7
   deploy_reverse_proxy_header: 'HTTP_X_FORWARDED_FOR'
+
+deploy_varnish_servers: "{{ groups[ app_name + '-' + app_target + '_varnish' ] }}"
+ 
