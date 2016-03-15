@@ -3,3 +3,4 @@
   command: "drush image-flush --all" 
   args:
     chdir: "{{ webroot }}/{{ app_name }}/public_html.build"
+  ignore_errors: yes
