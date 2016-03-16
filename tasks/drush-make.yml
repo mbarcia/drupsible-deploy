@@ -5,9 +5,14 @@
   when: deploy_drush_make_enabled|default(False)|bool
   register: profile_makefile_chosen
 
+- name: Run drush make makefile (ignore_errors version)
+  command: drush make "{{ profiles_dir }}/{{ install_profile }}/{{ deploy_drush_makefile }}" "{{ codebase_dir }}" --translations="{{ locale|join(',') }}" --shallow-clone --yes
+  when: profile_makefile_chosen.stat.exists and deploy_ignore_drush_make_errors|default(False)|bool
+  ignore_errors: yes
+
 - name: Run drush make makefile
   command: drush make "{{ profiles_dir }}/{{ install_profile }}/{{ deploy_drush_makefile }}" "{{ codebase_dir }}" --translations="{{ locale|join(',') }}" --shallow-clone --yes
-  when: profile_makefile_chosen.stat.exists
+  when: profile_makefile_chosen.stat.exists and not deploy_ignore_drush_make_errors|default(False)|bool
 
 - name: Look for the profile project in the build dir
   stat:
