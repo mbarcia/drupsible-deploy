@@ -28,9 +28,8 @@
   become: yes
   when: not profile_project_included.stat.exists
 
-- name: Make sure the profile project is present inside the build dir
-  command: cp -pr "{{ profiles_dir }}/{{ install_profile }}" "{{ codebase_dir }}{{ drupal_profiles_base_folder }}/"
-  when: not profile_project_included.stat.exists
+- name: rsync with the profile inside the build dir
+  command: rsync -a "{{ profiles_dir }}/" "{{ codebase_dir }}{{ drupal_profiles_base_folder }}"
 
 - name: Look for libraries inside the profile project
   stat:
@@ -46,9 +45,6 @@
   become: yes
   when: profile_libraries.stat.exists
 
-- name: Sync libraries between the profile and sites/all/libraries
-  synchronize:
-    src: "{{ profiles_dir }}/{{ install_profile }}/libraries/"
-    dest: "{{ codebase_dir }}/sites/all/libraries/"
-  delegate_to: "{{ ansible_fqdn }}"
+- name: rsync libraries between the profile and sites/all/libraries
+  command: rsync -a "{{ profiles_dir }}/{{ install_profile }}/libraries/" "{{ codebase_dir }}/sites/all/libraries"
   when: profile_libraries.stat.exists
