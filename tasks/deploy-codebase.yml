@@ -58,6 +58,7 @@
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
   become: yes
+  when: not deploy_install_profile_enabled|default(False)
 
 - name: Copy the updated codebase
   command: "cp -pr {{ cached_copy_dir }}/. {{ codebase_dir }}"
