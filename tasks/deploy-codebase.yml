@@ -8,14 +8,6 @@
     regexp: "^{{ git_repo_server }}"
   when: "not accept_hostkey and git_repo_protocol is defined and (git_repo_protocol == 'ssh' or git_repo_protocol == 'git')"
 
-- name: Make sure directory exists for the codebase dir
-  file:
-    path: "{{ codebase_dir }}"
-    state: directory
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
-  become: yes
-
 - name: Make sure directory exists for the cached copy dir
   file:
     path: "{{ cached_copy_dir }}"
@@ -59,8 +51,18 @@
     repo: "git@{{ git_repo_server }}:{{ git_repo_user }}/{{ git_repo_path }}"
   when: "git_repo_protocol is defined and git_repo_protocol == 'git'"
 
+- name: Make sure directory exists for the codebase dir
+  file:
+    path: "{{ codebase_dir }}"
+    state: directory
+    owner: "{{ app_env['user'] }}"
+    group: "{{ app_env['group'] }}"
+  become: yes
+  when: not deploy_install_profile_enabled|default(False)
+
 - name: Copy the updated codebase
   command: "cp -pr {{ cached_copy_dir }}/. {{ codebase_dir }}"
+  when: not deploy_install_profile_enabled|default(False)
 
 - name: Make sure files directory exists
   file:
@@ -69,3 +71,4 @@
     owner: "{{ app_env['user'] }}"
     group: "{{ app_env['group'] }}"
   become: yes
+  when: not deploy_install_profile_enabled|default(False)

@@ -2,6 +2,13 @@
 # Default language, fallback value
 app_languages: ['en']
 
+# Modules to enable/disable/uninstall per app deployment
+deploy_modules_present_app: []
+deploy_modules_absent_app: []
+# Modules to enable/disable/uninstall per app environment
+deploy_modules_present_env: []
+deploy_modules_absent_env: []
+
 # String to identify the build based on today's date like 20201224_1824
 build: "{{ ansible_date_time['year'] }}{{ ansible_date_time['month'] }}{{ ansible_date_time['day'] }}_{{ ansible_date_time['hour'] }}{{ ansible_date_time['minute'] }}"
 
@@ -44,7 +51,7 @@ app_env:
   site_install: no
   db_dump_filename: '{{ app_name }}.sql.gz'
   db_name: "{{ app_name }}"
-  db_user: "{{ app_name }}"
+  db_user: "{{ app_name|truncate(16) }}"
   # True clones the cur database
   db_clone: True
   # True looks for a DB dump to upload and import
@@ -71,3 +78,6 @@ app_env:
   deploy_backup_frequency: daily
   deploy_backup_qty: 7
   deploy_reverse_proxy_header: 'HTTP_X_FORWARDED_FOR'
+
+deploy_varnish_servers: "{{ groups[ app_name + '-' + app_target + '_varnish' ]|default([ 'localhost' ]) }}"
+deploy_mysql_host: "{{ groups[ app_name + '-' + app_target + '_mysql' ][0]|default('localhost') }}"

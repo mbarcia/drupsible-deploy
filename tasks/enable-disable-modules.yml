@@ -1,29 +1,30 @@
 ---
-- name: Enable project modules
-  command: "drush @{{ app_name }}.bld en {{ lookup('file', 'deploy/enable.txt') }} -y"
+- name: Enable app modules
+  command: "drush @{{ app_name }}.bld en {{ deploy_modules_present_app|join(' ') }} -y"
+  when: deploy_modules_present_app|length > 0
   ignore_errors: yes
 
-- name: Enable project modules for the environment/target
-  command: "drush @{{ app_name }}.bld en {{ lookup('file', 'deploy/enable-prod.txt') }} -y"
-  when: deploy_target == 'prod'
+- name: Enabled modules in the target environment
+  command: "drush @{{ app_name }}.bld en {{ deploy_modules_present_env|join(' ') }} -y"
+  when: deploy_modules_present_env|length > 0
   ignore_errors: yes
 
-- name: Disable project modules (D7)
-  command: "drush @{{ app_name }}.bld dis {{ lookup('file', 'deploy/disable.txt') }} -y"
-  ignore_errors: yes
-  when: drupal_version == '7'
-
-- name: Disable project modules
-  command: "drush @{{ app_name }}.bld pm-uninstall {{ lookup('file', 'deploy/disable.txt') }} -y"
-  ignore_errors: yes
-  when: drupal_version == '8'
-
-- name: Disable project modules in prod (D7)
-  command: "drush @{{ app_name }}.bld dis {{ lookup('file', 'deploy/disable-prod.txt') }} -y"
-  when: deploy_target == 'prod' and drupal_version == '7'
+- name: Disable app modules (D7)
+  command: "drush @{{ app_name }}.bld dis {{ deploy_modules_absent_app|join(' ') }} -y"
+  when: drupal_version == '7' and deploy_modules_absent_app|length > 0
   ignore_errors: yes
 
-- name: Uninstall project modules in prod
-  command: "drush @{{ app_name }}.bld pm-uninstall {{ lookup('file', 'deploy/disable-prod.txt') }} -y"
-  when: deploy_target == 'prod' and drupal_version == '8'
+- name: Uninstall app modules (D8)
+  command: "drush @{{ app_name }}.bld pm-uninstall {{ deploy_modules_absent_app|join(' ') }} -y"
+  when: drupal_version == '8' and deploy_modules_absent_app|length > 0
+  ignore_errors: yes
+
+- name: Disabled modules in the target environment (D7)
+  command: "drush @{{ app_name }}.bld dis {{ deploy_modules_absent_env|join(' ') }} -y"
+  when: drupal_version == '7' and deploy_modules_absent_env|length > 0
+  ignore_errors: yes
+
+- name: Uninstalled modules in the target environment (D8)
+  command: "drush @{{ app_name }}.bld pm-uninstall {{ deploy_modules_absent_env|join(' ') }} -y"
+  when: drupal_version == '8' and deploy_modules_absent_env|length > 0
   ignore_errors: yes
