@@ -31,18 +31,25 @@
   when: deploy_install_profile_enabled|default(False)|bool and deploy_d_o_install_profile != ''
   vars:
     codebase_basepath: "{{ webroot }}/{{ app_name }}"
-    project_name: "public_html.{{ build }}"
-    codebase_dir: "{{ codebase_basepath }}/{{ project_name }}"
+    codebase_dir: "{{ codebase_basepath }}/public_html.{{ build }}"
     profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}{{ drupal_profiles_base_folder }}"
+    project_name: "public_html.{{ build }}"
     install_profile: "{{ deploy_d_o_install_profile }}"
   tags:
     - deploy.app.codebase
 
 - include: deploy-codebase.yml
-  when: not deploy_install_profile_enabled|default(False)|bool or (deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '')
+  when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != ''
   vars:
-    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+    cached_copy_dir: "/home/{{ app_env['user'] }}/{{ app_name }}{{ drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
+  tags:
+    - deploy.app.codebase
+
+- include: deploy-codebase.yml
+  when: not deploy_install_profile_enabled|default(False)|bool
+  vars:
     cached_copy_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/cached-copy"
+    codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
     - deploy.app.codebase
 
