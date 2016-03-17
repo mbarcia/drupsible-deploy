@@ -11,20 +11,20 @@
 
 - name: Disable app modules (D7)
   command: "drush @{{ app_name }}.bld dis {{ deploy_modules_absent_app|join(' ') }} -y"
-  when: drupal_version == '7' and deploy_modules_absent_app|length > 0
+  when: drupal_version|version_compare('7', '==') and deploy_modules_absent_app|length > 0
   ignore_errors: yes
 
 - name: Uninstall app modules (D8)
   command: "drush @{{ app_name }}.bld pm-uninstall {{ deploy_modules_absent_app|join(' ') }} -y"
-  when: drupal_version == '8' and deploy_modules_absent_app|length > 0
+  when: drupal_version|version_compare('8', '==') and deploy_modules_absent_app|length > 0
   ignore_errors: yes
 
 - name: Disabled modules in the target environment (D7)
   command: "drush @{{ app_name }}.bld dis {{ deploy_modules_absent_env|join(' ') }} -y"
-  when: drupal_version == '7' and deploy_modules_absent_env|length > 0
+  when: drupal_version|version_compare('7', '==') and deploy_modules_absent_env|length > 0
   ignore_errors: yes
 
 - name: Uninstalled modules in the target environment (D8)
   command: "drush @{{ app_name }}.bld pm-uninstall {{ deploy_modules_absent_env|join(' ') }} -y"
-  when: drupal_version == '8' and deploy_modules_absent_env|length > 0
+  when: drupal_version|version_compare('8', '==') and deploy_modules_absent_env|length > 0
   ignore_errors: yes

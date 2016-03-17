@@ -87,7 +87,7 @@
     - deploy.drupal.settings
 
 - include: c-extension-twig.yml
-  when: drupal_version == '8'
+  when: drupal_version|version_compare('8', '==')
   vars:
     working_dir: "/home/{{ app_env['user'] }}/{{ app_name }}"
   tags:
@@ -149,26 +149,26 @@
 # Drupal DB tasks
 #
 - include: registry-rebuild.yml
-  when: drupal_version == '7'
+  when: drupal_version|version_compare('7', '==')
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
     - deploy.config.database
 
 - include: enable-memcached.yml
-  when: app_env.memcached|default(True)|bool and drupal_version == '7'
+  when: app_env.memcached|default(True)|bool and drupal_version|version_compare('7', '==')
   tags:
     - deploy.config.database
 
 - include: enable-varnish.yml
-  when: deploy_varnish_enabled|default(True)|bool and varnish_drupal_module == 'varnish' and drupal_version == '7'
+  when: deploy_varnish_enabled|default(True)|bool and varnish_drupal_module == 'varnish' and drupal_version|version_compare('7', '==')
   tags:
     - deploy.config.database
 
 - include: enable-securepages.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: app_env.https_enabled|default(False)|bool and app_env.https_enabled|bool and drupal_version|default('8') == '7'
+  when: app_env.https_enabled|default(False)|bool and app_env.https_enabled|bool and drupal_version|version_compare('7', '==')
   tags:
     - deploy.config.database
   
@@ -187,7 +187,7 @@
     - deploy.config.database
 
 - include: config-languages-d7.yml
-  when: app_env['site_install']|default(False)|bool and app_i18n|default(False)|bool and drupal_version|default('8') == '7'
+  when: app_env['site_install']|default(False)|bool and app_i18n|default(False)|bool and drupal_version|version_compare('7', '==')
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
@@ -241,7 +241,7 @@
     - deploy.provision.files
 
 - include: update-translations.yml
-  when: drupal_version|default('8') == '7' and (app_i18n|default(False)|bool or app_languages[0]|default('en') != 'en')
+  when: drupal_version|version_compare('7', '==') and (app_i18n|default(False)|bool or app_languages[0]|default('en') != 'en')
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:

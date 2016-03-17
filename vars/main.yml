@@ -1,3 +1,3 @@
 ---
 webroot: '/var/www'
-drupal_profiles_base_folder: "{{ (drupal_version == '8')|ternary('/core/profiles', '/profiles') }}"
+drupal_profiles_base_folder: "{{ (drupal_version|version_compare('8', '=='))|ternary('/core/profiles', '/profiles') }}"
