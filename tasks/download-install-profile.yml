@@ -15,7 +15,7 @@
   when: install_profile != 'standard' and install_profile != 'minimal' and not install_profile|match('(^testing$|^testing_.+$)')
 
 - name: Download install profile
-  command: "drush dl {{ install_profile }} --default-major={{ drupal_version.split('.', 0) }} --variant=profile-only --destination='{{ profiles_dir }}' -y"
+  command: "drush dl {{ install_profile }} --default-major={{ drupal_version.split('.', 0)|join('') }} --variant=profile-only --destination='{{ profiles_dir }}' -y"
   args:
     creates: "{{ profiles_dir }}/{{ install_profile }}/{{ install_profile }}.profile"
   when: install_profile != 'standard' and install_profile != 'minimal' and not install_profile|match('(^testing$|^testing_.+$)')
