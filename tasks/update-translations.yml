@@ -52,3 +52,4 @@
 
 - name: Update translations for all enabled languages
   command: drush @{{ app_name }}.bld l10n-update
+  ignore_errors: yes
