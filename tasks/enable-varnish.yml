@@ -14,4 +14,4 @@
   command: drush @{{ app_name }}.bld vset varnish_control_terminal 'localhost:{{ deploy_varnish_mgmt_port }}'
 
 - name: Configure varnish control key
-  command: drush @{{ app_name }}.bld vset varnish_control_key "{{ lookup('password', secret + '/credentials/varnish/secret chars=ascii_letters,digits,hexdigits') }}"
+  command: drush @{{ app_name }}.bld vset varnish_control_key "{{ lookup('password', secret + '/credentials/' + app_name + '/varnish/secret chars=ascii_letters,digits,hexdigits') }}"
