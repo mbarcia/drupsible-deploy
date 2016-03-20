@@ -1,4 +1,10 @@
 ---
+- name: Ensure git is installed
+  package:
+    name: git
+    state: present
+  become: yes
+
 - name: Ensure git host is a known host
   lineinfile:
     dest: /home/{{ app_env['user'] }}/.ssh/known_hosts
