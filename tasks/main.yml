@@ -141,7 +141,7 @@
     - deploy.provision.database
 
 - include: sync-db-from-source.yml
-  when: app_drush_source is defined and deploy_target != 'prod' and app_env.db_sync|default(False)|bool
+  when: app_drush_source is defined and app_env.db_sync|default(False)|bool
   tags:
     - deploy.provision.database
 
@@ -230,7 +230,7 @@
     - deploy.provision.files
 
 - include: sync-files-from-source.yml
-  when: app_env.files_sync|default(False)|bool and app_drush_source is defined and deploy_target != 'prod'
+  when: app_env.files_sync|default(False)|bool and app_drush_source is defined
   tags:
     - deploy.provision.files
 
