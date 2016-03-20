@@ -1,4 +1,9 @@
 ---
+- name: Ensure zip/unzip are installed
+  package:
+    name: zip
+    state: present
+
 - name: Copy and decompress codebase tarball
   unarchive:
     src: "codebase-tarballs/{{ codebase_tarball_filename }}"
