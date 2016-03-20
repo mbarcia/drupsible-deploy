@@ -9,3 +9,8 @@
   file:
     path: "{{ webroot }}/{{ app_name }}/public_html.build"
     state: absent
+
+- name: Ensure rsync is installed
+  package:
+    name: rsync
+    state: present
