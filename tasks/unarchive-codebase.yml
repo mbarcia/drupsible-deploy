@@ -3,6 +3,7 @@
   package:
     name: zip
     state: present
+  become: yes
 
 - name: Copy and decompress codebase tarball
   unarchive:
