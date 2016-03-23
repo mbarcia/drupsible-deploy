@@ -1,8 +1,8 @@
 ---
 - name: Copy and decompress files tarball
   unarchive:
-    src: "files-tarballs/{{ app_env['files_tarball_filename'] }}"
+    src: "files-tarballs/{{ deploy_files_tarball_filename }}"
     dest: "{{ codebase_dir }}/sites/default/"
     mode: "g+w"
-    group: "{{ app_env['group'] }}"
+    group: "{{ app_group }}"
   become: yes

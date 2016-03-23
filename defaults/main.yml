@@ -12,72 +12,109 @@ deploy_modules_absent_env: []
 # String to identify the build based on today's date like 20201224_1824
 build: "{{ ansible_date_time['year'] }}{{ ansible_date_time['month'] }}{{ ansible_date_time['day'] }}_{{ ansible_date_time['hour'] }}{{ ansible_date_time['minute'] }}"
 
+# Host in the mysql group of the current environment
+deploy_mysql_host: 'localhost'
+
+# List of hostnames in the varnish group of the current environment
+deploy_varnish_servers: "localhost"
+# Name of the drupal module to control Varnish cache
+deploy_varnish_drupal_module: 'varnish'
+
 # Version of the repository to check out (full 40-character SHA-1 hash, the literal string HEAD, a branch name, or a tag name).
-git_version: master
+deploy_git_repo_version: master
 # can be git, ssh, http or https
-git_repo_protocol: "http"
-git_repo_server: git.example.com
-git_repo_path: ""
-git_repo_user: ""
-git_repo_pass: ""
-accept_hostkey: no
+deploy_git_repo_protocol: "ssh"
+deploy_git_repo_server: ""
+deploy_git_repo_path: ""
+deploy_git_repo_user: ""
+deploy_git_repo_pass: ""
+deploy_accept_hostkey: no
 
 # Drupal admin password, when applicable
-drupal_admin_password: "drups1ble"
+deploy_drupal_admin_password: "drups1ble"
 
-varnish_drupal_module: 'varnish'
-
-deploy_install_profile_enabled: False
-deploy_custom_install_profile: ''
-deploy_d_o_install_profile: ''
-
-deploy_drush_make_enabled: False
-deploy_drush_makefile: "{{ app_name }}.make"
-
-provision_new_relic: False
+# Is this app spanning multiple internet domains?
 deploy_multiple_domains: False
 
+# Use an install profile?
+deploy_install_profile_enabled: False
+# Custom install profile name
+deploy_custom_install_profile: ''
+# Drupal.org install profile name (ie. commerce_kickstart or bear)
+deploy_d_o_install_profile: ''
+
+# Should Drupsible provision New Relic packages?
+provision_new_relic: False
+
+# Should Drupsible run drush make after grabbing the code?
+deploy_drush_make_enabled: False
+# Name of the makefile to feed drush make with
+deploy_drush_makefile: "build-{{ app_name }}.make"
+
+# Should Drupsible perform a backup of the current website before proceeding?
+deploy_backup_cur_enabled: False
+# Should Drupsible run drush site-install to build the DB from the profile?
+deploy_site_install_enabled: False
+# Should Drupsible clone the current DB into the build DB
+deploy_db_clone_enabled: False
+# Should Drupsible look for a DB dump in the controller, upload it and import 
+# it into the build DB?
+deploy_db_import_enabled: False
+# Name of the SQL dump file, can be .sql or .sql.gz
+deploy_db_dump_filename: '{{ app_name }}.sql.gz'
+# Should Drupsible run drush sql-sync with upstream/source DB?
+deploy_db_sync_enabled: False
+# Should Drupsible run drush updb, features-revert, registry-rebuild, etc.,
+# once the DB has been filled with content? Disable if you are building a 
+# clone website.
+deploy_rectify_db_enabled: True
+
+# True looks for tarballs (files) to upload and import
+deploy_files_import_enabled: False
+# Name of the "files" archive
+deploy_files_tarball_filename: '{{ app_name }}-files.tar.gz'
+# Should Drupsible run drush rsync :%files% with the upstream/source website?
+deploy_files_sync_enabled: False
+# Should Drupsible copy the files from the current website into the build? 
+# Can be combined with deploy_files_sync_enabled=yes
+deploy_files_copy_enabled: True
+
+# Should Drupsible setup and configure rsyslog, and enable syslog module?
+deploy_syslog_enabled: True
+
+# Should Drupsible perform periodic backups with drush ard?
+deploy_backup_enabled: False
+# Frequency can be hourly, daily, weekly, monthly, yearly.
+deploy_backup_frequency: daily
+# Maximun number of backup archives to be kept at all times.
+deploy_backup_qty: 7
+
+# Drupal will lookup the real IP of the request in this HTTP header. Confirm this with 
+# your CDN if any, as not all CDN send the real IP in this header.
+deploy_reverse_proxy_header: 'HTTP_X_FORWARDED_FOR'
+
+# Drupal settings (7 and 8)
+# Proxy server 
+deploy_proxy_server: ''
+deploy_proxy_port: 8080
+deploy_proxy_username: ''
+deploy_proxy_password: ''
+deploy_proxy_user_agent: ''
+deploy_proxy_exceptions: 
+  - '127.0.0.1'
+  - 'localhost'
+
 # Add prod if you would like Xdebug to also be present in Production
-deploy_xdebug_targets: [ 'local', 'test', 'uat' ]
+deploy_xdebug_targets: [ 'local', 'ci', 'test', 'uat' ]
 
-# App variables per target environment
-app_env:
-  aliases: []
-  user: 'vagrant'
-  group: 'www-data'
-  admin_email: admin@{{ webdomain }}
-  fpm_listen: '/var/run/php5-fpm-{{ app_name }}.sock'
-  files_tarball_filename: '{{ app_name }}.tar.gz'
-  site_install: no
-  db_dump_filename: '{{ app_name }}.sql.gz'
-  db_name: "{{ app_name }}"
-  db_user: "{{ app_name|truncate(16) }}"
-  # True clones the cur database
-  db_clone: True
-  # True looks for a DB dump to upload and import
-  db_import: False
-  # True syncs with source DB
-  db_sync: False
-  # True looks for tarballs (files) to upload and import
-  files_import: False
-  files_sync: False
-  files_copy: False
-  # Set to True if the target env has memcached available
-  memcached: False
-  # Set to False to skip installing syslog module and skip configuring the system rsyslog
-  syslog: True
-  # Do backup of the current database by default
-  do_cur_backup: True
-  # Do adjustments to the DB (features revert and updb) 
-  adjust_db: True
-  https_enabled: no
-  varnish_enabled: yes
-  varnish_mgmt_port: 6082
-  app_apache2_alt_port: 8080
-  deploy_backup_enabled: False
-  deploy_backup_frequency: daily
-  deploy_backup_qty: 7
-  deploy_reverse_proxy_header: 'HTTP_X_FORWARDED_FOR'
+# Drupal 8 settings
+# Container base class
+deploy_container_base_class: '\Drupal\Core\DependencyInjection\Container'
+# Config dirs
+deploy_config_dirs: []
+# Identifier
+deploy_identifier: "{{ build }}"
 
-deploy_varnish_servers: "{{ groups[ app_name + '-' + app_target + '_varnish' ]|default([ 'localhost' ]) }}"
-deploy_mysql_host: "{{ groups[ app_name + '-' + app_target + '_mysql' ][0]|default('localhost') }}"
+# Default locations of the SSL files in the target host
+deploy_pki_crt: '/etc/pki/realms/domain/default.crt'
+deploy_pki_key: '/etc/pki/realms/domain/default.key'

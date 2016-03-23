@@ -1,6 +1,6 @@
 ---
 - name: Download Drupal core project
-  command: "drush dl drupal-{{ drupal_version }} --destination='{{ codebase_basepath }}' --drupal-project-rename='{{ project_name }}' --yes"
+  command: "drush dl drupal-{{ app_drupal_version }} --destination='{{ codebase_basepath }}' --drupal-project-rename='{{ project_name }}' --yes"
   args:
     chdir: "{{ codebase_basepath }}"
     creates: "{{ codebase_dir }}/index.php"
@@ -10,7 +10,7 @@
   file:
     path: "{{ profiles_dir }}/{{ install_profile }}"
     state: directory
-    owner: "{{ app_env['user'] }}"
+    owner: "{{ app_user }}"
   become: yes
   when: install_profile != 'standard' and install_profile != 'minimal' and not install_profile|match('(^testing$|^testing_.+$)')
 

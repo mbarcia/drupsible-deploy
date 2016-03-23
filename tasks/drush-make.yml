@@ -40,8 +40,8 @@
   file:
     path: "{{ codebase_dir }}/sites/all/libraries"
     state: directory
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
   become: yes
   when: profile_libraries.stat.exists
 

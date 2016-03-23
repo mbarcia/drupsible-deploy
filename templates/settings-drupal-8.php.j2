@@ -223,13 +223,13 @@
 #}
 $databases['default']['default'] = array(
   'driver' => 'mysql',
-{% if app_env is defined and app_env.db_clone %}
-  'database' => '{{ app_env['db_name'] }}_{{ build }}',
+{% if deploy_db_clone_enabled|default(False)|bool %}
+  'database' => '{{ deploy_db_name }}_{{ build }}',
 {% else %}
-  'database' => '{{ app_env['db_name'] }}',
+  'database' => '{{ deploy_db_name }}',
 {% endif %}
-  'username' => '{{ app_env['db_user'] }}',
-  'password' => '{{ app_env["db_password"] | default(lookup("password", secret + "/credentials/" + app_name + "/mysql/" + app_env.db_user + "/password chars=ascii_letters,digits,hexdigits")) }}',
+  'username' => '{{ deploy_db_user }}',
+  'password' => '{{ deploy_db_password | default(lookup("password", secret + "/credentials/" + app_name + "/mysql/" + app_db_user + "/password chars=ascii_letters,digits,hexdigits")) }}',
   'host' => '{{ deploy_mysql_host }}',
   'prefix' => '',
 );
@@ -612,7 +612,7 @@ if ($settings['hash_salt']) {
  * for you.
  */
 #}
-{% if app_env.https_enabled|default(False)|bool %}
+{% if app_https_enabled|default(False)|bool %}
 $conf['https'] = TRUE;
 {% endif %}
 
@@ -805,7 +805,7 @@ $settings['trusted_host_patterns'] = array(
 #   include __DIR__ . '/settings.local.php';
 # }
 
-{% if app_env is defined and app_env.memcached is defined and app_env.memcached|bool %}
+{% if app_memcached_enabled|default(True)|bool %}
 #
 # Memcache Storage
 #
@@ -832,6 +832,6 @@ $settings['memcache_options'] = array(
 
 $settings['memcache_storage_key_prefix'] = '{{ app_name }}';
 {% endif %}
-{% if app_env.https_enabled|default(False)|bool and deploy_target == 'local' %}
+{% if app_https_enabled|default(False)|bool and deploy_target == 'local' %}
 $settings['drupal_http_request_fails'] = FALSE;
 {% endif %}

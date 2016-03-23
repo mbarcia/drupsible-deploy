@@ -3,8 +3,8 @@
   file:
     path: "{{ webroot }}/{{ app_name }}/logs"
     state: directory
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
   become: yes
 
 - name: Stat public_html for cur vhost
@@ -17,8 +17,8 @@
     dest: "{{ webroot }}/{{ app_name }}/public_html"
     src: "/tmp"
     state: link
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
   when: not public_html_symlink.stat.exists
   become: yes
 
@@ -32,7 +32,7 @@
     dest: "{{ webroot }}/{{ app_name }}/public_html.bak"
     src: "/tmp"
     state: link
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
   when: not public_html_symlink_bak.stat.exists
   become: yes

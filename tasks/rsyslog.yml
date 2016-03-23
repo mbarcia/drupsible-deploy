@@ -3,8 +3,8 @@
   file:
     path: "{{ webroot }}/{{ app_name }}/logs"
     state: directory
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
   become: yes
 
 - name: Make sure drupal log file exists
@@ -13,8 +13,8 @@
 - name: Set proper permissions to drupal.log
   file:
     path: "{{ webroot }}/{{ app_name }}/logs/drupal.log"
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
     mode: 0664
   become: yes
 

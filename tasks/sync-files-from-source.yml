@@ -1,7 +1,7 @@
 ---
 - name: Prepare to sync, ensure remote host is a known host
   lineinfile:
-    dest: /home/{{ app_env['user'] }}/.ssh/known_hosts
+    dest: /home/{{ app_user }}/.ssh/known_hosts
     create: yes
     state: present
     line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + deploy_upstream_remote_host) }}"

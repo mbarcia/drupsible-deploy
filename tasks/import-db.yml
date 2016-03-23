@@ -1,14 +1,14 @@
 ---
 - name: Make sure dbdumps dir exists
   file:
-    path: "/home/{{ app_env['user'] }}/.drush/dbdumps"
+    path: "/home/{{ app_user }}/.drush/dbdumps"
     state: directory
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
   become: yes
 
 - name: Set fact extension of the DB dump
-  set_fact: dbdump_extension="{{ app_env.db_dump_filename|regex_replace('^(.*)\\.(.*)$', '\\2') }}"
+  set_fact: dbdump_extension="{{ deploy_db_dump_filename|regex_replace('^(.*)\\.(.*)$', '\\2') }}"
 
 - name: Register connection string variable
   shell: "drush @{{ app_name }}.bld sql-connect"
@@ -16,16 +16,16 @@
 
 - name: Copy archived SQL dump
   copy:
-    src: "dbdumps/{{ app_env.db_dump_filename }}"
-    dest: "/home/{{ app_env['user'] }}/.drush/dbdumps"
+    src: "dbdumps/{{ deploy_db_dump_filename }}"
+    dest: "/home/{{ app_user }}/.drush/dbdumps"
 
 - name: "Drop current database's tables"
   command: "drush @{{ app_name }}.bld sql-drop --yes"
 
 - name: Import gzipped SQL dump into the current database
-  shell: "zcat /home/{{ app_env['user'] }}/.drush/dbdumps/{{ app_env.db_dump_filename }} | {{ sql_connect.stdout }}"
+  shell: "zcat /home/{{ app_user }}/.drush/dbdumps/{{ deploy_db_dump_filename }} | {{ sql_connect.stdout }}"
   when: dbdump_extension == 'gz'
 
 - name: Import SQL dump into the current database
-  shell: "{{ sql_connect.stdout }} < /home/{{ app_env['user'] }}/.drush/dbdumps/{{ app_env.db_dump_filename }}"
+  shell: "{{ sql_connect.stdout }} < /home/{{ app_user }}/.drush/dbdumps/{{ deploy_db_dump_filename }}"
   when: dbdump_extension != 'gz'

@@ -19,9 +19,9 @@
 - name: Create Drush aliases (current, build and source)
   template:
     src: drush/aliases.drushrc.php.j2
-    dest: /home/{{ app_env['user'] }}/.drush/{{ app_name }}.aliases.drushrc.php
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    dest: /home/{{ app_user }}/.drush/{{ app_name }}.aliases.drushrc.php
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
   become: yes
 
 #
@@ -32,7 +32,7 @@
   vars:
     codebase_basepath: "{{ webroot }}/{{ app_name }}"
     codebase_dir: "{{ codebase_basepath }}/public_html.{{ build }}"
-    profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}{{ drupal_profiles_base_folder }}"
+    profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ drupal_profiles_base_folder }}"
     project_name: "public_html.{{ build }}"
     install_profile: "{{ deploy_d_o_install_profile }}"
   tags:
@@ -41,14 +41,14 @@
 - include: deploy-codebase.yml
   when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != ''
   vars:
-    cached_copy_dir: "/home/{{ app_env['user'] }}/{{ app_name }}{{ drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
+    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}{{ drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
   tags:
     - deploy.app.codebase
 
 - include: deploy-codebase.yml
   when: not deploy_install_profile_enabled|default(False)|bool
   vars:
-    cached_copy_dir: "/home/{{ app_env['user'] }}/{{ app_name }}/cached-copy"
+    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
     - deploy.app.codebase
@@ -56,7 +56,7 @@
 - include: unarchive-codebase.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: codebase_import|default(False)|bool
+  when: deploy_codebase_import_enabled|default(False)|bool
   tags:
     - deploy.app.codebase
 
@@ -68,7 +68,7 @@
   when: deploy_drush_make_enabled|default(False)|bool
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    profiles_dir: "/home/{{ app_env['user'] }}/{{ app_name }}{{ drupal_profiles_base_folder }}"
+    profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ drupal_profiles_base_folder }}"
     install_profile: "{{ install_profile_param }}"
     locale: "{{ app_languages|default([ 'en' ]) }}"
   tags:
@@ -87,9 +87,9 @@
     - deploy.drupal.settings
 
 - include: c-extension-twig.yml
-  when: drupal_version|version_compare('8', '==')
+  when: app_drupal_version|version_compare('8', '==')
   vars:
-    working_dir: "/home/{{ app_env['user'] }}/{{ app_name }}"
+    working_dir: "/home/{{ app_user }}/{{ app_name }}"
   tags:
     - deploy.c-extension
 
@@ -97,21 +97,21 @@
 # Database tasks
 #
 - include: backup-cur-db.yml
-  when: app_env.do_cur_backup|default(True)|bool and (app_env.db_clone|default(False)|bool or app_env.db_import|default(False)|bool or app_env.db_sync|default(False)|bool)
+  when: deploy_backup_cur_enabled|default(True)|bool and (deploy_db_clone_enabled|default(False)|bool or deploy_db_import_enabled|default(False)|bool or deploy_db_sync_enabled|default(False)|bool)
   tags:
     - deploy.provision.database
 
 - include: readonly-mode.yml
   vars:
     readonly_flag: 1
-  when: app_env.db_clone|default(False)|bool and not app_env.db_import|default(False)|bool
+  when: deploy_db_clone_enabled|default(False)|bool and not deploy_db_import_enabled|default(False)|bool
   tags:
     - deploy.provision.database
 
 - include: site-offline.yml
   vars:
     offline_flag: 1
-  when: not app_env.db_clone|default(False)|bool and not app_env.db_import|default(False)|bool
+  when: not deploy_db_clone_enabled|default(False)|bool and not deploy_db_import_enabled|default(False)|bool
   tags:
     - deploy.provision.database
 
@@ -119,29 +119,29 @@
 # For when setting up a profile/distribution
 #
 - include: drush-site-install.yml
-  when: app_env['site_install']|default(False)|bool
+  when: deploy_site_install_enabled|default(False)|bool
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
     locale: "{{ app_languages[0]|default('en') }}"
     name: "{{ app_name }}"
-    email: "{{ app_env['admin_email'] }}"
-    site_pass: "{{ drupal_admin_password }}" 
+    email: "{{ app_admin_email }}"
+    site_pass: "{{ deploy_drupal_admin_password }}" 
     install_profile: "{{ install_profile_param }}"
   tags:
     - deploy.provision.si
 
 - include: clone-db.yml
-  when: app_env.db_clone|default(False)|bool
+  when: deploy_db_clone_enabled|default(False)|bool
   tags:
     - deploy.provision.database
 
 - include: import-db.yml
-  when: app_env.db_import|default(False)|bool
+  when: deploy_db_import_enabled|default(False)|bool
   tags:
     - deploy.provision.database
 
 - include: sync-db-from-source.yml
-  when: app_env.db_sync|default(False)|bool
+  when: deploy_db_sync_enabled|default(False)|bool
   tags:
     - deploy.provision.database
 
@@ -149,26 +149,26 @@
 # Drupal DB tasks
 #
 - include: registry-rebuild.yml
-  when: drupal_version|version_compare('7', '==')
+  when: app_drupal_version|version_compare('7', '==')
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
     - deploy.config.database
 
 - include: enable-memcached.yml
-  when: app_env.memcached|default(True)|bool and drupal_version|version_compare('7', '==')
+  when: app_memcached_enabled|default(True)|bool and app_drupal_version|version_compare('7', '==')
   tags:
     - deploy.config.database
 
 - include: enable-varnish.yml
-  when: deploy_varnish_enabled|default(True)|bool and varnish_drupal_module == 'varnish' and drupal_version|version_compare('7', '==')
+  when: deploy_varnish_enabled|default(True)|bool and deploy_varnish_drupal_module == 'varnish' and app_drupal_version|version_compare('7', '==')
   tags:
     - deploy.config.database
 
 - include: enable-securepages.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: app_env.https_enabled|default(False)|bool and app_env.https_enabled|bool and drupal_version|version_compare('7', '==')
+  when: app_https_enabled|default(False)|bool and app_drupal_version|version_compare('7', '==')
   tags:
     - deploy.config.database
   
@@ -177,7 +177,7 @@
     - deploy.config.database
 
 - include: adjust-db.yml
-  when: app_env.adjust_db|default(True)|bool
+  when: deploy_rectify_db_enabled|default(True)|bool
   tags:
     - deploy.config.database
 
@@ -187,7 +187,7 @@
     - deploy.config.database
 
 - include: config-languages-d7.yml
-  when: app_env['site_install']|default(False)|bool and app_i18n|default(False)|bool and drupal_version|version_compare('7', '==')
+  when: deploy_site_install_enabled|default(False)|bool and app_i18n_enabled|default(False)|bool and app_drupal_version|default('8')|version_compare('7', '==')
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
@@ -196,14 +196,14 @@
 - include: readonly-mode.yml
   vars:
     readonly_flag: 0
-  when: app_env.db_clone|default(False)|bool and not app_env.db_import|default(False)|bool
+  when: deploy_db_clone_enabled|default(False)|bool and not deploy_db_import_enabled|default(False)|bool
   tags:
     - deploy.config.database
 
 - include: site-offline.yml
   vars:
     offline_flag: 0
-  when: not app_env.db_clone|default(False)|bool and not app_env.db_import|default(False)|bool
+  when: not deploy_db_clone_enabled|default(False)|bool and not deploy_db_import_enabled|default(False)|bool
   tags:
     - deploy.config.database
 
@@ -218,19 +218,19 @@
 - include: unarchive-files.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: app_env.files_import|default(False)|bool
+  when: deploy_files_import_enabled|default(False)|bool
   tags:
     - deploy.provision.files
 
 - include: copy-files.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: app_env.files_copy|default(False)|bool
+  when: deploy_files_copy_enabled|default(False)|bool
   tags:
     - deploy.provision.files
 
 - include: sync-files-from-source.yml
-  when: app_env.files_sync|default(False)|bool
+  when: deploy_files_sync_enabled|default(False)|bool
   tags:
     - deploy.provision.files
 
@@ -241,7 +241,7 @@
     - deploy.provision.files
 
 - include: update-translations.yml
-  when: drupal_version|version_compare('7', '==') and (app_i18n|default(False)|bool or app_languages[0]|default('en') != 'en')
+  when: app_drupal_version|default('8')|version_compare('7', '==') and (app_i18n_enabled|default(False)|bool or app_languages[0]|default('en') != 'en')
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
   tags:
@@ -261,7 +261,7 @@
 - include: branch-tag.yml
   vars:
     codebase_dir: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-  when: deploy_target == 'prod' and not app_env['site_install']|default(False)|bool and not codebase_import|default(False)|bool
+  when: deploy_target == 'prod' and not deploy_site_install_enabled|default(False)|bool and not deploy_codebase_import_enabled|default(False)|bool
   tags:
     - deploy.final
 
@@ -274,12 +274,12 @@
     - deploy.cron
 
 - include: rsyslog.yml
-  when: app_env.syslog|default(False)|bool
+  when: deploy_syslog_enabled|default(False)|bool
   tags:
     - deploy.rsyslog
 
 - include: logrotate.yml
-  when: app_env['deploy_backup_enabled']|default(False)|bool
+  when: deploy_backup_enabled|default(False)|bool
   tags:
     - deploy.logrotate
 

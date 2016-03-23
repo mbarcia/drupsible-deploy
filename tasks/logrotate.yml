@@ -7,12 +7,12 @@
 
 - name: Make sure the archive dir is present
   file:
-    path: "/home/{{ app_env['user'] }}/drush-backups/archive-dump/logrotate"
+    path: "/home/{{ app_user }}/drush-backups/archive-dump/logrotate"
     state: directory
 
 - name: Make sure a first empty archive exists
   file:
-    path: "/home/{{ app_env['user'] }}/drush-backups/archive-dump/logrotate/{{ app_name }}-ard.tar.gz"
+    path: "/home/{{ app_user }}/drush-backups/archive-dump/logrotate/{{ app_name }}-ard.tar.gz"
     state: touch
 
 - name: Force postrotate on the empty archive to kick-off the log rotation

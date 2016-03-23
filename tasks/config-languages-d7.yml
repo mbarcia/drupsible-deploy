@@ -15,12 +15,12 @@
 
 - name: Add all app languages
   command: drush @{{ app_name }}.bld language-add {{ item }}
-  with_items: "{{ app_languages }}"
+  with_items: "{{ app_languages|default([ 'en' ]) }}"
   ignore_errors: yes
 
 - name: Enable all app languages
   command: drush @{{ app_name }}.bld language-enable {{ item }}
-  with_items: "{{ app_languages }}"
+  with_items: "{{ app_languages|default([ 'en' ]) }}"
   ignore_errors: yes
 
 - name: Set default language

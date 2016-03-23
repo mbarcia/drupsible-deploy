@@ -14,8 +14,8 @@
   file:
     dest: "{{ webroot }}/{{ app_name }}/public_html"
     src: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
     state: link
   become: yes
 
@@ -28,15 +28,15 @@
 
 - name: Check user/public_html symlink already exists
   stat: 
-    path: "/home/{{ app_env['user'] }}/public_html"
+    path: "/home/{{ app_user }}/public_html"
   register: stat_public_symlink
 
 - name: Create user/public_html symlink
   file:
     src: "{{ webroot }}/{{ app_name }}/public_html"
-    dest: "/home/{{ app_env['user'] }}/public_html"
+    dest: "/home/{{ app_user }}/public_html"
     state: link
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
   become: yes
   when: stat_public_symlink.stat is not defined or not stat_public_symlink.stat.exists

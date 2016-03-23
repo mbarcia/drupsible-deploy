@@ -4,7 +4,7 @@
 
 - name: Prepare to sync, ensure remote host is a known host
   lineinfile:
-    dest: /home/{{ app_env['user'] }}/.ssh/known_hosts
+    dest: /home/{{ app_user }}/.ssh/known_hosts
     create: yes
     state: present
     line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + deploy_upstream_remote_host) }}"
@@ -12,10 +12,10 @@
 
 - name: Prepare to sync, ensure directory dbdumps exists 
   file:
-    path: "/home/{{ app_env['user'] }}/.drush/dbdumps"
+    path: "/home/{{ app_user }}/.drush/dbdumps"
     state: directory
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
   become: yes
 
 - name: "Sync source database."

@@ -24,7 +24,7 @@
 - name: Add group ownership to the translation files folder
   file: 
     path: "{{ codebase_dir }}/sites/all/translations"
-    group: "{{ app_env['user'] }}"
+    group: "{{ app_user }}"
   become: yes
   when: translations_dir.stat.isdir is defined and translations_dir.stat.isdir
 

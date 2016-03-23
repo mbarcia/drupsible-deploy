@@ -25,6 +25,6 @@
 - name: Add group ownership to the new files folder
   file: 
     path: "{{ codebase_dir }}/sites/default/files"
-    group: "{{ app_env['group'] }}"
+    group: "{{ app_group }}"
   when: dest_files.stat.exists
   become: yes

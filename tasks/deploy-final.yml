@@ -4,8 +4,8 @@
     path: "{{ codebase_dir }}"
     state: directory
     recurse: yes
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
   become: yes
 
 - name: Setting new build symlink to clone the new build
@@ -13,11 +13,11 @@
     path: "{{ webroot }}/{{ app_name }}/public_html.build"
     src: "{{ codebase_dir }}"
     state: link
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
   become: yes
 
 - name: Download memcache_storage module
   command: drush @{{ app_name }}.bld dl memcache_storage -y
-  when: app_env.memcached|bool
+  when: app_memcached_enabled|default(True)|bool
   ignore_errors: yes
