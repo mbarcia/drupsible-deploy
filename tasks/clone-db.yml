@@ -1,8 +1,11 @@
 ---
-- name: Sync current database to build database.
+- name: Check current database is accessible
+  command: drush @{{ app_name }}.cur sql-conf | grep "\[driver\] => mysql"
+  register: cur_db_accessible
+  changed_when: false
+  ignore_errors: yes
+
+- name: Sync current database to build database
   command: drush sql-sync @{{ app_name }}.cur @{{ app_name }}.bld --create-db -y
-  when: "deploy_target == 'prod'"
-  
-- name: Sync source database to build database.
-  command: drush sql-sync @{{ app_name }}.src @{{ app_name }}.bld --create-db -y
-  when: "deploy_target != 'prod' and app_drush_source is defined"
+  when: cur_db_accessible is defined and cur_db_accessible.rc == 1
+
