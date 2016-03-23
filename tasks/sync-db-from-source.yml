@@ -7,8 +7,8 @@
     dest: /home/{{ app_env['user'] }}/.ssh/known_hosts
     create: yes
     state: present
-    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + app_drush_source.remote_host) }}"
-    regexp: "^{{ app_drush_source.remote_host }}"
+    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + deploy_upstream_remote_host) }}"
+    regexp: "^{{ deploy_upstream_remote_host }}"
 
 - name: Prepare to sync, ensure directory dbdumps exists 
   file:
