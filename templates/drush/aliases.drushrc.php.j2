@@ -24,7 +24,7 @@ $aliases['bld'] = array(
   ),
 );
 
-{% if (app_env.db_sync|default(False)|bool or app_env.files_sync|default(False)|bool) %}
+{% if (deploy_db_sync_enabled|default(False)|bool or deploy_files_sync_enabled|default(False)|bool) %}
 $aliases['src'] = array(
   'remote-host' => "{{ deploy_upstream_remote_host }}",
   'remote-user' => "{{ deploy_upstream_remote_user }}",

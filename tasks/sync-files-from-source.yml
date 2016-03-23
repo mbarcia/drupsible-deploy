@@ -9,5 +9,5 @@
 
 - name: Sync the additional/latest files from source.
   command: "drush -y rsync @{{ app_name }}.src:%files @{{ app_name }}.bld:%files"
-  when: app_env.files_sync|default(False)|bool
+  when: deploy_files_sync_enabled|default(False)|bool
   ignore_errors: yes

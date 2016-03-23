@@ -61,8 +61,8 @@
   file:
     path: "{{ codebase_dir }}"
     state: directory
-    owner: "{{ app_env['user'] }}"
-    group: "{{ app_env['group'] }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
   become: yes
   when: not deploy_install_profile_enabled|default(False)
 
