@@ -24,28 +24,26 @@ $aliases['bld'] = array(
   ),
 );
 
-{% if app_drush_source is defined and app_drush_source.remote_host is defined %}
+{% if (app_env.db_sync|default(False)|bool or app_env.files_sync|default(False)|bool) %}
 $aliases['src'] = array(
-  'remote-host' => "{{ app_drush_source.remote_host }}",
-  'remote-user' => "{{ app_drush_source.remote_user }}",
-  {% if app_drush_source.docroot is defined %}
-  'root' => "{{ app_drush_source.docroot }}",
+  'remote-host' => "{{ deploy_upstream_remote_host }}",
+  'remote-user' => "{{ deploy_upstream_remote_user }}",
+  'root' => "{{ deploy_upstream_docroot }}",
   'path-aliases' => array(
-    '%files' => "{{ app_drush_source.docroot }}/sites/default/files",
+    '%files' => "{{ deploy_upstream_docroot }}/{{ deploy_upstream_files_path|default('sites/default/files') }}",
   ),
-  {% endif  %}
-  {% if app_drush_source.proxy_credentials is defined %}
-    {% if app_drush_source.proxy_port is defined %}
-  'ssh-options' => '-o "ProxyCommand ssh -p {{ app_drush_source.proxy_port }} {{ app_drush_source.proxy_credentials }} nc %h %p"',
+  {% if deploy_upstream_proxy_credentials|default("") != '' %}
+    {% if deploy_upstream_proxy_port|default("") != '' %}
+  'ssh-options' => '-o "ProxyCommand ssh -p {{ deploy_upstream_proxy_port }} {{ deploy_upstream_proxy_credentials }} nc %h %p"',
     {% else %}
-  'ssh-options' => '-o "ProxyCommand ssh {{ app_drush_source.proxy_credentials }} nc %h %p"',
+  'ssh-options' => '-o "ProxyCommand ssh {{ deploy_upstream_proxy_credentials }} nc %h %p"',
     {% endif  %}
   {% endif  %}
-  {% if app_drush_source.ssh_options is defined %}
-    {% if app_drush_source.remote_port|default("") != '' %}
-  'ssh-options' => '-p {{ app_drush_source.remote_port }} {{app_drush_source.ssh_options }}',
+  {% if deploy_upstream_ssh_options|default("") != '' %}
+    {% if deploy_upstream_remote_port|default("") != '' %}
+  'ssh-options' => '-p {{ deploy_upstream_remote_port }} {{deploy_upstream_ssh_options }}',
     {% else %}
-  'ssh-options' => '{{ app_drush_source.ssh_options }}',
+  'ssh-options' => '{{ deploy_upstream_ssh_options }}',
     {% endif  %}
   {% endif  %}
 );
