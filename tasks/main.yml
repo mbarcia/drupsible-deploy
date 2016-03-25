@@ -112,7 +112,7 @@
     - deploy.provision.si
 
 - include: clone-db.yml
-  when: deploy_db_clone_enabled|default(False)|bool
+  when: app_db_create_for_build_enabled|default(False)|bool and deploy_db_clone_enabled|default(False)|bool
   tags:
     - deploy.provision.database
 
