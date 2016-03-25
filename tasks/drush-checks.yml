@@ -5,13 +5,16 @@
   failed_when: "drush_help_result.rc != 0"
   changed_when: false
 
-- name: Ensure build symlink is absent
-  file:
-    path: "{{ webroot }}/{{ app_name }}/public_html.build"
-    state: absent
-
 - name: Ensure rsync is installed
   package:
     name: rsync
     state: present
+  become: yes
+
+- name: Create Drush aliases (current, build and source)
+  template:
+    src: drush/aliases.drushrc.php.j2
+    dest: /home/{{ app_user }}/.drush/{{ app_name }}.aliases.drushrc.php
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
   become: yes

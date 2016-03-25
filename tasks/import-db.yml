@@ -19,7 +19,7 @@
     src: "dbdumps/{{ deploy_db_dump_filename }}"
     dest: "/home/{{ app_user }}/.drush/dbdumps"
 
-- name: "Drop current database's tables"
+- name: Drop current database's tables
   command: "drush @{{ app_name }}.bld sql-drop --yes"
 
 - name: Import gzipped SQL dump into the current database

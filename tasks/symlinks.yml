@@ -36,3 +36,10 @@
     group: "{{ app_group }}"
   when: not public_html_symlink_bak.stat.exists
   become: yes
+
+- name: Remove current build symlink and its contents, if any
+  file:
+    path: "{{ webroot }}/{{ app_name }}/public_html.build"
+    state: absent
+    follow: yes
+  become: yes

@@ -1,28 +1,11 @@
 ---
-- include: symlinks-present.yml
+- include: symlinks.yml
   tags:
     - deploy.init
 
-- name: Remove current build symlink and its contents, if any
-  file:
-    path: "{{ webroot }}/{{ app_name }}/public_html.build"
-    state: absent
-    follow: yes
-  become: yes
-  tags:
-    - deploy.init
- 
 - include: drush-checks.yml
   tags:
     - deploy.init
-
-- name: Create Drush aliases (current, build and source)
-  template:
-    src: drush/aliases.drushrc.php.j2
-    dest: /home/{{ app_user }}/.drush/{{ app_name }}.aliases.drushrc.php
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
-  become: yes
 
 #
 # Codebase tasks
@@ -97,7 +80,7 @@
 # Database tasks
 #
 - include: backup-cur-db.yml
-  when: deploy_backup_cur_enabled|default(True)|bool and (deploy_db_clone_enabled|default(False)|bool or deploy_db_import_enabled|default(False)|bool or deploy_db_sync_enabled|default(False)|bool)
+  when: deploy_backup_cur_enabled|default(True)|bool and not app_db_create_for_build_enabled|default(False)|bool
   tags:
     - deploy.provision.database
 
@@ -115,9 +98,7 @@
   tags:
     - deploy.provision.database
 
-#
 # For when setting up a profile/distribution
-#
 - include: drush-site-install.yml
   when: deploy_site_install_enabled|default(False)|bool
   vars:
