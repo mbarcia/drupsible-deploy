@@ -16,7 +16,7 @@ build: "{{ ansible_date_time['year'] }}{{ ansible_date_time['month'] }}{{ ansibl
 deploy_mysql_host: 'localhost'
 
 # List of hostnames in the varnish group of the current environment
-deploy_varnish_servers: "localhost"
+deploy_varnish_servers: [ "localhost" ]
 # Name of the drupal module to control Varnish cache
 deploy_varnish_drupal_module: 'varnish'
 
