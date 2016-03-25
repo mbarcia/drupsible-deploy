@@ -218,7 +218,7 @@
 #}
 $databases['default']['default'] = array(
   'driver' => 'mysql',
-{% if deploy_db_clone_enabled|default(False)|bool %}
+{% if app_db_create_for_build_enabled|default(False)|bool %}
   'database' => '{{ deploy_db_name }}_{{ build }}',
 {% else %}
   'database' => '{{ deploy_db_name }}',
