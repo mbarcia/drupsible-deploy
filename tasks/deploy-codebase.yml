@@ -12,7 +12,7 @@
     state: present
     line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + deploy_git_repo_server) }}"
     regexp: "^{{ deploy_git_repo_server }}"
-  when: "not deploy_accept_hostkey|default(False) and deploy_git_repo_protocol is defined and (deploy_git_repo_protocol == 'ssh' or deploy_git_repo_protocol == 'git')"
+  when: "not deploy_accept_hostkey|default(False)|bool and deploy_git_repo_protocol is defined and (deploy_git_repo_protocol == 'ssh' or deploy_git_repo_protocol == 'git')"
 
 - name: Make sure directory exists for the cached copy dir
   file:
@@ -46,7 +46,7 @@
     version: "{{ deploy_git_repo_version }}"
     dest: "{{ cached_copy_dir }}"
     repo: "ssh://{{ deploy_git_repo_user }}@{{ deploy_git_repo_server }}/{{ deploy_git_repo_path }}"
-  when: "deploy_git_repo_protocol is defined and deploy_git_repo_protocol == 'ssh'"
+  when: deploy_git_repo_protocol|default('ssh') == 'ssh'
 
 - name: Git clone the app codebase (git)
   git:
@@ -55,7 +55,7 @@
     version: "{{ deploy_git_repo_version }}"
     dest: "{{ cached_copy_dir }}"
     repo: "git@{{ deploy_git_repo_server }}:{{ deploy_git_repo_user }}/{{ deploy_git_repo_path }}"
-  when: "deploy_git_repo_protocol is defined and deploy_git_repo_protocol == 'git'"
+  when: deploy_git_repo_protocol|default('ssh') == 'git'
 
 - name: Make sure directory exists for the codebase dir
   file:
@@ -68,7 +68,7 @@
 
 - name: Copy the updated codebase
   command: "cp -pr {{ cached_copy_dir }}/. {{ codebase_dir }}"
-  when: not deploy_install_profile_enabled|default(False)
+  when: not deploy_install_profile_enabled|default(False)|bool
 
 - name: Make sure files directory exists
   file:
@@ -77,4 +77,4 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
-  when: not deploy_install_profile_enabled|default(False)
+  when: not deploy_install_profile_enabled|default(False)|bool
