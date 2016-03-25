@@ -5,7 +5,10 @@
   changed_when: false
   ignore_errors: yes
 
-- name: Sync current database to build database
-  command: drush sql-sync @{{ app_name }}.cur @{{ app_name }}.bld --create-db -y
+- name: Prepare to sync, drop all tables
+  command: "drush @{{ app_name }}.bld sql-drop --yes" 
   when: cur_db_accessible is defined and cur_db_accessible.rc == 1
 
+- name: Clone current database into build database
+  command: drush sql-sync @{{ app_name }}.cur @{{ app_name }}.bld --create-db -y
+  when: cur_db_accessible is defined and cur_db_accessible.rc == 1

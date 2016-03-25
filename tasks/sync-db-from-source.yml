@@ -1,7 +1,4 @@
 ---
-- name: Prepare to sync, drop all tables
-  command: "drush @{{ app_name }}.bld sql-drop --yes" 
-
 - name: Prepare to sync, ensure remote host is a known host
   lineinfile:
     dest: /home/{{ app_user }}/.ssh/known_hosts
@@ -18,5 +15,8 @@
     group: "{{ app_group }}"
   become: yes
 
-- name: "Sync source database."
+- name: Prepare to sync, drop all tables
+  command: "drush @{{ app_name }}.bld sql-drop --yes" 
+
+- name: Sync source database
   command: "drush -y sql-sync @{{ app_name }}.src @{{ app_name }}.bld" 
