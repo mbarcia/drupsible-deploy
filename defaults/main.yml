@@ -1,4 +1,7 @@
 ---
+# Location of the webserver sites
+deploy_webroot: "{{ app_apache2_enabled|default(True)|bool|ternary( ansible_local.apache2.www|default('/var/www'), ansible_local.nginx.www|default('/srv/www') ) }}"
+
 # Default language, fallback value
 app_languages: ['en']
 

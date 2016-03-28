@@ -16,7 +16,7 @@
 
 - name: Look for the profile project in the build dir
   stat:
-    path: "{{ codebase_dir }}{{ drupal_profiles_base_folder }}/{{ install_profile }}"
+    path: "{{ codebase_dir }}{{ deploy_drupal_profiles_base_folder }}/{{ install_profile }}"
   register: profile_project_included
 
 - name: Make sure build_dir exists (if profile not found)
@@ -29,7 +29,7 @@
   when: not profile_project_included.stat.exists
 
 - name: rsync with the profile inside the build dir
-  command: rsync -a "{{ profiles_dir }}/" "{{ codebase_dir }}{{ drupal_profiles_base_folder }}"
+  command: rsync -a "{{ profiles_dir }}/" "{{ codebase_dir }}{{ deploy_drupal_profiles_base_folder }}"
 
 - name: Look for libraries inside the profile project
   stat:

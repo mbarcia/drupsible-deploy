@@ -1,18 +1,18 @@
 ---
 - name: Make sure logs dir exists
   file:
-    path: "{{ webroot }}/{{ app_name }}/logs"
+    path: "{{ deploy_webroot }}/{{ app_name }}/logs"
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
 
 - name: Make sure drupal log file exists
-  shell: touch {{ webroot }}/{{ app_name }}/logs/drupal.log creates="{{ webroot }}/{{ app_name }}/logs/drupal.log"
+  shell: touch {{ deploy_webroot }}/{{ app_name }}/logs/drupal.log creates="{{ deploy_webroot }}/{{ app_name }}/logs/drupal.log"
 
 - name: Set proper permissions to drupal.log
   file:
-    path: "{{ webroot }}/{{ app_name }}/logs/drupal.log"
+    path: "{{ deploy_webroot }}/{{ app_name }}/logs/drupal.log"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: 0664

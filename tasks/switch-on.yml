@@ -1,19 +1,19 @@
 ---
 - name: Remove .bak symlink and its contents, if it exists
   file:
-    path: "{{ webroot }}/{{ app_name }}/public_html.bak"
+    path: "{{ deploy_webroot }}/{{ app_name }}/public_html.bak"
     follow: yes
     state: absent
   become: yes
 
 - name: Rename current symlink to .bak, if it exists
-  command: "mv {{ webroot }}/{{ app_name }}/public_html {{ webroot }}/{{ app_name }}/public_html.bak"
+  command: "mv {{ deploy_webroot }}/{{ app_name }}/public_html {{ deploy_webroot }}/{{ app_name }}/public_html.bak"
   become: yes
 
 - name: Set new symlink to new live codebase
   file:
-    dest: "{{ webroot }}/{{ app_name }}/public_html"
-    src: "{{ webroot }}/{{ app_name }}/public_html.{{ build }}"
+    dest: "{{ deploy_webroot }}/{{ app_name }}/public_html"
+    src: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     state: link
@@ -21,7 +21,7 @@
 
 - name: Remove current build symlink
   file:
-    path: "{{ webroot }}/{{ app_name }}/public_html.build"
+    path: "{{ deploy_webroot }}/{{ app_name }}/public_html.build"
     state: absent
     follow: no
   become: yes
@@ -33,7 +33,7 @@
 
 - name: Create user/public_html symlink
   file:
-    src: "{{ webroot }}/{{ app_name }}/public_html"
+    src: "{{ deploy_webroot }}/{{ app_name }}/public_html"
     dest: "/home/{{ app_user }}/public_html"
     state: link
     owner: "{{ app_user }}"

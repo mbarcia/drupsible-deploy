@@ -10,7 +10,7 @@
 
 - name: Setting new build symlink to clone the new build
   file:
-    path: "{{ webroot }}/{{ app_name }}/public_html.build"
+    path: "{{ deploy_webroot }}/{{ app_name }}/public_html.build"
     src: "{{ codebase_dir }}"
     state: link
     owner: "{{ app_user }}"

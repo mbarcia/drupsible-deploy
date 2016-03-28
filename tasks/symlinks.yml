@@ -1,7 +1,7 @@
 ---
 - name: Make sure app logs dir exists
   file:
-    path: "{{ webroot }}/{{ app_name }}/logs"
+    path: "{{ deploy_webroot }}/{{ app_name }}/logs"
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
@@ -9,12 +9,12 @@
 
 - name: Stat public_html for cur vhost
   stat:
-    path: "{{ webroot }}/{{ app_name }}/public_html"
+    path: "{{ deploy_webroot }}/{{ app_name }}/public_html"
   register: public_html_symlink
 
 - name: Create temp public_html symlink for cur vhost if missing
   file:
-    dest: "{{ webroot }}/{{ app_name }}/public_html"
+    dest: "{{ deploy_webroot }}/{{ app_name }}/public_html"
     src: "/tmp"
     state: link
     owner: "{{ app_user }}"
@@ -24,12 +24,12 @@
 
 - name: Stat public_html for bak vhost
   stat:
-    path: "{{ webroot }}/{{ app_name }}/public_html.bak"
+    path: "{{ deploy_webroot }}/{{ app_name }}/public_html.bak"
   register: public_html_symlink_bak
 
 - name: Create temp public_html symlink for bak vhost if missing
   file:
-    dest: "{{ webroot }}/{{ app_name }}/public_html.bak"
+    dest: "{{ deploy_webroot }}/{{ app_name }}/public_html.bak"
     src: "/tmp"
     state: link
     owner: "{{ app_user }}"
@@ -39,7 +39,7 @@
 
 - name: Remove current build symlink and its contents, if any
   file:
-    path: "{{ webroot }}/{{ app_name }}/public_html.build"
+    path: "{{ deploy_webroot }}/{{ app_name }}/public_html.build"
     state: absent
     follow: yes
   become: yes

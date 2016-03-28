@@ -2,5 +2,5 @@
 - name: Flush image styles
   command: "drush image-flush --all" 
   args:
-    chdir: "{{ webroot }}/{{ app_name }}/public_html.build"
+    chdir: "{{ deploy_webroot }}/{{ app_name }}/public_html.build"
   ignore_errors: yes
