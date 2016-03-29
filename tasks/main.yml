@@ -69,13 +69,6 @@
   tags:
     - deploy.drupal.settings
 
-- include: c-extension-twig.yml
-  when: app_drupal_version|version_compare('8', '==')
-  vars:
-    working_dir: "/home/{{ app_user }}/{{ app_name }}"
-  tags:
-    - deploy.c-extension
-
 #
 # Database tasks
 #
@@ -231,6 +224,13 @@
 #
 # Final tasks
 #
+- include: c-extension-twig.yml
+  when: app_drupal_version|version_compare('8', '==')
+  vars:
+    working_dir: "/home/{{ app_user }}/{{ app_name }}"
+  tags:
+    - deploy.c-extension
+
 - include: clear-cache.yml
   tags:
     - deploy.final
