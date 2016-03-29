@@ -19,9 +19,9 @@
     path: "{{ codebase_dir }}{{ deploy_drupal_profiles_base_folder }}/{{ install_profile }}"
   register: profile_project_included
 
-- name: Make sure build_dir exists (if profile not found)
+- name: Make sure base folder for profiles exists (if profile not found)
   file:
-    path: "{{ codebase_dir }}"
+    path: "{{ codebase_dir }}{{ deploy_drupal_profiles_base_folder }}"
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
