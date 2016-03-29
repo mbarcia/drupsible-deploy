@@ -293,7 +293,7 @@ $config_directories = array(
 #}
 {% if deploy_d_o_install_profile|default('') != '' %}
 $settings['install_profile'] = '{{ deploy_d_o_install_profile }}';
-{% elseif deploy_d_o_install_profile|default('') != '' %}
+{% elif deploy_d_o_install_profile|default('') != '' %}
 $settings['install_profile'] = '{{ deploy_custom_install_profile }}';
 {% endif %}
 {#
