@@ -291,10 +291,11 @@ $config_directories = array(
  * @see install_select_profile()
  */
 #}
-{% if deploy_install_profile|default('') != '' %}
-$settings['install_profile'] = '{{ deploy_install_profile }}';
+{% if deploy_d_o_install_profile|default('') != '' %}
+$settings['install_profile'] = '{{ deploy_d_o_install_profile }}';
+{% elseif deploy_d_o_install_profile|default('') != '' %}
+$settings['install_profile'] = '{{ deploy_custom_install_profile }}';
 {% endif %}
-
 {#
 /**
  * Salt for one-time login links, cancel links, form tokens, etc.
@@ -326,8 +327,9 @@ $settings['hash_salt'] = '{{ deploy_hash_salt | default(lookup("password", secre
  * allow the container to be invalidated as soon as code is deployed.
  */
 #}
-$settings['deployment_identifier'] = {{ deploy_identifier }};
-
+{% if deploy_identifier|default('') != '' %}
+$settings['deployment_identifier'] = '{{ deploy_identifier }}';
+{% endif %}
 {#
 /**
  * Access control for update.php script.
