@@ -291,7 +291,9 @@ $config_directories = array(
  * @see install_select_profile()
  */
 #}
-$settings['install_profile'] = '{{ deploy_install_profile | default(omit) }}';
+{% if deploy_install_profile|default('') != '' %}
+$settings['install_profile'] = '{{ deploy_install_profile }}';
+{% endif %}
 
 {#
 /**
