@@ -29,7 +29,10 @@
   when: not profile_project_included.stat.exists
 
 - name: rsync with the profile inside the build dir
-  command: rsync -a "{{ profiles_dir }}/" "{{ codebase_dir }}{{ deploy_drupal_profiles_base_folder }}"
+  synchronize: 
+    src: "{{ profiles_dir }}/"
+    dest: "{{ codebase_dir }}{{ deploy_drupal_profiles_base_folder }}"
+  delegate_to: "{{ inventory_hostname }}"
 
 - name: Look for libraries inside the profile project
   stat:
@@ -46,5 +49,8 @@
   when: profile_libraries.stat.exists
 
 - name: rsync libraries between the profile and sites/all/libraries
-  command: rsync -a "{{ profiles_dir }}/{{ install_profile }}/libraries/" "{{ codebase_dir }}/sites/all/libraries"
+  synchronize: 
+    src: "{{ profiles_dir }}/{{ install_profile }}/libraries/" 
+    dest: "{{ codebase_dir }}/sites/all/libraries"
+  delegate_to: "{{ inventory_hostname }}"
   when: profile_libraries.stat.exists
