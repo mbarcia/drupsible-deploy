@@ -789,7 +789,7 @@ $settings['container_base_class'] = '{{ deploy_container_base_class }}';
  */
 #}
 $settings['trusted_host_patterns'] = array(
-{% for trusted_host_pattern in trusted_host_patterns %}
+{% for trusted_host_pattern in deploy_trusted_host_patterns %}
   '{{ trusted_host_pattern }}',
 {% endfor %}
 );
