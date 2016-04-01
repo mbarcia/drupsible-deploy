@@ -224,7 +224,7 @@
 $databases['default']['default'] = array(
   'driver' => 'mysql',
 {% if app_db_create_for_build_enabled|default(False)|bool %}
-  'database' => '{{ deploy_db_name }}_{{ build }}',
+  'database' => '{{ deploy_db_name }}_{{ deploy_build_id }}',
 {% else %}
   'database' => '{{ deploy_db_name }}',
 {% endif %}

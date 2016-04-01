@@ -9,19 +9,19 @@
 
 - name: Check a previous SQL dump for the build does not exist
   stat: 
-    path: "/home/{{ app_user }}/.drush/dbdumps/{{ app_name }}-before-{{ build }}.sql"
+    path: "/home/{{ app_user }}/.drush/dbdumps/{{ app_name }}-before-{{ deploy_build_id }}.sql"
   register: stat_build_dump
 
 - name: Backup current database
-  command: "drush @{{ app_name }}.cur sql-dump > /home/{{ app_user }}/.drush/dbdumps/{{ app_name }}-before-{{ build }}.sql"
+  command: "drush @{{ app_name }}.cur sql-dump > /home/{{ app_user }}/.drush/dbdumps/{{ app_name }}-before-{{ deploy_build_id }}.sql"
   when: not stat_build_dump.stat.exists
   ignore_errors: yes
 
 - name: Now check the SQL dump has been made
   stat: 
-    path: "/home/{{ app_user }}/.drush/dbdumps/{{ app_name }}-before-{{ build }}.sql"
+    path: "/home/{{ app_user }}/.drush/dbdumps/{{ app_name }}-before-{{ deploy_build_id }}.sql"
   register: stat_build_dump
 
 - name: Gzip database backup
-  command: "gzip -f /home/{{ app_user }}/.drush/dbdumps/{{ app_name }}-before-{{ build }}.sql"
+  command: "gzip -f /home/{{ app_user }}/.drush/dbdumps/{{ app_name }}-before-{{ deploy_build_id }}.sql"
   when: stat_build_dump.stat.exists

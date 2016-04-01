@@ -14,9 +14,9 @@
   when: deploy_install_profile_enabled|default(False)|bool and deploy_d_o_install_profile != ''
   vars:
     codebase_basepath: "{{ deploy_webroot }}/{{ app_name }}"
-    codebase_dir: "{{ codebase_basepath }}/public_html.{{ build }}"
+    codebase_dir: "{{ codebase_basepath }}/public_html.{{ deploy_build_id }}"
     profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}"
-    project_name: "public_html.{{ build }}"
+    project_name: "public_html.{{ deploy_build_id }}"
     install_profile: "{{ deploy_d_o_install_profile }}"
   tags:
   - deploy.app.codebase
@@ -32,13 +32,13 @@
   when: not deploy_install_profile_enabled|default(False)|bool
   vars:
     cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   tags:
   - deploy.app.codebase
 
 - include: unarchive-codebase.yml
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   when: deploy_codebase_import_enabled|default(False)|bool
   tags:
   - deploy.app.codebase
@@ -52,7 +52,7 @@
 - include: drush-make.yml
   when: deploy_drush_make_enabled|default(False)|bool
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
     profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}"
     install_profile: "{{ install_profile_param }}"
     locale: "{{ app_languages|default([ 'en' ]) }}"
@@ -61,13 +61,13 @@
 
 - include: deploy-final.yml
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   tags:
   - deploy.app.codebase
 
 - include: drupal-settings.yml
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   tags:
     - deploy.drupal.settings
 
@@ -97,7 +97,7 @@
 - include: drush-site-install.yml
   when: deploy_site_install_enabled|default(False)|bool
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
     locale: "{{ app_languages[0]|default('en') }}"
     name: "{{ app_name }}"
     email: "{{ app_admin_email }}"
@@ -127,7 +127,7 @@
 - include: registry-rebuild.yml
   when: app_drupal_version|version_compare('7', '==')
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   tags:
   - deploy.config.database
 
@@ -143,7 +143,7 @@
 
 - include: enable-securepages.yml
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   when: app_https_enabled|default(False)|bool and app_drupal_version|version_compare('7', '==')
   tags:
   - deploy.config.database
@@ -165,7 +165,7 @@
 - include: config-languages-d7.yml
   when: deploy_site_install_enabled|default(False)|bool and app_i18n_enabled|default(False)|bool and app_drupal_version|default('8')|version_compare('7', '==')
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   tags:
   - deploy.config.database
 
@@ -193,14 +193,14 @@
 # Defaults to {{ app_name }}-files.tar.gz  
 - include: unarchive-files.yml
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   when: deploy_files_import_enabled|default(False)|bool
   tags:
   - deploy.provision.files
 
 - include: copy-files.yml
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   when: deploy_files_copy_enabled|default(False)|bool
   tags:
   - deploy.provision.files
@@ -212,14 +212,14 @@
 
 - include: adjust-files-perms.yml
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   tags:
   - deploy.provision.files
 
 - include: update-translations.yml
   when: app_drupal_version|default('8')|version_compare('7', '==') and (app_i18n_enabled|default(False)|bool or app_languages[0]|default('en') != 'en')
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   tags:
   - deploy.provision.translation.files
 
@@ -243,7 +243,7 @@
 
 - include: branch-tag.yml
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   when: deploy_target == 'prod' and not deploy_site_install_enabled|default(False)|bool and not deploy_codebase_import_enabled|default(False)|bool
   tags:
   - deploy.final

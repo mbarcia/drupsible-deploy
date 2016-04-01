@@ -13,7 +13,7 @@
 - name: Set new symlink to new live codebase
   file:
     dest: "{{ deploy_webroot }}/{{ app_name }}/public_html"
-    src: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ build }}"
+    src: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     state: link
