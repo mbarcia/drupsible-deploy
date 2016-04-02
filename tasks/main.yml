@@ -82,7 +82,7 @@
 - include: readonly-mode.yml
   vars:
     readonly_flag: 1
-  when: deploy_db_clone_enabled|default(False)|bool and not deploy_db_import_enabled|default(False)|bool
+  when: deploy_db_clone_enabled|default(False)|bool and not deploy_db_import_enabled|default(False)|bool and app_drupal_version|version_compare('7', '==')
   tags:
   - deploy.provision.database
 
