@@ -107,8 +107,8 @@ deploy_proxy_exceptions:
   - '127.0.0.1'
   - 'localhost'
 
-# Add prod if you would like Xdebug to also be present in Production
-deploy_xdebug_targets: [ 'local', 'ci', 'test', 'uat' ]
+# The Xdebug extension should not be enabled by default anywhere
+deploy_xdebug_enabled: no
 
 # Drupal 8 settings
 # Container base class
