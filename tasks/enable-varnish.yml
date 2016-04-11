@@ -3,15 +3,10 @@
   command: drush @{{ app_name }}.bld dl {{ deploy_varnish_drupal_module }} -y
   ignore_errors: yes
 
-- name: Enable varnish  module
+- name: Enable varnish module
   command: drush @{{ app_name }}.bld en {{ deploy_varnish_drupal_module }} -y
   ignore_errors: yes
 
-- name: Configure varnish version 4
-  command: drush @{{ app_name }}.bld vset varnish_version 4
-
-- name: Configure varnish control terminal
-  command: drush @{{ app_name }}.bld vset varnish_control_terminal 'localhost:{{ deploy_varnish_mgmt_port|default('6082') }}'
-
-- name: Configure varnish control key
-  command: drush @{{ app_name }}.bld vset varnish_control_key "{{ lookup('password', secret + '/credentials/' + inventory_hostname + '/varnish/secret chars=ascii_letters,digits,hexdigits') }}"
+- name: Configure varnish variables
+  command: "drush @{{ app_name }}.bld vset {{ item.key }} {{ item.value }}"
+  with_dict: "{{ deploy_varnish_variables }}"
