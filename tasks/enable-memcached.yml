@@ -3,7 +3,15 @@
   command: drush @{{ app_name }}.bld en memcache_storage -y
   ignore_errors: yes
 
+- name: Copy templated memcached settings
+  template:
+    src: "memcached/{{ app_drupal_version.split('.', 0)|join('') }}/memcached-settings.php.j2"
+    dest: "{{ codebase_dir }}/sites/default/settings.d/memcached.php"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0640
+  become: yes
+
 - name: Disable memcache module
   command: drush @{{ app_name }}.bld dis memcache -y
   ignore_errors: yes
-  
