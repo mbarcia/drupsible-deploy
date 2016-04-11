@@ -158,7 +158,7 @@
   - deploy.config.database
 
 - include: reset-admin-pass.yml
-  when: deploy_target != 'prod'
+  when: deploy_reset_admin_pass|default(False)|bool
   tags:
   - deploy.config.database
 

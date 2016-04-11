@@ -33,7 +33,8 @@ deploy_git_repo_user: ""
 deploy_git_repo_pass: ""
 deploy_accept_hostkey: no
 
-# Drupal admin password, when applicable
+deploy_reset_admin_pass: False
+# Drupal admin password to set, when deploy_reset_admin_pass is True
 deploy_drupal_admin_password: "drups1ble"
 
 # Is this app spanning multiple internet domains?
