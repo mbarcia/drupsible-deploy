@@ -15,43 +15,28 @@
     group: "{{ app_group }}"
   become: yes
 
+- name: Make sure settings.d directory exists
+  file:
+    path: "{{ codebase_dir }}/sites/default/settings.d"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: yes
+
 - name: Copy templated settings.php
   template:
-    src: "settings-drupal-{{ app_drupal_version }}.php.j2"
+    src: "settings-drupal-{{ app_drupal_version.split('.', 0)|join('') }}.php.j2"
     dest: "{{ codebase_dir }}/sites/default/settings.php"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: 0640
   become: yes
 
-- name: Copy templated custom settings when provided
+- name: Copy templated custom settings
   template:
-    src: "{{ deploy_custom_settings }}"
-    dest: "{{ codebase_dir }}/sites/default/custom-settings.php"
+    src: "custom/settings.php.j2"
+    dest: "{{ codebase_dir }}/sites/default/settings.d/custom.php"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: 0640
   become: yes
-  when: deploy_custom_settings is defined
-
-- name: Include custom settings when provided
-  lineinfile: 
-    dest: "{{ codebase_dir }}/sites/default/settings.php"
-    insertafter: EOF 
-    line: "require_once 'custom-settings.php';"
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
-    mode: 0640
-  become: yes
-  when: deploy_custom_settings is defined
-
-- name: Make sure custom settings are absent when not provided
-  lineinfile: 
-    dest: "{{ codebase_dir }}/sites/default/settings.php"
-    line: "require_once 'custom-settings.php';"
-    state: absent
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
-    mode: 0640
-  become: yes
-  when: deploy_custom_settings is not defined

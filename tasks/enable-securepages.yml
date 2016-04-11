@@ -1,4 +1,13 @@
 ---
+- name: Copy templated https settings
+  template:
+    src: "https/https-settings.php.j2"
+    dest: "{{ codebase_dir }}/sites/default/settings.d/https.php"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0640
+  become: yes
+
 - name: Enable securepages module
   command: drush @{{ app_name }}.bld en securepages -y
 
