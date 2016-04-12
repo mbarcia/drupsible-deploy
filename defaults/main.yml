@@ -2,9 +2,6 @@
 # Location of the webserver sites
 deploy_webroot: "{{ ansible_local.apache2.www }}"
 
-# Default language, fallback value
-app_languages: ['en']
-
 # Modules to enable/disable/uninstall per app deployment
 deploy_modules_present_app: []
 deploy_modules_absent_app: []
