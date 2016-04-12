@@ -11,7 +11,3 @@
     group: "{{ app_group }}"
     mode: 0640
   become: yes
-
-- name: Disable memcache module
-  command: drush @{{ app_name }}.bld dis memcache -y
-  ignore_errors: yes

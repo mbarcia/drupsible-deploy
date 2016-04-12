@@ -132,7 +132,9 @@
   - deploy.config.database
 
 - include: enable-memcached.yml
-  when: app_memcached_enabled|default(True)|bool and app_drupal_version|version_compare('7', '==')
+  when: app_memcached_enabled|default(True)|bool
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   tags:
   - deploy.config.database
 
