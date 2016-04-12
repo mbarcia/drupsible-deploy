@@ -1,0 +1,6 @@
+---
+- name: Run composer install
+  composer:
+    working_dir: "{{ codebase_dir }}"
+  args:
+    chdir: "{{ profiles_dir }}/{{ install_profile }}"
