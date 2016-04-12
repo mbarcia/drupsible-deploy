@@ -1,7 +1,8 @@
 <?php
 
-/* Memcache Storage */
 // {{ ansible_managed }}
+
+/* Memcache Storage */
 
 $conf['cache_backends'][] = 'sites/all/modules/memcache_storage/memcache_storage.inc';
 $conf['cache_default_class'] = 'MemcacheStorage';
