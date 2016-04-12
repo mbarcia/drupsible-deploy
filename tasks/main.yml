@@ -65,7 +65,6 @@
     codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
     profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}"
     install_profile: "{{ install_profile_param }}"
-    locale: "{{ app_languages|default([ 'en' ]) }}"
   tags:
   - deploy.app.codebase
 
