@@ -122,3 +122,9 @@ deploy_identifier: "{{ deploy_build_id }}"
 # Default locations of the SSL files in the target host
 deploy_pki_crt: '/etc/pki/realms/domain/default.crt'
 deploy_pki_key: '/etc/pki/realms/domain/default.key'
+
+# Varnish module parameters
+deploy_varnish_variables:
+  varnish_version: 4
+  varnish_control_terminal: "localhost:{{ deploy_varnish_mgmt_port|default('6082') }}"
+  varnish_control_key: "{{ lookup('password', secret + '/credentials/' + inventory_hostname + '/varnish/secret chars=ascii_letters,digits,hexdigits') }}"
