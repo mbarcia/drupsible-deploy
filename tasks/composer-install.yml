@@ -1,6 +1,39 @@
 ---
+- name: Check for the composer.json
+  stat:
+    path: "{{ profiles_dir }}/{{ install_profile }}/composer.json"
+  register: deploy_composer_json
+
+- name: Make sure directory exists for the app dir
+  file:
+    path: "/home/{{ app_user }}/{{ app_name }}"
+    state: directory
+    owner: "{{ app_user }}"
+  become: yes
+  when: deploy_composer_json.stat.exists
+
+- name: rsync composer.json
+  synchronize:
+    src: "{{ profiles_dir }}/{{ install_profile }}/composer.json" 
+    dest: "/home/{{ app_user }}/{{ app_name }}"
+  delegate_to: "{{ inventory_hostname }}"
+  when: deploy_composer_json.stat.exists
+
+- name: rsync composer.lock
+  synchronize:
+    src: "{{ profiles_dir }}/{{ install_profile }}/composer.lock" 
+    dest: "/home/{{ app_user }}/{{ app_name }}"
+  delegate_to: "{{ inventory_hostname }}"
+  when: deploy_composer_json.stat.exists
+
 - name: Run composer install
   composer:
-    working_dir: "{{ codebase_dir }}"
-  args:
-    chdir: "{{ profiles_dir }}/{{ install_profile }}"
+    working_dir: "/home/{{ app_user }}/{{ app_name }}"
+  when: deploy_composer_json.stat.exists
+
+- name: rsync codebase in web subir
+  synchronize:
+    src: "/home/{{ app_user }}/{{ app_name }}/web/" 
+    dest: "{{ codebase_dir }}"
+  delegate_to: "{{ inventory_hostname }}"
+  when: deploy_composer_json.stat.exists
