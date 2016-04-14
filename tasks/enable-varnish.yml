@@ -10,3 +10,4 @@
 - name: Configure varnish variables
   command: "drush @{{ app_name }}.bld vset {{ item.key }} {{ item.value }}"
   with_dict: "{{ deploy_varnish_variables }}"
+  no_log: True

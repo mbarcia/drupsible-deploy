@@ -31,6 +31,7 @@
     group: "{{ app_group }}"
     mode: 0640
   become: yes
+  no_log: True
 
 - name: Copy templated custom settings
   template:
@@ -40,3 +41,4 @@
     group: "{{ app_group }}"
     mode: 0640
   become: yes
+  no_log: True
