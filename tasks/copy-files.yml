@@ -8,6 +8,7 @@
 - name: Copy files from existing release to codebase dir.
   command: "cp -pur {{ deploy_webroot }}/{{ app_name }}/public_html/sites/default/files {{ codebase_dir }}/sites/default/"
   when: source_files.stat.exists
+  become: yes
 
 - name: Check files dest now exists under codebase_dir
   stat:
