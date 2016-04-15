@@ -7,15 +7,13 @@
     group: "{{ app_group }}"
   become: yes
 
-- name: Make sure drupal log file exists
-  shell: touch {{ deploy_webroot }}/{{ app_name }}/logs/drupal.log creates="{{ deploy_webroot }}/{{ app_name }}/logs/drupal.log"
-
-- name: Set proper permissions to drupal.log
+- name: Touch and set proper permissions to drupal.log
   file:
     path: "{{ deploy_webroot }}/{{ app_name }}/logs/drupal.log"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: 0664
+    state: touch
   become: yes
 
 - name: Install rsyslog config for Drupal syslog module
