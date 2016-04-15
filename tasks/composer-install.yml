@@ -1,0 +1,85 @@
+---
+- name: Check for composer.json
+  stat:
+    path: "{{ profiles_dir }}/{{ install_profile }}/composer.json"
+  register: deploy_composer_json
+
+- name: Fail if composer.json not found
+  fail: msg="composer.json not found"
+  when: not deploy_composer_json.stat.exists
+
+- name: Make sure directory exists for the app dir
+  file:
+    path: "/home/{{ app_user }}/{{ app_name }}"
+    state: directory
+    owner: "{{ app_user }}"
+  become: yes
+
+- name: rsync composer.json
+  synchronize:
+    src: "{{ profiles_dir }}/{{ install_profile }}/composer.json"
+    dest: "/home/{{ app_user }}/{{ app_name }}"
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: Check for composer.lock
+  stat:
+    path: "{{ profiles_dir }}/{{ install_profile }}/composer.lock"
+  register: deploy_composer_lock
+
+- name: rsync composer.lock
+  synchronize:
+    src: "{{ profiles_dir }}/{{ install_profile }}/composer.lock"
+    dest: "/home/{{ app_user }}/{{ app_name }}"
+  delegate_to: "{{ inventory_hostname }}"
+  when: deploy_composer_lock.stat.exists
+
+- name: Require composer/installers
+  composer:
+    command: require
+    arguments: "composer/installers:^1.0"
+    working_dir: "/home/{{ app_user }}/{{ app_name }}"
+
+- name: Require composer/scaffold
+  composer:
+    command: require
+    arguments: "drupal-composer/drupal-scaffold:dev-master"
+    working_dir: "/home/{{ app_user }}/{{ app_name }}"
+
+- name: Run composer install
+  composer:
+    working_dir: "/home/{{ app_user }}/{{ app_name }}"
+
+- name: Run drupal-scaffold
+  composer:
+    command: "drupal-scaffold"
+    working_dir: "/home/{{ app_user }}/{{ app_name }}"
+
+- name: Discover install paths from composer.json
+  shell: cat composer.json
+  args:
+    chdir: "/home/{{ app_user }}/{{ app_name }}"
+  register: deploy_composerjson
+
+- set_fact:
+    deploy_composer_vars: "{{ deploy_composerjson.stdout|from_json }}"
+
+- set_fact:
+    deploy_composer_installer_paths: "{{ deploy_composer_vars.extra['installer-paths'] }}"
+
+- name: Discover core
+  set_fact:
+    deploy_composer_core_basepath: "{{ item.key | regex_replace('^(.*)/core$', '\\1') }}"
+  when: item.key | search('.*/core')
+  with_dict: "{{ deploy_composer_installer_paths }}"
+
+- name: rsync core codebase in web subir
+  synchronize:
+    src: "/home/{{ app_user }}/{{ app_name }}/{{ deploy_composer_core_basepath }}/"
+    dest: "{{ codebase_dir }}"
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: rsync codebase in web subir
+  synchronize:
+    src: "/home/{{ app_user }}/{{ app_name }}/"
+    dest: "{{ codebase_dir }}"
+  delegate_to: "{{ inventory_hostname }}"

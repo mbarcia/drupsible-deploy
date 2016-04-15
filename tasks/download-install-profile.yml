@@ -6,7 +6,7 @@
     creates: "{{ codebase_dir }}/index.php"
   when: install_profile == 'standard' or install_profile == 'minimal' or install_profile|match('(^testing$|^testing_.+$)')
 
-- name: Make sure directory exists for the profiles dir.
+- name: Make sure directory exists for the profiles dir
   file:
     path: "{{ profiles_dir }}/{{ install_profile }}"
     state: directory
