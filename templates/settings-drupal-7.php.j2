@@ -639,6 +639,6 @@ $conf['allow_authorize_operations'] = FALSE;
 /**
  * Inclusion of PHP files inside sites/default/settings.d/
  */
-foreach (glob("settings.d/*.php") as $filename) {
+foreach (glob("sites/default/settings.d/*.php") as $filename) {
   include $filename;
 }
