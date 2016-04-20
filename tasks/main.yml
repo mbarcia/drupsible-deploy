@@ -284,3 +284,7 @@
     name: php5-fpm 
     state: restarted
   become: yes
+
+- name: Flush ferm
+  command: ferm --flush /etc/ferm/ferm.conf
+  become: yes
