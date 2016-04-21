@@ -628,7 +628,7 @@ else {
   $protocol = 'http';
 }
 
-$base_url = $protocol . '://{{ deploy_webhost }}.{{ webdomain }}';
+$base_url = $protocol . '://{{ deploy_webhost }}.{{ app_webdomain }}';
 {% endif %}
 
 {#
