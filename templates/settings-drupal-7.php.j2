@@ -298,7 +298,7 @@ else {
   $protocol = 'http';
 }
 
-$base_url = $protocol . '://{{ deploy_webhost }}.{{ webdomain }}';
+$base_url = $protocol . '://{{ deploy_webhost }}.{{ app_webdomain }}';
 {% endif %}
 
 {#
@@ -361,8 +361,8 @@ ini_set('session.cookie_lifetime', 2000000);
  * with a leading dot, as per RFC 2109.
  */
  #}
-{% if webdomain is defined and not deploy_multiple_domains|bool %}
-$cookie_domain = '.{{ webdomain }}';
+{% if app_webdomain is defined and not deploy_multiple_domains|bool %}
+$cookie_domain = '.{{ app_webdomain }}';
 
 {% endif %}
 {#
