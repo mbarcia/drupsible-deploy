@@ -25,7 +25,7 @@
 
 - name: Copy templated settings.php
   template:
-    src: "settings-drupal-{{ app_drupal_version.split('.', 0)|join('') }}.php.j2"
+    src: "settings-drupal-{{ app_drupal_version.split('.', 1)[0] }}.php.j2"
     dest: "{{ codebase_dir }}/sites/default/settings.php"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
