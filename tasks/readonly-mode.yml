@@ -1,4 +1,20 @@
 ---
-- name: Enter read-only mode.
+- name: Enable readonlymode module
+  command: drush @{{ app_name }}.cur en readonlymode -y
+  ignore_errors: True
+  when: app_drupal_version|default('8')|version_compare('7', '==')
+
+- name: Enter read-only mode
   command: drush @{{ app_name }}.cur vset site_readonly {{ readonly_flag }}
   ignore_errors: True
+  when: app_drupal_version|default('8')|version_compare('7', '==')
+
+- name: Enable readonlymode module
+  command: drush @{{ app_name }}.cur en readonlymode -y
+  ignore_errors: True
+  when: app_drupal_version|default('8')|version_compare('8', '==')
+
+- name: Enter read-only mode
+  command: drush @{{ app_name }}.cur cset readonlymode.settings enabled {{ readonly_flag }} -y
+  ignore_errors: True
+  when: app_drupal_version|default('8')|version_compare('8', '==')
