@@ -5,6 +5,14 @@
     state: present
   become: yes
 
+- name: Make sure directory exists for the codebase dir
+  file:
+    path: "{{ codebase_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: yes
+
 - name: Copy and decompress codebase tarball
   unarchive:
     src: "codebase-tarballs/{{ deploy_codebase_tarball_filename }}"
