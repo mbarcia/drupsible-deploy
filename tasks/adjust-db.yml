@@ -2,10 +2,12 @@
 - name: Enable features
   command: drush @{{ app_name }}.bld en features -y
   ignore_errors: yes
+  when: app_drupal_version|default('8')|version_compare('7', '==')
 
 - name: Run features revert
   command: drush @{{ app_name }}.bld fra -y
   ignore_errors: yes
+  when: app_drupal_version|default('8')|version_compare('7', '==')
 
 - name: Run database updates
   command: drush @{{ app_name }}.bld updatedb -y
@@ -14,7 +16,9 @@
 - name: Run features revert again in case updb changed anything
   command: drush @{{ app_name }}.bld fra -y
   ignore_errors: yes
+  when: app_drupal_version|default('8')|version_compare('7', '==')
 
 - name: Run database updates again in case it failed the first time
   command: drush @{{ app_name }}.bld updatedb -y
   ignore_errors: yes
+  when: app_drupal_version|default('8')|version_compare('7', '==')

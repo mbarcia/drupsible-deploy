@@ -128,3 +128,26 @@ deploy_varnish_variables:
 
 # Update translations?
 deploy_update_translations_enabled: True
+
+# Purge module (D8) defaults
+deploy_purge_http_purger_instance_id: db413bd5ce
+deploy_purge_plugins_purgers_config:
+  order_index: 1
+  instance_id: "{{ deploy_purge_http_purger_instance_id }}"
+  plugin_id: http
+
+# HTTP purger (D8) default
+# This needs /etc/hosts (of the web server) to resolve the hostname to the Varnish server IP
+purge_purger_http_settings:
+  uuid: a499996a-f2a5-4ca1-bd8e-1e17925947ae
+  status: true
+  id: "{{ deploy_purge_http_purger_instance_id }}"
+  name: 'Drupsible-Varnish-HTTP-purger'
+  invalidationtype: tag
+  hostname: "{{ deploy_webhost}}.{{ app_webdomain }}"
+  port: 80
+  path: /
+  request_method: PURGE
+
+# Drupal page cache max-age value in seconds (default 10 min)
+deploy_page_cache_max_age: 600

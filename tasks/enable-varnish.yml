@@ -11,3 +11,9 @@
   command: "drush @{{ app_name }}.bld vset {{ item.key }} {{ item.value }}"
   with_dict: "{{ deploy_varnish_variables }}"
   no_log: True
+
+- name: Configure page cache max-age
+  command: "drush -y @{{ app_name }}.bld vset page_cache_maximum_age {{ deploy_page_cache_max_age }}"
+
+- name: Configure cache TTL to the same value as page cache max-age
+  command: "drush -y @{{ app_name }}.bld vset cache_lifetime {{ deploy_page_cache_max_age }}"

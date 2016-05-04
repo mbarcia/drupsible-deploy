@@ -21,25 +21,25 @@
   tags:
   - deploy.app.codebase
 
+- include: unarchive-codebase.yml
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+  when: deploy_codebase_import_enabled|default(False)|bool
+  tags:
+  - deploy.app.codebase
+
 - include: deploy-codebase.yml
-  when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != ''
+  when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '' and not deploy_codebase_import_enabled|default(False)|bool
   vars:
     cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
   tags:
   - deploy.app.codebase
 
 - include: deploy-codebase.yml
-  when: not deploy_install_profile_enabled|default(False)|bool
+  when: not deploy_install_profile_enabled|default(False)|bool and not deploy_codebase_import_enabled|default(False)|bool
   vars:
     cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
     codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  tags:
-  - deploy.app.codebase
-
-- include: unarchive-codebase.yml
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  when: deploy_codebase_import_enabled|default(False)|bool
   tags:
   - deploy.app.codebase
 
@@ -158,6 +158,11 @@
 
 - include: enable-varnish.yml
   when: deploy_varnish_enabled|default(True)|bool and deploy_varnish_drupal_module == 'varnish' and app_drupal_version|version_compare('7', '==')
+  tags:
+  - deploy.config.database
+
+- include: enable-purge.yml
+  when: deploy_varnish_enabled|default(True)|bool and app_drupal_version|version_compare('8', '==')
   tags:
   - deploy.config.database
 
