@@ -136,7 +136,8 @@ deploy_purge_plugins_purgers_config:
   instance_id: "{{ deploy_purge_http_purger_instance_id }}"
   plugin_id: http
 
-# HTTP purger (D8) defaults
+# HTTP purger (D8) default
+# This needs /etc/hosts (of the web server) to resolve the hostname to the Varnish server IP
 purge_purger_http_settings:
   uuid: a499996a-f2a5-4ca1-bd8e-1e17925947ae
   status: true
