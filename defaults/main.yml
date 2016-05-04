@@ -27,7 +27,6 @@ deploy_git_repo_protocol: "ssh"
 deploy_git_repo_server: ""
 deploy_git_repo_path: ""
 deploy_git_repo_user: ""
-deploy_git_repo_pass: ""
 deploy_accept_hostkey: no
 
 deploy_reset_admin_pass: False
