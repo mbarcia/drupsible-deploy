@@ -16,7 +16,7 @@
   with_dict: "{{ deploy_purge_plugins_purgers_config }}"
 
 - name: Configure HTTP purger
-  command: "drush -y @{{ app_name }}.bld cset purge_purger_http.settings.{{ item.key }} {{ item.value }}"
+  command: "drush -y @{{ app_name }}.bld cset purge_purger_http.settings.{{ deploy_purge_http_purger_instance_id }} {{ item.key }} {{ item.value }}"
   with_dict: "{{ purge_purger_http_settings }}"
 
 - name: Set page cache max-age
