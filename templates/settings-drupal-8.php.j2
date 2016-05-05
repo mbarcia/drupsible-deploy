@@ -616,10 +616,6 @@ if ($settings['hash_salt']) {
  * for you.
  */
 #}
-{% if app_https_enabled|default(False)|bool %}
-$conf['https'] = TRUE;
-{% endif %}
-
 {% if not deploy_multiple_domains|bool %}
 if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') {
   $protocol = 'https';
