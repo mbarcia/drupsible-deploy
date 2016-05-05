@@ -616,6 +616,13 @@ if ($settings['hash_salt']) {
  * for you.
  */
 #}
+{% if app_https_enabled|default(False)|bool %}
+// Inform PHP of HTTPS when using an SSL terminator like Pound.
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+  $_SERVER['HTTPS'] = 'on';
+}
+{% endif %}
+
 {% if not deploy_multiple_domains|bool %}
 if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') {
   $protocol = 'https';
