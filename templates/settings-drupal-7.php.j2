@@ -562,11 +562,11 @@ $conf['reverse_proxy_header'] = '{{ deploy_reverse_proxy_header }}';
  * Add leading hash signs if you would like to disable this functionality.
  */
 #}
-{% raw %}
-$conf['404_fast_paths_exclude'] = '/\/(?:styles)\//';
-$conf['404_fast_paths'] = '/\.(?:txt|png|gif|jpe?g|css|js|ico|swf|flv|cgi|bat|pl|dll|exe|asp)$/i';
-$conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested URL "@path" was not found on this server.</p></body></html>';
-{% endraw %}
+{% if deploy_404_fast_enabled_d7|default(True)|bool %}
+$conf['404_fast_paths_exclude'] = '{{ deploy_404_fast_paths_exclude_d7 }}';
+$conf['404_fast_paths'] = '{{ deploy_404_fast_paths_d7 }}';
+$conf['404_fast_html'] = '{{ deploy_404_fast_html_d7 }}';
+{% endif %}
 {#
 /**
  * By default the page request process will return a fast 404 page for missing
@@ -585,7 +585,7 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
  * uncommenting the line below.
  */
 #}
-{% if deploy_drupal_fast_404|default(False)|bool %}
+{% if deploy_faster_404_enabled_d7|default(True)|bool %}
 drupal_fast_404();
 {% endif %}
 
