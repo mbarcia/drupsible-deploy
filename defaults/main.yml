@@ -154,3 +154,16 @@ deploy_page_cache_max_age: 600
 # Default IP address and port where memcached is listening
 deploy_memcached_listen_ip_address: '127.0.0.1' 
 deploy_memcached_port: 11211
+
+# Fast 404 pages (D7)
+deploy_404_fast_enabled_d7: yes
+deploy_404_fast_paths_exclude_d7: '/\/(?:styles)\//'
+deploy_404_fast_paths_d7: '/\.(?:txt|png|gif|jpe?g|css|js|ico|swf|flv|cgi|bat|pl|dll|exe|asp)$/i'
+deploy_404_fast_html_d7: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested URL "@path" was not found on this server.</p></body></html>'
+deploy_faster_404_enabled_d7: yes
+
+# Fast 404 pages
+deploy_fast_404_enabled: yes
+deploy_fast_404_exclude_paths: '/\/(?:styles)|(?:system\/files)\//'
+deploy_fast_404_paths: '/\.(?:txt|png|gif|jpe?g|css|js|ico|swf|flv|cgi|bat|pl|dll|exe|asp)$/i'
+deploy_fast_404_html: '<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested URL "@path" was not found on this server.</p></body></html>'
