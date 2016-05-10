@@ -372,7 +372,7 @@ $settings['update_free_access'] = FALSE;
 {% if deploy_http_client_proxy_enabled|default(False)|bool %}
 $settings['http_client_config']['proxy']['http'] = '{{ deploy_http_client_proxy }}';
 $settings['http_client_config']['proxy']['https'] = '{{ deploy_http_client_proxy_s }}';
-$settings['http_client_config']['proxy']['no'] = [ "{{ deploy_http_client_proxy_exceptions|join('", "') }}" ]
+$settings['http_client_config']['proxy']['no'] = [ "{{ deploy_http_client_proxy_exceptions|join('", "') }}" ];
 {% endif %}
 
 {#

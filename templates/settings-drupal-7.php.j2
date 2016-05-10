@@ -604,7 +604,7 @@ $conf['proxy_port'] = {{ deploy_proxy_port }};
 $conf['proxy_username'] = '{{ deploy_proxy_username }}';
 $conf['proxy_password'] = '{{ deploy_proxy_password }}';
 $conf['proxy_user_agent'] = '{{ deploy_proxy_user_agent }}';
-$conf['proxy_exceptions'] = [ "{{ deploy_http_client_proxy_exceptions|join('", "') }}" ]
+$conf['proxy_exceptions'] = [ "{{ deploy_http_client_proxy_exceptions|join('", "') }}" ];
 {% endif %}
 
 {#
