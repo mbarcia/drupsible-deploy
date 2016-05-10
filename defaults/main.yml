@@ -57,7 +57,7 @@ deploy_backup_cur_enabled: False
 deploy_site_install_enabled: False
 # Should Drupsible clone the current DB into the build DB
 deploy_db_clone_enabled: False
-# Should Drupsible look for a DB dump in the controller, upload it and import 
+# Should Drupsible look for a DB dump in the controller, upload it and import
 # it into the build DB?
 deploy_db_import_enabled: False
 # Name of the SQL dump file, can be .sql or .sql.gz
@@ -65,7 +65,7 @@ deploy_db_dump_filename: '{{ app_name }}.sql.gz'
 # Should Drupsible run drush sql-sync with upstream/source DB?
 deploy_db_sync_enabled: False
 # Should Drupsible run drush updb, features-revert, registry-rebuild, etc.,
-# once the DB has been filled with content? Disable if you are building a 
+# once the DB has been filled with content? Disable if you are building a
 # clone website.
 deploy_rectify_db_enabled: True
 
@@ -75,7 +75,7 @@ deploy_files_import_enabled: False
 deploy_files_tarball_filename: '{{ app_name }}-files.tar.gz'
 # Should Drupsible run drush rsync :%files% with the upstream/source website?
 deploy_files_sync_enabled: False
-# Should Drupsible copy the files from the current website into the build? 
+# Should Drupsible copy the files from the current website into the build?
 # Can be combined with deploy_files_sync_enabled=yes
 deploy_files_copy_enabled: True
 
@@ -89,20 +89,33 @@ deploy_backup_frequency: daily
 # Maximun number of backup archives to be kept at all times.
 deploy_backup_qty: 7
 
-# Drupal will lookup the real IP of the request in this HTTP header. Confirm this with 
-# your CDN if any, as not all CDN send the real IP in this header.
-deploy_reverse_proxy_header: 'HTTP_X_FORWARDED_FOR'
-
+#
 # Drupal settings (7 and 8)
-# Proxy server 
+#
+# Reverse proxy variables
+# Ie., Drupal will lookup the real IP of the request in the deploy_reverse_proxy_header header.
+# Make sure your CDN includes the right information in the right header.
+deploy_reverse_proxy_header: 'X_FORWARDED_FOR'
+# D8 only
+deploy_reverse_proxy_proto_header: 'X_FORWARDED_PROTO'
+deploy_reverse_proxy_host_header: 'X_FORWARDED_HOST'
+deploy_reverse_proxy_port_header: 'X_FORWARDED_PORT'
+deploy_reverse_proxy_forwarded_header: 'FORWARDED'
+
+# HTTP Client Proxy settings
+deploy_http_client_proxy_enabled: no
+deploy_http_client_proxy: 'http://proxy_user:proxy_pass@example.com:8080'
+deploy_http_client_proxy_s: 'http://proxy_user:proxy_pass@example.com:8080'
+deploy_http_client_proxy_exceptions:
+  - '127.0.0.1'
+  - 'localhost'
+
+# Proxy settings (D7)
 deploy_proxy_server: ''
 deploy_proxy_port: 8080
 deploy_proxy_username: ''
 deploy_proxy_password: ''
 deploy_proxy_user_agent: ''
-deploy_proxy_exceptions: 
-  - '127.0.0.1'
-  - 'localhost'
 
 # The Xdebug extension should not be enabled by default anywhere
 deploy_xdebug_enabled: no
@@ -152,7 +165,7 @@ purge_purger_http_settings:
 deploy_page_cache_max_age: 600
 
 # Default IP address and port where memcached is listening
-deploy_memcached_listen_ip_address: '127.0.0.1' 
+deploy_memcached_listen_ip_address: '127.0.0.1'
 deploy_memcached_port: 11211
 
 # Fast 404 pages (D7)
