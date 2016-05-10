@@ -434,29 +434,25 @@ $cookie_domain = '.{{ app_webdomain }}';
  * address spoofing unless more advanced precautions are taken.
  */
 #}
-{% if deploy_varnish_enabled is defined and deploy_varnish_enabled %}
+{% if deploy_varnish_enabled|default(False)|bool %}
 $conf['reverse_proxy'] = TRUE;
-{% endif %}
 {#
 /**
  * Specify every reverse proxy IP address in your environment.
  * This setting is required if $conf['reverse_proxy'] is TRUE.
  */
 #}
-{% if deploy_varnish_enabled is defined and deploy_varnish_enabled %}
 $conf['reverse_proxy_addresses'] = array(
 {% for host in deploy_varnish_servers %}
   '"{{ hostvars[host].ansible_eth0.ipv4.address }}"',
 {% endfor %}
 );
-{% endif %}
 {#
 /**
  * Set this value if your proxy server sends the client IP in a header
- * other than X-Forwarded-For.
+ * other than X_Forwarded_For.
  */
 #}
-{% if deploy_varnish_enabled is defined and deploy_varnish_enabled and deploy_reverse_proxy_header is defined and deploy_reverse_proxy_header != 'HTTP_X_FORWARDED_FOR' %}
 $conf['reverse_proxy_header'] = '{{ deploy_reverse_proxy_header }}';
 {% endif %}
 {#
@@ -602,17 +598,13 @@ drupal_fast_404();
  * not via proxy.
  */
 #}
-{% if deploy_proxy_server is defined and deploy_proxy_server != '' %}
+{% if deploy_http_client_proxy_enabled|default(False)|bool %}
 $conf['proxy_server'] = '{{ deploy_proxy_server }}';
 $conf['proxy_port'] = {{ deploy_proxy_port }};
 $conf['proxy_username'] = '{{ deploy_proxy_username }}';
 $conf['proxy_password'] = '{{ deploy_proxy_password }}';
 $conf['proxy_user_agent'] = '{{ deploy_proxy_user_agent }}';
-$conf['proxy_exceptions'] = array(
-{% for exception in deploy_proxy_exceptions %}
-  '{{ exception }}',
-{% endfor %}
-);
+$conf['proxy_exceptions'] = [ "{{ deploy_http_client_proxy_exceptions|join('", "') }}" ];
 {% endif %}
 
 {#
