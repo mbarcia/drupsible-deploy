@@ -3,9 +3,10 @@
   service:
     name: apache2
     state: restarted
+  become: yes
 
 - name: Restart php prefork
   service:
     name: apache2
     state: restarted
-   
+  become: yes
