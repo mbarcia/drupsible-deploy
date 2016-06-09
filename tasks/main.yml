@@ -283,9 +283,3 @@
   when: deploy_backup_enabled|default(False)|bool
   tags:
   - deploy.logrotate
-
-- name: Restart php-fpm
-  command: /bin/true
-  notify: ['Restart php-fpm']
-  changed_when: True
-
