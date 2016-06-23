@@ -46,6 +46,9 @@ deploy_d_o_install_profile: ''
 # Should Drupsible provision New Relic packages?
 provision_new_relic: False
 
+# Should Drupsible provision Drupal Console?
+deploy_drupal_console_enabled: True
+
 # Should Drupsible run drush make after grabbing the code?
 deploy_drush_make_enabled: False
 # Name of the makefile to feed drush make with
