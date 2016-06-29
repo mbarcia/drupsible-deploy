@@ -443,9 +443,11 @@ $conf['reverse_proxy'] = TRUE;
  */
 #}
 $conf['reverse_proxy_addresses'] = array(
-{% for host in deploy_varnish_servers %}
-  '"{{ hostvars[host].ansible_eth0.ipv4.address }}"',
-{% endfor %}
+{% for host in deploy_varnish_servers -%}
+  {% for ip_addr in hostvars[host].ansible_all_ipv4_addresses %}
+  '{{ ip_addr }}',
+  {% endfor %}
+{%- endfor %}
 );
 {#
 /**
