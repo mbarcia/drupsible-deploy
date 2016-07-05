@@ -159,7 +159,7 @@ purge_purger_http_settings:
   id: "{{ deploy_purge_http_purger_instance_id }}"
   name: 'Drupsible-Varnish-HTTP-purger'
   invalidationtype: tag
-  hostname: "{{ deploy_webhost}}.{{ app_webdomain }}"
+  hostname: "{{ groups[ app_name + '-' + app_target + '_' + 'varnish'][0] }}"
   port: 80
   path: /
   request_method: PURGE
