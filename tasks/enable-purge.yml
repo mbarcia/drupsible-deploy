@@ -4,7 +4,7 @@
   ignore_errors: yes
 
 - name: Enable purge submodules
-  command: "drush @{{ app_name }}.bld en purge_ui purge_drush purge_queuer_coretags purge_processor_cron purge_tokens -y"
+  command: "drush @{{ app_name }}.bld en purge_ui purge_drush purge_queuer_coretags purge_processor_cron purge_tokens purge_processor_lateruntime -y"
   ignore_errors: yes
 
 - name: Enable HTTP purger module
