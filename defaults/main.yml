@@ -98,12 +98,12 @@ deploy_backup_qty: 7
 # Reverse proxy variables
 # Ie., Drupal will lookup the real IP of the request in the deploy_reverse_proxy_header header.
 # Make sure your CDN includes the right information in the right header.
-deploy_reverse_proxy_header: 'HTTP_X_FORWARDED_FOR'
+deploy_reverse_proxy_header: 'X_FORWARDED_FOR'
 # D8 only
-deploy_reverse_proxy_proto_header: 'HTTP_X_FORWARDED_PROTO'
-deploy_reverse_proxy_host_header: 'HTTP_X_FORWARDED_HOST'
-deploy_reverse_proxy_port_header: 'HTTP_X_FORWARDED_PORT'
-deploy_reverse_proxy_forwarded_header: 'HTTP_FORWARDED'
+deploy_reverse_proxy_proto_header: 'X_FORWARDED_PROTO'
+deploy_reverse_proxy_host_header: 'X_FORWARDED_HOST'
+deploy_reverse_proxy_port_header: 'X_FORWARDED_PORT'
+deploy_reverse_proxy_forwarded_header: 'FORWARDED'
 
 # HTTP Client Proxy settings
 deploy_http_client_proxy_enabled: no
