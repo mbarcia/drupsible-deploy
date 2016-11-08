@@ -29,6 +29,8 @@ deploy_git_repo_server: ""
 deploy_git_repo_path: ""
 deploy_git_repo_user: ""
 deploy_accept_hostkey: no
+# The root folder needs to be prefixed with a slash, like '/www'
+deploy_codebase_root_folder: ''
 
 deploy_reset_admin_pass: False
 # Drupal admin password to set, when deploy_reset_admin_pass is True

@@ -68,7 +68,7 @@
   when: not deploy_install_profile_enabled|default(False)
 
 - name: Copy the updated codebase
-  command: "cp -pr {{ cached_copy_dir }}/. {{ codebase_dir }}"
+  command: "cp -pr {{ cached_copy_dir }}{{ deploy_codebase_root_folder }}/. {{ codebase_dir }}"
   when: not deploy_install_profile_enabled|default(False)|bool
 
 - name: Make sure files directory exists
