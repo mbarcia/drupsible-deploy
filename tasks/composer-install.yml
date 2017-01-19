@@ -33,6 +33,14 @@
   delegate_to: "{{ inventory_hostname }}"
   when: deploy_composer_lock.stat.exists
 
+- name: Ensure app_user ownership of the app dir and files beneath
+  file:
+    path: "/home/{{ app_user }}/{{ app_name }}"
+    state: directory
+    owner: "{{ app_user }}"
+    recurse: yes
+  become: yes
+
 - name: Require composer/installers
   composer:
     command: require
@@ -49,11 +57,6 @@
   composer:
     working_dir: "/home/{{ app_user }}/{{ app_name }}"
 
-- name: Run drupal-scaffold
-  composer:
-    command: "drupal-scaffold"
-    working_dir: "/home/{{ app_user }}/{{ app_name }}"
-
 - name: Discover install paths from composer.json
   shell: cat composer.json
   args:
@@ -65,16 +68,17 @@
 
 - set_fact:
     deploy_composer_installer_paths: "{{ deploy_composer_vars.extra['installer-paths'] }}"
+  when: "deploy_composer_vars.extra is defined and 'installer-paths' in deploy_composer_vars.extra"
 
 - name: Discover core
   set_fact:
-    deploy_composer_core_basepath: "{{ item.key | regex_replace('^(.*)/core$', '\\1') }}"
-  when: item.key | search('.*/core')
-  with_dict: "{{ deploy_composer_installer_paths }}"
+    deploy_composer_core_basepath: "{{ item.key | regex_replace('^(.*)/core$', '\\1') }}/"
+  when: "item.key | search('.*/core')"
+  with_dict: "{{ deploy_composer_installer_paths|default({}) }}"
 
 - name: rsync core codebase in web subir
   synchronize:
-    src: "/home/{{ app_user }}/{{ app_name }}/{{ deploy_composer_core_basepath }}/"
+    src: "/home/{{ app_user }}/{{ app_name }}/{{ deploy_composer_core_basepath|default('') }}"
     dest: "{{ codebase_dir }}"
   delegate_to: "{{ inventory_hostname }}"
 
