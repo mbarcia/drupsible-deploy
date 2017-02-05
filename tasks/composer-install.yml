@@ -76,6 +76,14 @@
   when: "item.key | search('.*/core')"
   with_dict: "{{ deploy_composer_installer_paths|default({}) }}"
 
+- name: Make sure directory exists for the codebase dir
+  file:
+    path: "{{ codebase_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: yes
+
 - name: rsync core codebase in web subir
   synchronize:
     src: "/home/{{ app_user }}/{{ app_name }}/{{ deploy_composer_core_basepath|default('') }}"
