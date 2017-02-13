@@ -189,3 +189,7 @@ deploy_fast_404_html: '<!DOCTYPE html><html><head><title>404 Not Found</title></
 
 # Enable if your profile supports it
 deploy_drush_make_shallow_clone_enabled: False
+
+# Disable this if you don't want Drupsible to create a hotfix branch and tag upon 
+# successful deployment to prod
+deploy_push_hotfix_branch_tag: yes
