@@ -263,11 +263,7 @@ $databases['default']['default'] = array(
  */
  #}
 $config_directories = array(
-{% if deploy_config_dirs is defined %}
-{% for confdir in deploy_config_dirs %}
-'{{ confdir }}',
-{% endfor %}
-{% endif %}
+  CONFIG_SYNC_DIRECTORY => '{{ deploy_config_sync_dir }}',
 );
 
 {#
@@ -763,7 +759,7 @@ $config['system.performance']['fast_404']['html'] = '{{ deploy_fast_404_html }}'
  * Load services definition file.
  */
 #}
-$settings['container_yamls'][] = __DIR__ . '/services.yml';
+$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';
 
 {#
 /**
@@ -775,6 +771,17 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
  */
 #}
 $settings['container_base_class'] = '{{ deploy_container_base_class }}';
+
+{#
+/**
+ * Override the default yaml parser class.
+ *
+ * Provide a fully qualified class name here if you would like to provide an
+ * alternate implementation YAML parser. The class must implement the
+ * \Drupal\Component\Serialization\SerializationInterface interface.
+ */
+$settings['yaml_parser_class'] = NULL;
+#}
 
 {#
 /**
@@ -820,9 +827,28 @@ $settings['trusted_host_patterns'] = array(
 {% endfor %}
 );
 
+{#
+/**
+ * The default list of directories that will be ignored by Drupal's file API.
+ *
+ * By default ignore node_modules and bower_components folders to avoid issues
+ * with common frontend tools and recursive scanning of directories looking for
+ * extensions.
+ *
+ * @see file_scan_directory()
+ * @see \Drupal\Core\Extension\ExtensionDiscovery::scanDirectory()
+ */
+#}
+$settings['file_scan_ignore_directories'] = [
+  'node_modules',
+  'bower_components',
+];
+
+{#
 /**
  * Inclusion of PHP files inside sites/default/settings.d/
  */
+#}
 foreach (glob("sites/default/settings.d/*.php") as $filename) {
   include $filename;
 }

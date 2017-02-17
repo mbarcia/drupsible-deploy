@@ -1,13 +1,5 @@
 ---
-- name: Make sure sites/default dir exists
-  file:
-    path: "{{ codebase_dir }}/sites/default"
-    state: directory
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
-  become: yes
-
-- name: Make sure files directory exists
+- name: Make sure default files directory exists
   file:
     path: "{{ codebase_dir }}/sites/default/files"
     state: directory
@@ -18,6 +10,14 @@
 - name: Make sure settings.d directory exists
   file:
     path: "{{ codebase_dir }}/sites/default/settings.d"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: yes
+
+- name: Make sure config sync directory exists
+  file:
+    path: "{{ deploy_config_sync_dir }}"
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
