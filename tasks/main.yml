@@ -289,4 +289,3 @@
   notify: ['Restart php-fpm']
   when: deploy_target == 'prod'
   changed_when: True
-
