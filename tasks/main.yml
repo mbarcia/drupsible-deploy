@@ -178,7 +178,12 @@
   - deploy.config.database
 
 - include: adjust-db.yml
-  when: deploy_rectify_db_enabled|default(True)|bool
+  when: deploy_rectify_db_enabled|default(True)|bool and app_drupal_version|version_compare('7', '==')
+  tags:
+  - deploy.config.database
+
+- include: import-config.yml
+  when: deploy_rectify_db_enabled|default(True)|bool and app_drupal_version|version_compare('8', '==')
   tags:
   - deploy.config.database
 

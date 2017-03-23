@@ -1,0 +1,41 @@
+---
+- name: Check sync config dir is not empty
+  find: 
+    paths: "{{ deploy_config_sync_dir }}"
+    file_type: directory
+    patterns: "*.yml"
+  register: deploy_sync_config_dir_files_output
+
+- name: Run drush config-import preview mode
+  command: "drush @{{ app_name }}.bld config-import --preview=diff --skip-modules={{ deploy_modules_absent_env|d([])|join(',') }} sync -n"
+  when: deploy_sync_config_dir_files_output.matched|int != 0
+  register: deploy_adjust_db_sync_preview_output
+
+- name: Show preview results
+  debug:
+    var: deploy_adjust_db_sync_preview_output
+  when: deploy_sync_config_dir_files_output.matched|int != 0
+
+- name: Run drush config-import
+  command: "drush @{{ app_name }}.bld config-import --skip-modules={{ deploy_modules_absent_env|d([])|join(',') }} sync -y"
+  when: deploy_sync_config_dir_files_output.matched|int != 0
+
+- name: Check sync config dir is not empty
+  find: 
+    paths: "{{ deploy_config_env_dir }}"
+    file_type: directory
+    patterns: "*.yml"
+  register: deploy_env_config_dir_files_output
+
+- name: Run drush config-import preview mode for the target environment
+  command: "drush @{{ app_name }}.bld config-import --partial --preview=diff {{ app_target }} -y"
+  when: deploy_env_config_dir_files_output.matched|int != 0
+
+- name: Show preview results for the target environment
+  debug:
+    var: deploy_adjust_db_sync_preview_output
+  when: deploy_sync_config_dir_files_output.matched|int != 0
+
+- name: Run drush config-import for the target environment
+  command: "drush @{{ app_name }}.bld config-import --partial {{ app_target }} -y"
+  when: deploy_env_config_dir_files_output.matched|int != 0

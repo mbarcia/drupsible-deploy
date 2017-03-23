@@ -264,6 +264,7 @@ $databases['default']['default'] = array(
  #}
 $config_directories = array(
   CONFIG_SYNC_DIRECTORY => '{{ deploy_config_sync_dir }}',
+  '{{ deploy_config_env_label|d('env') }}' => '{{ deploy_config_env_dir }}',
 );
 
 {#
