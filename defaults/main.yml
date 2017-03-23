@@ -134,10 +134,6 @@ deploy_config_sync_dir: "{{ deploy_webroot }}/{{ app_name }}/config/sync"
 # Identifier
 deploy_identifier: "{{ deploy_build_id }}"
 
-# Default locations of the SSL files in the target host
-deploy_pki_crt: '/etc/pki/realms/domain/default.crt'
-deploy_pki_key: '/etc/pki/realms/domain/default.key'
-
 # Varnish module parameters
 deploy_varnish_variables:
   varnish_version: 4
