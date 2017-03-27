@@ -7,6 +7,6 @@
 
 - name: Restart php-fpm
   service:
-    name: "php{{ ansible_local.php.version|default(deploy_php_version_default) }}-fpm"
+    name: "{{ deploy_php_service_name }}"
     state: restarted
   become: yes
