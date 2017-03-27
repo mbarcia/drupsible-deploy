@@ -193,3 +193,5 @@ deploy_drush_make_shallow_clone_enabled: False
 # Disable this if you don't want Drupsible to create a hotfix branch and tag upon 
 # successful deployment to prod
 deploy_push_hotfix_branch_tag: yes
+
+deploy_php_service_name: "php{{ ansible_local.php.version|default(deploy_php_version_default) }}-fpm"

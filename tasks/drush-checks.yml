@@ -9,12 +9,14 @@
   package:
     name: rsync
     state: present
+    use: apt
   become: yes
 
 - name: Ensure mysql-client is installed
   package:
     name: mysql-client
     state: present
+    use: apt
   become: yes
 
 - name: Create Drush aliases (current, build and source)

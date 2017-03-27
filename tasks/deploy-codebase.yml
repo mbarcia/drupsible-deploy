@@ -3,6 +3,7 @@
   package:
     name: git
     state: present
+    use: apt
   become: yes
 
 - name: Ensure git host is a known host
