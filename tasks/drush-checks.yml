@@ -19,6 +19,11 @@
     use: apt
   become: yes
 
+- name: "Make sure .drush directory exists under the user's home"
+  file:
+    path: "/home/{{ app_user }}/.drush"
+    state: directory
+
 - name: Create Drush aliases (current, build and source)
   template:
     src: drush/aliases.drushrc.php.j2
