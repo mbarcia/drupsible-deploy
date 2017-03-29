@@ -408,6 +408,7 @@ $settings['http_client_config']['proxy']['no'] = [ "{{ deploy_http_client_proxy_
 {% if deploy_varnish_enabled|default(False)|bool %}
 $settings['reverse_proxy'] = TRUE;
 
+{% if not app_in_container|default(False)|bool %}
 {#
 /**
  * Specify every reverse proxy IP address in your environment.
@@ -421,6 +422,7 @@ $settings['reverse_proxy_addresses'] = array(
   {% endfor %}
 {%- endfor %}
 );
+{% endif %}
 
 {#
 /**

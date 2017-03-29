@@ -442,6 +442,7 @@ $conf['reverse_proxy'] = TRUE;
  * This setting is required if $conf['reverse_proxy'] is TRUE.
  */
 #}
+{% if not app_in_container|default(False)|bool %}
 $conf['reverse_proxy_addresses'] = array(
 {% for host in deploy_varnish_servers -%}
   {% for ip_addr in hostvars[host].ansible_all_ipv4_addresses %}
@@ -449,6 +450,7 @@ $conf['reverse_proxy_addresses'] = array(
   {% endfor %}
 {%- endfor %}
 );
+{%- endif %}
 {#
 /**
  * Set this value if your proxy server sends the client IP in a header
