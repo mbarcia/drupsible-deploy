@@ -1,10 +1,21 @@
 ---
-- name: Make sure app logs dir exists
+- name: Make sure app dir exists and is writable
+  file:
+    path: "{{ deploy_webroot }}/{{ app_name }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0775
+  become: yes
+  become_user: root
+
+- name: Make sure app logs dir exists and is writable
   file:
     path: "{{ deploy_webroot }}/{{ app_name }}/logs"
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
+    mode: 0775
   become: yes
   become_user: root
 
