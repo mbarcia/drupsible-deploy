@@ -3,6 +3,7 @@
   package:
     name: git
     state: present
+    use: apt
   become: yes
 
 - name: Ensure git host is a known host
@@ -71,11 +72,50 @@
   command: "cp -pr {{ cached_copy_dir }}{{ deploy_codebase_root_folder }}/. {{ codebase_dir }}"
   when: not deploy_install_profile_enabled|default(False)|bool
 
-- name: Make sure files directory exists
+- name: Make sure config sync directory exists
   file:
-    path: "{{ codebase_dir }}/sites/default/files"
+    path: "{{ deploy_config_sync_dir }}"
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
+  when: app_drupal_version|default('8')|version_compare('8', '==')
   become: yes
-  when: not deploy_install_profile_enabled|default(False)|bool
+
+- name: Check config sync directory exists in the codebase
+  stat:
+    path: "{{ cached_copy_dir }}{{ deploy_codebase_config_base_dir }}/sync"
+  register: deploy_codebase_check_sync_output
+  when: app_drupal_version|default('8')|version_compare('8', '==')
+  become: yes
+
+- name: Copy the sync configuration folder
+  synchronize: 
+    src: "{{ cached_copy_dir }}{{ deploy_codebase_config_base_dir }}/sync/"
+    dest: "{{ deploy_config_sync_dir }}"
+    delete: yes
+  when: app_drupal_version|default('8')|version_compare('8', '==') and deploy_codebase_check_sync_output.stat.exists
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: Make sure config env directory exists
+  file:
+    path: "{{ deploy_config_env_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  when: app_drupal_version|default('8')|version_compare('8', '==')
+  become: yes
+
+- name: Check config directory exists in the codebase for the target environment
+  stat:
+    path: "{{ cached_copy_dir }}/{{ deploy_codebase_config_base_dir }}/{{ app_target }}"
+  register: deploy_codebase_check_env_output
+  when: app_drupal_version|default('8')|version_compare('8', '==')
+  become: yes
+
+- name: Deploy the configuration for the target environment
+  synchronize: 
+    src: "{{ cached_copy_dir }}/{{ deploy_codebase_config_base_dir }}/{{ app_target }}/"
+    dest: "{{ deploy_config_env_dir }}"
+    delete: yes
+  when: app_drupal_version|default('8')|version_compare('8', '==') and deploy_codebase_check_env_output.stat.exists
+  delegate_to: "{{ inventory_hostname }}"

@@ -31,6 +31,7 @@
 - include: deploy-codebase.yml
   when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '' and not deploy_codebase_import_enabled|default(False)|bool
   vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
     cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
   tags:
   - deploy.app.codebase
@@ -178,7 +179,12 @@
   - deploy.config.database
 
 - include: adjust-db.yml
-  when: deploy_rectify_db_enabled|default(True)|bool
+  when: deploy_rectify_db_enabled|default(True)|bool and app_drupal_version|version_compare('7', '==')
+  tags:
+  - deploy.config.database
+
+- include: import-config.yml
+  when: deploy_rectify_db_enabled|default(True)|bool and app_drupal_version|version_compare('8', '==')
   tags:
   - deploy.config.database
 

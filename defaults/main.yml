@@ -129,8 +129,12 @@ deploy_xdebug_enabled: no
 # Drupal 8 settings
 # Container base class
 deploy_container_base_class: '\Drupal\Core\DependencyInjection\Container'
-# Config sync dir
-deploy_config_sync_dir: "{{ deploy_webroot }}/{{ app_name }}/config/sync"
+# Config base dir in the repository (no slashes at the beginning or end)
+deploy_codebase_config_base_dir: "config"
+# Config dir for the sync label
+deploy_config_sync_dir: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_codebase_config_base_dir }}/sync"
+# Config dir for the target environment label
+deploy_config_env_dir: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_codebase_config_base_dir }}/{{ app_target }}"
 # Identifier
 deploy_identifier: "{{ deploy_build_id }}"
 

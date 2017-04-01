@@ -1,4 +1,12 @@
 ---
+- name: Make sure default files directory exists
+  file:
+    path: "{{ codebase_dir }}/sites/default/files"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: yes
+
 - name: Ensuring user/group of codebase dir
   file:
     path: "{{ codebase_dir }}"

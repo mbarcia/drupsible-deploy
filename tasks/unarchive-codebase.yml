@@ -3,6 +3,7 @@
   package:
     name: zip
     state: present
+    use: apt
   become: yes
 
 - name: Make sure directory exists for the codebase dir
