@@ -17,18 +17,13 @@
     follow: yes
   register: dest_files
 
-- name: Add group write permission to the new files folder
+- name: "Make sure the files folder exists and is owned/writable by app"
   file: 
     path: "{{ codebase_dir }}/sites/default/files"
-    mode: "g+w"
-  when: dest_files.stat.exists
-  become: yes
-  become_user: root
-
-- name: Add group ownership to the new files folder
-  file: 
-    path: "{{ codebase_dir }}/sites/default/files"
+    state: directory
+    owner: "{{ app_user }}"
     group: "{{ app_group }}"
+    mode: "ug+w"
   when: dest_files.stat.exists
   become: yes
   become_user: root
