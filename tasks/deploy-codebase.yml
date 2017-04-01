@@ -5,6 +5,7 @@
     state: present
     use: apt
   become: yes
+  become_user: root
 
 - name: Ensure git host is a known host
   lineinfile:
@@ -21,6 +22,7 @@
     state: directory
     owner: "{{ app_user }}"
   become: yes
+  become_user: root
 
 - name: Git clone the app codebase (http/s w/o credentials)
   git:
@@ -66,6 +68,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
+  become_user: root
   when: not deploy_install_profile_enabled|default(False)
 
 - name: Copy the updated codebase
@@ -80,6 +83,7 @@
     group: "{{ app_group }}"
   when: app_drupal_version|default('8')|version_compare('8', '==')
   become: yes
+  become_user: root
 
 - name: Check config sync directory exists in the codebase
   stat:
@@ -87,6 +91,7 @@
   register: deploy_codebase_check_sync_output
   when: app_drupal_version|default('8')|version_compare('8', '==')
   become: yes
+  become_user: root
 
 - name: Copy the sync configuration folder
   synchronize: 
@@ -104,6 +109,7 @@
     group: "{{ app_group }}"
   when: app_drupal_version|default('8')|version_compare('8', '==')
   become: yes
+  become_user: root
 
 - name: Check config directory exists in the codebase for the target environment
   stat:
@@ -111,6 +117,7 @@
   register: deploy_codebase_check_env_output
   when: app_drupal_version|default('8')|version_compare('8', '==')
   become: yes
+  become_user: root
 
 - name: Deploy the configuration for the target environment
   synchronize: 

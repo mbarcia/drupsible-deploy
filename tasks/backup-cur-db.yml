@@ -6,6 +6,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
+  become_user: root
 
 - name: Check a previous SQL dump for the build does not exist
   stat: 

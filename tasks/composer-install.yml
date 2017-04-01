@@ -14,6 +14,7 @@
     state: directory
     owner: "{{ app_user }}"
   become: yes
+  become_user: root
 
 - name: rsync composer.json
   synchronize:
@@ -40,6 +41,7 @@
     owner: "{{ app_user }}"
     recurse: yes
   become: yes
+  become_user: root
 
 - name: Require composer/installers
   composer:
@@ -83,6 +85,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
+  become_user: root
 
 - name: rsync core codebase in web subir
   synchronize:

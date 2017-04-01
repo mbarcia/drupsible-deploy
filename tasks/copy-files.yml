@@ -9,6 +9,7 @@
   command: "cp -pur {{ deploy_webroot }}/{{ app_name }}/public_html/sites/default/files {{ codebase_dir }}/sites/default/"
   when: source_files.stat.exists
   become: yes
+  become_user: root
 
 - name: Check files dest now exists under codebase_dir
   stat:
@@ -29,3 +30,4 @@
     group: "{{ app_group }}"
   when: dest_files.stat.exists
   become: yes
+  become_user: root

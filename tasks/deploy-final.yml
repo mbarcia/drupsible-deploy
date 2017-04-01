@@ -6,6 +6,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
+  become_user: root
 
 - name: Ensuring user/group of codebase dir
   file:
@@ -15,6 +16,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
+  become_user: root
 
 - name: Setting new build symlink to clone the new build
   file:
@@ -24,6 +26,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
+  become_user: root
 
 - name: Download memcache_storage module
   command: drush @{{ app_name }}.bld dl memcache_storage -y

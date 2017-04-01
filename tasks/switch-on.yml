@@ -5,10 +5,12 @@
     follow: yes
     state: absent
   become: yes
+  become_user: root
 
 - name: Rename current symlink to .bak, if it exists
   command: "mv {{ deploy_webroot }}/{{ app_name }}/public_html {{ deploy_webroot }}/{{ app_name }}/public_html.bak"
   become: yes
+  become_user: root
 
 - name: Set new symlink to new live codebase
   file:
@@ -18,6 +20,7 @@
     group: "{{ app_group }}"
     state: link
   become: yes
+  become_user: root
 
 - name: Remove current build symlink
   file:
@@ -25,6 +28,7 @@
     state: absent
     follow: no
   become: yes
+  become_user: root
 
 - name: Check user/public_html symlink already exists
   stat: 
@@ -39,4 +43,5 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
+  become_user: root
   when: stat_public_symlink.stat is not defined or not stat_public_symlink.stat.exists

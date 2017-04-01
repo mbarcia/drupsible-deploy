@@ -11,6 +11,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
+  become_user: root
   when: not profile_project_included.stat.exists
 
 - name: rsync with the profile inside the build dir
@@ -31,6 +32,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
+  become_user: root
   when: profile_libraries.stat.exists
 
 - name: rsync libraries between the profile and sites/all/libraries

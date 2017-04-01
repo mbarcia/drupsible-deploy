@@ -14,6 +14,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
+  become_user: root
 
 - name: Prepare to sync, drop all tables
   command: "drush @{{ app_name }}.bld sql-drop --yes" 

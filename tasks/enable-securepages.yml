@@ -7,6 +7,7 @@
     group: "{{ app_group }}"
     mode: 0640
   become: yes
+  become_user: root
 
 - name: Enable securepages module
   command: drush @{{ app_name }}.bld en securepages -y
