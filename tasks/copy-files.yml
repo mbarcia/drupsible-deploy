@@ -22,7 +22,8 @@
     path: "{{ codebase_dir }}/sites/default/files"
     mode: "g+w"
   when: dest_files.stat.exists
-  become: yes 
+  become: yes
+  become_user: root
 
 - name: Add group ownership to the new files folder
   file: 
