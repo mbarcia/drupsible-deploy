@@ -6,6 +6,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
+  become_user: root
 
 - name: Copy templated settings.php
   template:
@@ -15,6 +16,7 @@
     group: "{{ app_group }}"
     mode: 0640
   become: yes
+  become_user: root
   no_log: True
 
 - name: Copy templated custom settings
@@ -25,4 +27,5 @@
     group: "{{ app_group }}"
     mode: 0640
   become: yes
+  become_user: root
   no_log: True

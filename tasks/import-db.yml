@@ -6,6 +6,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
+  become_user: root
 
 - name: Set fact extension of the DB dump
   set_fact: dbdump_extension="{{ deploy_db_dump_filename|regex_replace('^(.*)\\.(.*)$', '\\2') }}"

@@ -1,11 +1,23 @@
 ---
-- name: Make sure app logs dir exists
+- name: Make sure app dir exists and is writable
+  file:
+    path: "{{ deploy_webroot }}/{{ app_name }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0775
+  become: yes
+  become_user: root
+
+- name: Make sure app logs dir exists and is writable
   file:
     path: "{{ deploy_webroot }}/{{ app_name }}/logs"
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
+    mode: 0775
   become: yes
+  become_user: root
 
 - name: Stat public_html for cur vhost
   stat:
@@ -21,6 +33,7 @@
     group: "{{ app_group }}"
   when: not public_html_symlink.stat.exists
   become: yes
+  become_user: root
 
 - name: Stat public_html for bak vhost
   stat:
@@ -36,6 +49,7 @@
     group: "{{ app_group }}"
   when: not public_html_symlink_bak.stat.exists
   become: yes
+  become_user: root
 
 - name: Remove current build symlink and its contents, if any
   file:
@@ -43,3 +57,4 @@
     state: absent
     follow: yes
   become: yes
+  become_user: root

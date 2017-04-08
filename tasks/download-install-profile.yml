@@ -12,6 +12,7 @@
     state: directory
     owner: "{{ app_user }}"
   become: yes
+  become_user: root
   when: install_profile != 'standard' and install_profile != 'minimal' and not install_profile|match('(^testing$|^testing_.+$)')
 
 - name: Download install profile

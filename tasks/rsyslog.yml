@@ -6,6 +6,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
+  become_user: root
 
 - name: Touch and set proper permissions to drupal.log
   file:
@@ -15,6 +16,7 @@
     mode: 0664
     state: touch
   become: yes
+  become_user: root
 
 - name: Install rsyslog config for Drupal syslog module
   template:
@@ -22,6 +24,7 @@
     dest: /etc/rsyslog.d/drupal.conf
   notify: Restart rsyslog
   become: yes
+  become_user: root
 
 - name: Enable syslog drupal module
   command: drush @{{ app_name }}.cur en syslog -y
@@ -31,3 +34,4 @@
     src: "logrotate.d/drupal.j2"
     dest: "/etc/logrotate.d/drupal"
   become: yes
+  become_user: root
