@@ -27,8 +27,3 @@
     group: "{{ app_group }}"
   become: yes
   become_user: root
-
-- name: Download memcache_storage module
-  command: drush @{{ app_name }}.bld dl memcache_storage -y
-  when: app_memcached_enabled|default(True)|bool
-  ignore_errors: yes
