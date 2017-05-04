@@ -27,3 +27,18 @@
     group: "{{ app_group }}"
   become: yes
   become_user: root
+
+- name: Check whether CHANGELOG.txt exists
+  stat:
+    path: "{{ codebase_dir }}/CHANGELOG.txt"
+  register: changelog_output
+  become: yes
+  become_user: root
+
+- name: Ensure CHANGELOG.txt isn't publicly accesible
+  file:
+    path: "{{ codebase_dir }}/CHANGELOG.txt"
+    mode: "a-r"
+  when: changelog_output.stat.exists
+  become: yes
+  become_user: root
