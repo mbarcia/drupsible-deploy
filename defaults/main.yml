@@ -14,6 +14,13 @@ deploy_build_id: "{{ ansible_date_time['year'] }}{{ ansible_date_time['month'] }
 
 # Host in the mysql group of the current environment
 deploy_mysql_host: 'localhost'
+# You can optionally set prefixes for some or all database table names
+# by using the 'prefix' setting. If a prefix is specified, the table
+# name will be prepended with its value. Be sure to use valid database
+# characters only, usually alphanumeric and underscore. If no prefixes
+# are desired, leave it as an empty string ''. You can also specify an
+# array of prefixes for specific tables (see settings.php).
+deploy_mysql_prefix: ""
 
 # List of hostnames in the varnish group of the current environment
 deploy_varnish_servers: [ "localhost" ]

@@ -232,7 +232,7 @@ $databases['default']['default'] = array(
   'username' => '{{ deploy_db_user }}',
   'password' => '{{ deploy_db_password | default(lookup("password", secret + "/credentials/" + app_name + "/mysql/" + deploy_db_user + "/password chars=ascii_letters,digits,hexdigits")) }}',
   'host' => '{{ deploy_mysql_host }}',
-  'prefix' => '',
+  'prefix' => '{{ deploy_mysql_prefix|d("") }}',
 );
 
 {#
