@@ -15,19 +15,20 @@
 - name: Download patches to apply to securepages
   get_url:
     url: "{{ item }}"
-    dest: "/tmp/{{ item | basename }}"
+    dest: "{{ codebase_dir }}"
   with_items:
     - 'https://www.drupal.org/files/drupal-https-only-961508-23-32.patch'
     - 'https://www.drupal.org/files/issues/471970_0.patch'
     
 - name: Apply patches required by securepages
   patch:
-    src: "/tmp/{{ item }}"
+    src: "{{ codebase_dir }}/{{ item }}"
     basedir: "{{ codebase_dir }}"
     strip: 1
+    remote_src: yes
   with_items:
-    - '471970_0.patch'
-    - 'drupal-https-only-961508-23-32.patch'
+  - 471970_0.patch
+  - drupal-https-only-961508-23-32.patch
 
 - name: Configure securepages to be enabled
   command: drush @{{ app_name }}.bld vset securepages_enable '1'
