@@ -1,0 +1,4 @@
+---
+- name: Configuration set
+  command: "drush @{{ app_name }}.bld -y cset {{ outer_item.key|quote }} {{ item.key|quote }} {{ item.value|quote }}"
+  with_dict: "{{ outer_item.value }}"

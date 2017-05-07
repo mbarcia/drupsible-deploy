@@ -1,13 +1,4 @@
 ---
-- name: Make sure settings.d directory exists
-  file:
-    path: "{{ codebase_dir }}/sites/default/settings.d"
-    state: directory
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
-  become: yes
-  become_user: root
-
 - name: Copy templated settings.php
   template:
     src: "settings-drupal-{{ app_drupal_version.split('.', 1)[0] }}.php.j2"
@@ -19,6 +10,15 @@
   become_user: root
   no_log: True
 
+- name: Make sure settings.d directory exists
+  file:
+    path: "{{ codebase_dir }}/sites/default/settings.d"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: yes
+  become_user: root
+
 - name: Copy templated custom settings
   template:
     src: "custom/settings.php.j2"
@@ -29,3 +29,21 @@
   become: yes
   become_user: root
   no_log: True
+
+- name: Copy templated settings for all OPS features (may give some errors)
+  template:
+    src: "ops-features/{{ app_drupal_version }}/{{ item }}.php.j2"
+    dest: "{{ codebase_dir }}/sites/default/settings.d/{{ item|basename|splitext|first }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0640
+  become: yes
+  become_user: root
+  register: deploy_ops_features_templates_output
+  ignore_errors: yes
+  with_items: "{{ deploy_drupal_projects_base }} + {{ deploy_drupal_projects|d([]) }}"
+
+- fail:
+    msg: "{{ item }}"
+  when: not item|search('Unable to find') 
+  with_items: "{{ deploy_ops_features_templates_output.results|map(attribute='msg')|list }}"

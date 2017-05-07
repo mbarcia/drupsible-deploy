@@ -1,0 +1,39 @@
+---
+- name: Download drupal projects for all OPS features
+  shell: "drush @{{ app_name }}.bld dl {{ hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_drupal_projects']|join(' ') }} -y"
+  with_items: "{{ deploy_drupal_projects_base }} + {{ deploy_drupal_projects|d([]) }}"
+
+- name: Enable Drupal modules for all OPS features
+  shell: "drush @{{ app_name }}.bld en {{ hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_drupal_modules_enabled']|join(' ') }} -y"
+  with_items: "{{ deploy_drupal_projects_base }} + {{ deploy_drupal_projects|d([]) }}"
+
+- name: Apply core patches for all OPS features
+  patch: 
+    src: "{{ item[1] }}"
+    remote_src: no
+    strip: 1
+    basedir: "{{ codebase_dir }}"
+  when: item is defined
+  with_nested: 
+  - "{{ hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item[0] + '_core_patches']|d([]) }}"
+  - "{{ deploy_drupal_projects_base }} + {{ deploy_drupal_projects|d([]) }}" 
+
+- name: Apply patches for all OPS features
+  patch: 
+    src: "{{ item[1] }}"
+    remote_src: no
+    strip: 1
+    basedir: "{{ codebase_dir }}/{{ drush_contrib_modules_destination }}/{{ item[0] }}"
+  when: item is defined
+  with_nested: 
+  - "{{ hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item[0] + '_patches']|d([]) }}"
+  - "{{ deploy_drupal_projects_base }} + {{ deploy_drupal_projects|d([]) }}" 
+
+- set_fact:
+    dictio__: "{{ dictio__|d({})|combine(hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_variables' ]|d({})) }}"
+  with_items: "{{ deploy_drupal_projects_base }} + {{ deploy_drupal_projects|d([]) }}"
+
+- include: cset-inner.yml
+  with_dict: "{{ dictio__ }}"
+  loop_control:
+    loop_var: outer_item

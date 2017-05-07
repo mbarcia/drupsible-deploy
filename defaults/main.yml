@@ -175,11 +175,11 @@ purge_purger_http_settings:
   request_method: PURGE
 
 # Drupal page cache max-age value in seconds (default 10 min)
-deploy_page_cache_max_age: 600
+deploy_page_cache_max_age: '600'
 
 # Default IP address and port where memcached is listening
 deploy_memcached_listen_ip_address: '127.0.0.1'
-deploy_memcached_port: 11211
+deploy_memcached_port: '11211'
 
 # Fast 404 pages (D7)
 deploy_404_fast_enabled_d7: yes
