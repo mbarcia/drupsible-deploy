@@ -7,10 +7,16 @@
     deploy_drupal_projects__: "{{ deploy_drupal8_projects_base|d([]) }} + {{ deploy_drupal8_projects|d([]) }}"
   when: app_drupal_version|version_compare('8', '==')
   
-# We need to download the projects before writing settings.php to avoid
-# any possible PHP fatal error, ie. Memcached class not found
+# We need to download the projects and enable the modules before writing 
+# settings.php to avoid any possible PHP fatal error, ie. Memcached class 
+# not found or https://www.drupal.org/node/2656848
 - name: Download drupal projects for all OPS features
   shell: "drush @{{ app_name }}.bld dl {{ deploy_drupal_projects__ | join(' ') }} -y"
+  when: deploy_drupal_projects__ | length > 0
+
+- name: Enable Drupal modules for all OPS features
+  shell: "drush @{{ app_name }}.bld en {{ hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_drupal' + app_drupal_version + '_modules_enabled']|join(' ') }} -y"
+  with_items: "{{ deploy_drupal_projects__ }}"
   when: deploy_drupal_projects__ | length > 0
 
 - name: Copy templated settings for all OPS features (may give some errors)
@@ -30,11 +36,6 @@
     msg: "{{ item }}"
   when: deploy_ops_features_templates_output|failed and item is defined and not item|search('Unable to find') 
   with_items: "{{ deploy_ops_features_templates_output.results|map(attribute='msg')|list }}"
-
-- name: Enable Drupal modules for all OPS features
-  shell: "drush @{{ app_name }}.bld en {{ hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_drupal' + app_drupal_version + '_modules_enabled']|join(' ') }} -y"
-  with_items: "{{ deploy_drupal_projects__ }}"
-  when: deploy_drupal_projects__ | length > 0
 
 - name: Apply core patches for all OPS features (remote_src)
   patch: 
