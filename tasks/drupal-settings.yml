@@ -29,21 +29,3 @@
   become: yes
   become_user: root
   no_log: True
-
-- name: Copy templated settings for all OPS features (may give some errors)
-  template:
-    src: "ops-features/{{ app_drupal_version }}/{{ item }}.php.j2"
-    dest: "{{ codebase_dir }}/sites/default/settings.d/{{ item|basename|splitext|first }}"
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
-    mode: 0640
-  become: yes
-  become_user: root
-  register: deploy_ops_features_templates_output
-  ignore_errors: yes
-  with_items: "{{ deploy_drupal7_projects_base|d([]) }} + {{ deploy_drupal7_projects|d([]) }} + {{ deploy_drupal8_projects_base|d([]) }} + {{ deploy_drupal8_projects|d([]) }}" 
-
-- fail:
-    msg: "{{ item }}"
-  when: not item|search('Unable to find') 
-  with_items: "{{ deploy_ops_features_templates_output.results|map(attribute='msg')|list }}"
