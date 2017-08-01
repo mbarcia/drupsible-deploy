@@ -41,7 +41,7 @@
   become_user: root
   register: deploy_ops_features_templates_output
   ignore_errors: yes
-  with_items: "{{ deploy_drupal_projects_base }} + {{ deploy_drupal_projects|d([]) }}"
+  with_items: "{{ deploy_drupal7_projects_base|d([]) }} + {{ deploy_drupal7_projects|d([]) }} + {{ deploy_drupal8_projects_base|d([]) }} + {{ deploy_drupal8_projects|d([]) }}" 
 
 - fail:
     msg: "{{ item }}"
