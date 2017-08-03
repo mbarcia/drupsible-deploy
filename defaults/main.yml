@@ -145,12 +145,6 @@ deploy_config_env_dir: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_codebase_c
 # Identifier
 deploy_identifier: "{{ deploy_build_id }}"
 
-# Varnish module parameters
-deploy_varnish_variables:
-  varnish_version: 4
-  varnish_control_terminal: "localhost:{{ deploy_varnish_mgmt_port|default('6082') }}"
-  varnish_control_key: "{{ lookup('password', secret + '/credentials/' + inventory_hostname + '/varnish/secret chars=ascii_letters,digits,hexdigits') }}"
-
 # Update translations?
 deploy_update_translations_enabled: True
 
