@@ -76,9 +76,11 @@
 # Drupal 7 variables
 - name: Harvest all projects Drupal 7 variables
   set_fact:
-    variables__: "{{ hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_variables' ]|d([]) }}"
+    variables__: "{{ variables__|d({})|combine(hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_variables' ]|d({})) }}"
   with_items: "{{ deploy_drupal_projects__ }}"
   when: app_drupal_version|version_compare('7', '==')
+
+- debug: var=varnish_control_key_eval
 
 - name: Set all variables
   command: "drush @{{ app_name }}.bld -y vset {{ item.key|quote }} {{ item.value|quote }}"
