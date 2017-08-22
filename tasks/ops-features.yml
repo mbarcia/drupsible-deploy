@@ -1,0 +1,79 @@
+---
+- set_fact:
+    deploy_drupal_projects__: "{{ deploy_drupal7_projects_base|d([]) }} + {{ deploy_drupal7_projects|d([]) }}"
+  when: app_drupal_version|version_compare('7', '==')
+  
+- set_fact:
+    deploy_drupal_projects__: "{{ deploy_drupal8_projects_base|d([]) }} + {{ deploy_drupal8_projects|d([]) }}"
+  when: app_drupal_version|version_compare('8', '==')
+  
+# We need to download the projects and enable the modules before writing
+# settings.php to avoid any possible PHP fatal error, ie. Memcached class
+# not found or https://www.drupal.org/node/2656848
+- name: Download drupal projects for all OPS features
+  shell: "drush @{{ app_name }}.bld dl {{ deploy_drupal_projects__ | join(' ') }} -y"
+  when: deploy_drupal_projects__ | length > 0
+
+- name: Enable Drupal modules for all OPS features
+  shell: "drush @{{ app_name }}.bld en {{ hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_drupal' + app_drupal_version + '_modules_enabled']|join(' ') }} -y"
+  with_items: "{{ deploy_drupal_projects__ }}"
+  when: deploy_drupal_projects__ | length > 0
+
+- name: Copy templated settings for all OPS features (may give some errors)
+  template:
+    src: "ops-features/{{ app_drupal_version }}/{{ item }}.php.j2"
+    dest: "{{ codebase_dir }}/sites/default/settings.d/{{ item|basename }}.php"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0640
+  become: yes
+  become_user: root
+  register: deploy_ops_features_templates_output
+  ignore_errors: yes
+  with_items: "{{ deploy_drupal_projects__ }}"
+
+- fail:
+    msg: "{{ item }}"
+  when: deploy_ops_features_templates_output|failed and item is defined and not item|search('Unable to find')
+  with_items: "{{ deploy_ops_features_templates_output.results|map(attribute='msg')|list }}"
+
+- name: Harvest all core patches
+  set_fact:
+    corepatches__: "{{ corepatches__|d([])|union(hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_core_drupal' + app_drupal_version + '_patches']|d([])) }}"
+  with_items: "{{ deploy_drupal_projects__ }}"
+
+- name: Apply core patches for all OPS features
+  patch:
+    src: "{{ item }}"
+    strip: 1
+    basedir: "{{ codebase_dir }}"
+  with_items: "{{ corepatches__ }}"
+
+# Drupal 8 config sets
+- name: Harvest all projects Drupal 8 config sets
+  set_fact:
+    dictio__: "{{ dictio__|d({})|combine(hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_config_sets' ]|d({})) }}"
+  with_items: "{{ deploy_drupal_projects__ }}"
+  when: app_drupal_version|version_compare('8', '==')
+  no_log: True
+
+- include: cset-inner.yml
+  with_dict: "{{ dictio__ }}"
+  # (needs an inner play called several times)
+  loop_control:
+    loop_var: outer_item
+  when: app_drupal_version|version_compare('8', '==')
+
+# Drupal 7 variables
+- name: Harvest all projects Drupal 7 variables
+  set_fact:
+    variables__: "{{ variables__|d({})|combine(hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_variables' ]|d({})) }}"
+  with_items: "{{ deploy_drupal_projects__ }}"
+  when: app_drupal_version|version_compare('7', '==')
+  no_log: True
+
+- name: Set all variables
+  command: "drush @{{ app_name }}.bld -y vset {{ item.key|quote }} {{ item.value|quote }}"
+  with_dict: "{{ variables__ }}"
+  when: app_drupal_version|version_compare('7', '==')
+  no_log: True

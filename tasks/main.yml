@@ -150,29 +150,11 @@
   tags:
   - deploy.config.database
 
-- include: enable-memcached.yml
-  when: app_memcached_enabled|default(True)|bool
+- include: ops-features.yml
   vars:
     codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
   tags:
-  - deploy.config.database
-
-- include: enable-varnish.yml
-  when: deploy_varnish_enabled|default(True)|bool and deploy_varnish_drupal_module == 'varnish' and app_drupal_version|version_compare('7', '==')
-  tags:
-  - deploy.config.database
-
-- include: enable-purge.yml
-  when: deploy_varnish_enabled|default(True)|bool and app_drupal_version|version_compare('8', '==')
-  tags:
-  - deploy.config.database
-
-- include: enable-securepages.yml
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  when: app_https_enabled|default(False)|bool and app_drupal_version|version_compare('7', '==')
-  tags:
-  - deploy.config.database
+  - deploy.config.ops-features
 
 - include: enable-disable-modules.yml
   tags:

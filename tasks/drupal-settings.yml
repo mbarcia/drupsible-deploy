@@ -1,13 +1,4 @@
 ---
-- name: Make sure settings.d directory exists
-  file:
-    path: "{{ codebase_dir }}/sites/default/settings.d"
-    state: directory
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
-  become: yes
-  become_user: root
-
 - name: Copy templated settings.php
   template:
     src: "settings-drupal-{{ app_drupal_version.split('.', 1)[0] }}.php.j2"
@@ -18,6 +9,15 @@
   become: yes
   become_user: root
   no_log: True
+
+- name: Make sure settings.d directory exists
+  file:
+    path: "{{ codebase_dir }}/sites/default/settings.d"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: yes
+  become_user: root
 
 - name: Copy templated custom settings
   template:
