@@ -37,27 +37,17 @@
   when: deploy_ops_features_templates_output|failed and item is defined and not item|search('Unable to find')
   with_items: "{{ deploy_ops_features_templates_output.results|map(attribute='msg')|list }}"
 
-- name: Apply core patches for all OPS features (remote_src)
+- name: Harvest all core patches
+  set_fact:
+    corepatches__: "{{ corepatches__|d([])|union(hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_core_drupal' + app_drupal_version + '_patches']|d([])) }}"
+  with_items: "{{ deploy_drupal_projects__ }}"
+
+- name: Apply core patches for all OPS features
   patch:
-    src: "{{ item[1] }}"
-    remote_src: yes
+    src: "{{ item }}"
     strip: 1
     basedir: "{{ codebase_dir }}"
-  when: item is defined
-  with_nested:
-  - "{{ hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item[0] + '_core_drupal' + app_drupal_version + '_patches']|d([]) }}"
-  - "{{ deploy_drupal_projects__ }}"
-
-- name: Apply project patches for all OPS features
-  patch:
-    src: "{{ item[1] }}"
-    remote_src: no
-    strip: 1
-    basedir: "{{ codebase_dir }}/{{ drush_contrib_modules_destination }}/{{ item[0] }}"
-  when: item is defined
-  with_nested:
-  - "{{ hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item[0] + '_patches']|d([]) }}"
-  - "{{ deploy_drupal_projects__ }}"
+  with_items: "{{ corepatches__ }}"
 
 # Drupal 8 config sets
 - name: Harvest all projects Drupal 8 config sets
