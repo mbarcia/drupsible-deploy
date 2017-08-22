@@ -7,8 +7,8 @@
     deploy_drupal_projects__: "{{ deploy_drupal8_projects_base|d([]) }} + {{ deploy_drupal8_projects|d([]) }}"
   when: app_drupal_version|version_compare('8', '==')
   
-# We need to download the projects and enable the modules before writing 
-# settings.php to avoid any possible PHP fatal error, ie. Memcached class 
+# We need to download the projects and enable the modules before writing
+# settings.php to avoid any possible PHP fatal error, ie. Memcached class
 # not found or https://www.drupal.org/node/2656848
 - name: Download drupal projects for all OPS features
   shell: "drush @{{ app_name }}.bld dl {{ deploy_drupal_projects__ | join(' ') }} -y"
@@ -34,28 +34,28 @@
 
 - fail:
     msg: "{{ item }}"
-  when: deploy_ops_features_templates_output|failed and item is defined and not item|search('Unable to find') 
+  when: deploy_ops_features_templates_output|failed and item is defined and not item|search('Unable to find')
   with_items: "{{ deploy_ops_features_templates_output.results|map(attribute='msg')|list }}"
 
 - name: Apply core patches for all OPS features (remote_src)
-  patch: 
+  patch:
     src: "{{ item[1] }}"
     remote_src: yes
     strip: 1
     basedir: "{{ codebase_dir }}"
   when: item is defined
-  with_nested: 
+  with_nested:
   - "{{ hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item[0] + '_core_drupal' + app_drupal_version + '_patches']|d([]) }}"
   - "{{ deploy_drupal_projects__ }}"
 
 - name: Apply project patches for all OPS features
-  patch: 
+  patch:
     src: "{{ item[1] }}"
     remote_src: no
     strip: 1
     basedir: "{{ codebase_dir }}/{{ drush_contrib_modules_destination }}/{{ item[0] }}"
   when: item is defined
-  with_nested: 
+  with_nested:
   - "{{ hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item[0] + '_patches']|d([]) }}"
   - "{{ deploy_drupal_projects__ }}"
 
@@ -65,6 +65,7 @@
     dictio__: "{{ dictio__|d({})|combine(hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_config_sets' ]|d({})) }}"
   with_items: "{{ deploy_drupal_projects__ }}"
   when: app_drupal_version|version_compare('8', '==')
+  no_log: True
 
 - include: cset-inner.yml
   with_dict: "{{ dictio__ }}"
@@ -79,10 +80,10 @@
     variables__: "{{ variables__|d({})|combine(hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_variables' ]|d({})) }}"
   with_items: "{{ deploy_drupal_projects__ }}"
   when: app_drupal_version|version_compare('7', '==')
-
-- debug: var=varnish_control_key_eval
+  no_log: True
 
 - name: Set all variables
   command: "drush @{{ app_name }}.bld -y vset {{ item.key|quote }} {{ item.value|quote }}"
   with_dict: "{{ variables__ }}"
   when: app_drupal_version|version_compare('7', '==')
+  no_log: True
