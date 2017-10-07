@@ -4,13 +4,13 @@
 
 /* Memcache Storage */
 
-$conf['cache_backends'][] = 'sites/all/modules/memcache_storage/memcache_storage.inc';
+$conf['cache_backends'][] = '{{ drush_contrib_modules_destination | d('sites/all/modules') }}/memcache_storage/memcache_storage.inc';
 $conf['cache_default_class'] = 'MemcacheStorage';
 
 $conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
 $conf['cache_class_cache_update'] = 'DrupalDatabaseCache';
 
-$conf['lock_inc'] = 'sites/all/modules/memcache_storage/includes/lock.inc';
+$conf['lock_inc'] = '{{ drush_contrib_modules_destination | d('sites/all/modules') }}/memcache_storage/includes/lock.inc';
 $conf['memcache_extension'] = 'Memcached';
 
 $conf['memcache_storage_persistent_connection'] = TRUE;
