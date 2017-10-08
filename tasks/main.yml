@@ -11,13 +11,13 @@
 # Codebase tasks
 #
 - include: download-install-profile.yml
-  when: deploy_install_profile_enabled|default(False)|bool and deploy_d_o_install_profile != ''
   vars:
     codebase_basepath: "{{ deploy_webroot }}/{{ app_name }}"
     codebase_dir: "{{ codebase_basepath }}/public_html.{{ deploy_build_id }}"
     profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}"
     project_name: "public_html.{{ deploy_build_id }}"
     install_profile: "{{ deploy_d_o_install_profile }}"
+  when: deploy_install_profile_enabled|default(False)|bool and deploy_d_o_install_profile != ''
   tags:
   - deploy.app.codebase
 
@@ -39,8 +39,8 @@
 - include: deploy-codebase.yml
   when: not deploy_install_profile_enabled|default(False)|bool and not deploy_codebase_import_enabled|default(False)|bool
   vars:
-    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
     codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
   tags:
   - deploy.app.codebase
 
