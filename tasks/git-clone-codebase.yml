@@ -1,0 +1,62 @@
+---
+- name: Ensure git is installed
+  package:
+    name: git
+    state: present
+    use: apt
+  become: yes
+  become_user: root
+
+- name: Ensure git host is a known host
+  lineinfile:
+    dest: /home/{{ app_user }}/.ssh/known_hosts
+    create: yes
+    state: present
+    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + deploy_git_repo_server) }}"
+    regexp: "^{{ deploy_git_repo_server }}"
+  when: "not deploy_accept_hostkey|default(False)|bool and deploy_git_repo_protocol is defined and (deploy_git_repo_protocol == 'ssh' or deploy_git_repo_protocol == 'git')"
+
+- name: Make sure directory exists for the cached copy dir
+  file:
+    path: "{{ cached_copy_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+  become: yes
+  become_user: root
+
+- name: Git clone the app codebase (http/s w/o credentials)
+  git:
+    clone: yes
+    force: yes
+    version: "{{ deploy_git_repo_version }}"
+    dest: "{{ cached_copy_dir }}"
+    repo: "{{ deploy_git_repo_protocol }}://{{ deploy_git_repo_server }}/{{ deploy_git_repo_path }}"
+  when: "deploy_git_repo_protocol is defined and (deploy_git_repo_protocol == 'https' or deploy_git_repo_protocol == 'http') and deploy_git_repo_user is not defined"
+
+- name: Git clone the app codebase (http/s w/credentials)
+  git:
+    clone: yes
+    force: yes
+    version: "{{ deploy_git_repo_version }}"
+    dest: "{{ cached_copy_dir }}"
+    repo: '{{ deploy_git_repo_protocol }}://{{ deploy_git_repo_user }}:{{ deploy_git_repo_pass | default(lookup("password", secret + "/credentials/" + app_name + "/git/" + deploy_git_repo_user)) }}@{{ deploy_git_repo_server }}/{{ deploy_git_repo_path }}'
+  when: "deploy_git_repo_protocol is defined and (deploy_git_repo_protocol == 'https' or deploy_git_repo_protocol == 'http') and deploy_git_repo_user is defined"
+  no_log: True
+
+- name: Git clone the app codebase (ssh)
+  git:
+    clone: yes
+    force: yes
+    version: "{{ deploy_git_repo_version }}"
+    dest: "{{ cached_copy_dir }}"
+    repo: "ssh://{{ deploy_git_repo_user }}@{{ deploy_git_repo_server }}/{{ deploy_git_repo_path }}"
+  when: deploy_git_repo_protocol|default('ssh') == 'ssh'
+
+- name: Git clone the app codebase (git)
+  git:
+    clone: yes
+    force: yes
+    version: "{{ deploy_git_repo_version }}"
+    dest: "{{ cached_copy_dir }}"
+    repo: "git@{{ deploy_git_repo_server }}:{{ deploy_git_repo_user }}/{{ deploy_git_repo_path }}"
+  when: deploy_git_repo_protocol|default('ssh') == 'git'
