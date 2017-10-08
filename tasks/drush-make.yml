@@ -6,7 +6,7 @@
   register: profile_makefile_chosen
 
 - name: Run drush make makefile (ignore_errors version)
-  command: drush make "{{ profiles_dir }}/{{ install_profile }}/{{ deploy_drush_makefile }}" "{{ codebase_dir }}" --translations="{{ locale|difference(['en'])|join(',') }}" {{ deploy_drush_make_shallow_clone_enabled|default(False)|bool|ternary('--shallow-clone', '') }} --yes
+  command: drush make --force-complete "{{ profiles_dir }}/{{ install_profile }}/{{ deploy_drush_makefile }}" "{{ codebase_dir }}" --translations="{{ locale|difference(['en'])|join(',') }}" {{ deploy_drush_make_shallow_clone_enabled|default(False)|bool|ternary('--shallow-clone', '') }} --yes
   when: profile_makefile_chosen.stat.exists and deploy_ignore_drush_make_errors|default(False)|bool
   ignore_errors: yes
 
