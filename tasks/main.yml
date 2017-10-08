@@ -43,7 +43,6 @@
 - include: git-clone-codebase.yml
   when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '' and not deploy_codebase_import_enabled|default(False)|bool
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
     cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
   tags:
   - deploy.app.codebase
@@ -52,17 +51,7 @@
 - include: git-clone-codebase.yml
   when: not deploy_install_profile_enabled|default(False)|bool and not deploy_codebase_import_enabled|default(False)|bool
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
     cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
-  tags:
-  - deploy.app.codebase
-
-# copy install profile to webserver folder
-- include: deploy-codebase.yml
-  when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '' and not deploy_codebase_import_enabled|default(False)|bool
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
   tags:
   - deploy.app.codebase
 
@@ -89,6 +78,15 @@
     profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}"
     install_profile: "{{ install_profile_param }}"
     locale: "{{ app_languages|default([ 'en' ]) }}"
+  tags:
+  - deploy.app.codebase
+
+# copy install profile to webserver folder
+- include: deploy-codebase.yml
+  when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '' and not deploy_codebase_import_enabled|default(False)|bool
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
   tags:
   - deploy.app.codebase
 
