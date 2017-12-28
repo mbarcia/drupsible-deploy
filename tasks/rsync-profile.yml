@@ -14,11 +14,9 @@
   become_user: root
   when: not profile_project_included.stat.exists
 
-- name: rsync with the profile inside the build dir
-  synchronize: 
-    src: "{{ profiles_dir }}/"
-    dest: "{{ codebase_dir }}{{ deploy_drupal_profiles_base_folder }}"
-  delegate_to: "{{ inventory_hostname }}"
+- name: rsync the profile contents inside the build dir
+  command: "/usr/bin/rsync --delay-updates -F --compress --archive {{ profiles_dir }}/ {{ codebase_dir }}{{ deploy_drupal_profiles_base_folder }}"
+  become: yes
 
 - name: Look for libraries/modules/themes inside the profile project
   stat:
@@ -41,11 +39,9 @@
   become: yes
   become_user: root
 
-- name: rsync libraries between the profile and sites/all/libraries
-  synchronize:
-    src: "{{ profiles_dir }}/{{ install_profile }}/{{ item.item }}/"
-    dest: "{{ codebase_dir }}/sites/all/{{ item.item }}"
-  delegate_to: "{{ inventory_hostname }}"
+- name: rsync modules/libraries/themes from the profile to sites/all
+  command: "/usr/bin/rsync --delay-updates -F --compress --archive {{ profiles_dir }}/{{ install_profile }}/{{ item.item }}/ {{ codebase_dir }}/sites/all/{{ item.item }}"
+  become: yes
   with_items: "{{ profile_resources_stat_output.results }}"
   when:
   - item.stat.exists

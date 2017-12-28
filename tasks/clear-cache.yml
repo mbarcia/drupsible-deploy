@@ -1,14 +1,10 @@
 ---
 - name: Cache clear all (D7)
-  command: drush @{{ app_name }}.cur cc all
-  args:
-    chdir: "{{ deploy_webroot }}/{{ app_name }}/public_html.build"
+  command: drush @{{ app_name }}.bld cc all
   ignore_errors: yes
   when: app_drupal_version|version_compare('7', '==')
 
 - name: Cache rebuild
-  command: drush @{{ app_name }}.cur cache-rebuild
-  args:
-    chdir: "{{ deploy_webroot }}/{{ app_name }}/public_html.build"
+  command: drush @{{ app_name }}.bld cache-rebuild
   ignore_errors: yes
   when: app_drupal_version|version_compare('8', '==')

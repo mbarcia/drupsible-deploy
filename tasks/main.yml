@@ -10,37 +10,57 @@
 #
 # Codebase tasks
 #
+
+# d.o. install profile
 - include: download-install-profile.yml
-  when: deploy_install_profile_enabled|default(False)|bool and deploy_d_o_install_profile != ''
   vars:
     codebase_basepath: "{{ deploy_webroot }}/{{ app_name }}"
     codebase_dir: "{{ codebase_basepath }}/public_html.{{ deploy_build_id }}"
     profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}"
     project_name: "public_html.{{ deploy_build_id }}"
     install_profile: "{{ deploy_d_o_install_profile }}"
+  when: deploy_install_profile_enabled|default(False)|bool and deploy_d_o_install_profile != ''
   tags:
   - deploy.app.codebase
 
+# tarball with a whole lotta code
 - include: unarchive-codebase.yml
   vars:
     codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  when: deploy_codebase_import_enabled|default(False)|bool
+  when: deploy_codebase_import_enabled|default(False)|bool and not deploy_install_profile_enabled|default(False)|bool
   tags:
   - deploy.app.codebase
 
-- include: deploy-codebase.yml
+# tarball with only the install profile
+- include: unarchive-codebase.yml
+  vars:
+    codebase_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
+  when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '' and deploy_codebase_import_enabled|default(False)|bool
+  tags:
+  - deploy.app.codebase
+
+# git repo with only the install profile
+- include: git-clone-codebase.yml
   when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '' and not deploy_codebase_import_enabled|default(False)|bool
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
     cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
   tags:
   - deploy.app.codebase
 
-- include: deploy-codebase.yml
+# git repo with a whole lotta code
+- include: git-clone-codebase.yml
   when: not deploy_install_profile_enabled|default(False)|bool and not deploy_codebase_import_enabled|default(False)|bool
   vars:
     cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
+  tags:
+  - deploy.app.codebase
+
+# copy a whole lotta code to webserver folder
+- include: deploy-codebase.yml
+  when: not deploy_install_profile_enabled|default(False)|bool and not deploy_codebase_import_enabled|default(False)|bool
+  vars:
     codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
   tags:
   - deploy.app.codebase
 
@@ -50,6 +70,7 @@
   tags:
   - deploy.app.codebase
 
+# build/make if needed
 - include: drush-make.yml
   when: deploy_drush_make_enabled|default(False)|bool
   vars:
@@ -60,6 +81,16 @@
   tags:
   - deploy.app.codebase
 
+# copy install profile to webserver folder
+- include: deploy-codebase.yml
+  when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '' and not deploy_codebase_import_enabled|default(False)|bool
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
+  tags:
+  - deploy.app.codebase
+
+# compose if needed
 - include: composer-install.yml
   when: deploy_composer_enabled|default(False)|bool
   vars:
