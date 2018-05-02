@@ -1,5 +1,5 @@
 ---
-- name: Make sure directory exists for the codebase dir
+- name: Make sure directory exists for the codebase dir inside the web root
   file:
     path: "{{ codebase_dir }}"
     state: directory
@@ -9,11 +9,11 @@
   become_user: root
   when: not deploy_install_profile_enabled|default(False)
 
-- name: Copy the updated codebase
+- name: Copy the updated codebase to the codebase dir inside the web root
   command: "cp -pr {{ cached_copy_dir }}{{ deploy_codebase_root_folder }}/. {{ codebase_dir }}"
   when: not deploy_install_profile_enabled|default(False)|bool
 
-- name: Make sure config sync directory exists
+- name: Make sure config sync directory exists (usually outside of the web root)
   file:
     path: "{{ deploy_config_sync_dir }}"
     state: directory
@@ -23,7 +23,7 @@
   become: yes
   become_user: root
 
-- name: Check config sync directory exists in the codebase
+- name: Check config sync directory exists in the cached copy of the repo
   stat:
     path: "{{ cached_copy_dir }}/{{ deploy_codebase_config_base_dir }}/sync"
   register: deploy_codebase_check_sync_output
@@ -31,7 +31,7 @@
   become: yes
   become_user: root
 
-- name: Copy the sync configuration folder
+- name: Copy the sync configuration folder to the web server dir but outside the webroot
   synchronize: 
     src: "{{ cached_copy_dir }}/{{ deploy_codebase_config_base_dir }}/sync/"
     dest: "{{ deploy_config_sync_dir }}"
@@ -39,7 +39,7 @@
   when: app_drupal_version|default('8')|version_compare('8', '==') and deploy_codebase_check_sync_output.stat.exists
   delegate_to: "{{ inventory_hostname }}"
 
-- name: Make sure config env directory exists
+- name: Make sure config env directory exists (usually outside of the web root)
   file:
     path: "{{ deploy_config_env_dir }}"
     state: directory
@@ -49,7 +49,7 @@
   become: yes
   become_user: root
 
-- name: Check config directory exists in the codebase for the target environment
+- name: Check config directory exists in the cached copy of the repo for the target environment
   stat:
     path: "{{ cached_copy_dir }}/{{ deploy_codebase_config_base_dir }}/{{ app_target }}"
   register: deploy_codebase_check_env_output
