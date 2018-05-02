@@ -25,7 +25,7 @@
 
 - name: Check config sync directory exists in the codebase
   stat:
-    path: "{{ cached_copy_dir }}{{ deploy_codebase_config_base_dir }}/sync"
+    path: "{{ cached_copy_dir }}/{{ deploy_codebase_config_base_dir }}/sync"
   register: deploy_codebase_check_sync_output
   when: app_drupal_version|default('8')|version_compare('8', '==')
   become: yes
@@ -33,7 +33,7 @@
 
 - name: Copy the sync configuration folder
   synchronize: 
-    src: "{{ cached_copy_dir }}{{ deploy_codebase_config_base_dir }}/sync/"
+    src: "{{ cached_copy_dir }}/{{ deploy_codebase_config_base_dir }}/sync/"
     dest: "{{ deploy_config_sync_dir }}"
     delete: yes
   when: app_drupal_version|default('8')|version_compare('8', '==') and deploy_codebase_check_sync_output.stat.exists
