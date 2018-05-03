@@ -81,8 +81,8 @@
     dest: "{{ codebase_dir }}"
   delegate_to: "{{ inventory_hostname }}"
 
-- name: rsync codebase in web subir
+- name: rsync codebase (root folder) in web subir
   synchronize:
-    src: "/home/{{ app_user }}/{{ app_name }}/"
+    src: "/home/{{ app_user }}/{{ app_name }}{{deploy_codebase_root_folder}}"
     dest: "{{ codebase_dir }}"
   delegate_to: "{{ inventory_hostname }}"
