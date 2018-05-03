@@ -1,12 +1,13 @@
 ---
+# Get the code in an intermediate folder
 - include: unarchive-codebase.yml
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    unarchive_target_dir: "/tmp/cached-copy"
   when: deploy_codebase_import_enabled|default(False)|bool
 
 - include: ../git-clone-codebase.yml
   vars:
-    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
+    cached_copy_dir: "/tmp/cached-copy"
   when: not deploy_codebase_import_enabled|default(False)|bool
 
 # build/make if needed
@@ -14,7 +15,7 @@
   when: deploy_drush_make_enabled|default(False)|bool
   vars:
     codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-    source_dir: "/home/{{ app_user }}/{{ app_name }}"
+    source_dir: "/tmp/cached-copy"
     locale: "{{ app_languages|default([ 'en' ]) }}"
 
 # compose if needed
@@ -22,10 +23,9 @@
   when: deploy_composer_enabled|default(False)|bool
   vars:
     codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-    composer_base_dir: "/home/{{ app_user }}/{{ app_name }}"
+    composer_base_dir: "/tmp/cached-copy"
 
 - include: ../deploy-codebase.yml
   vars:
     codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
-
+    cached_copy_dir: "/tmp/cached-copy{{deploy_codebase_root_folder}}"
