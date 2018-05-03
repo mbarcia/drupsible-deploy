@@ -28,4 +28,4 @@
 - include: ../deploy-codebase.yml
   vars:
     codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-    cached_copy_dir: "/tmp/cached-copy{{deploy_codebase_root_folder}}"
+    cached_copy_dir: "/tmp/cached-copy"
