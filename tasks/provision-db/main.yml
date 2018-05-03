@@ -1,0 +1,23 @@
+---
+#
+# Provision a database
+#
+# For when setting up a profile/distribution
+- include: drush-site-install.yml
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    locale: "{{ app_languages[0]|default('en') }}"
+    name: "{{ app_name }}"
+    email: "{{ app_admin_email }}"
+    site_pass: "{{ deploy_drupal_admin_password }}"
+    install_profile: "{{ install_profile_param__ }}"
+  when: deploy_site_install_enabled|default(False)|bool
+
+- include: clone-db.yml
+  when: app_db_create_for_build_enabled|default(False)|bool and deploy_db_clone_enabled|default(False)|bool
+
+- include: import-db.yml
+  when: deploy_db_import_enabled|default(False)|bool
+
+- include: sync-db-from-source.yml
+  when: deploy_db_sync_enabled|default(False)|bool

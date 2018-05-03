@@ -1,0 +1,31 @@
+---
+- include: unarchive-codebase.yml
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+  when: deploy_codebase_import_enabled|default(False)|bool
+
+- include: ../git-clone-codebase.yml
+  vars:
+    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
+  when: not deploy_codebase_import_enabled|default(False)|bool
+
+# build/make if needed
+- include: ../drush-make.yml
+  when: deploy_drush_make_enabled|default(False)|bool
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    source_dir: "/home/{{ app_user }}/{{ app_name }}"
+    locale: "{{ app_languages|default([ 'en' ]) }}"
+
+# compose if needed
+- include: ../composer-install.yml
+  when: deploy_composer_enabled|default(False)|bool
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    composer_base_dir: "/home/{{ app_user }}/{{ app_name }}"
+
+- include: ../deploy-codebase.yml
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
+

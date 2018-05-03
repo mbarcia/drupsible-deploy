@@ -1,0 +1,15 @@
+---
+#
+# Codebase tasks
+#
+- include: symlinks.yml
+
+- include: install-profile/main.yml
+  when: deploy_install_profile_enabled|default(False)|bool
+
+- include: lottacode/main.yml
+  when: not deploy_install_profile_enabled|default(False)|bool
+
+- include: deploy-final.yml
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"

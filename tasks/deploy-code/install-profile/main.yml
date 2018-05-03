@@ -1,0 +1,55 @@
+---
+# d.o. install profile
+- include: download-install-profile.yml
+  vars:
+    codebase_basepath: "{{ deploy_webroot }}/{{ app_name }}"
+    codebase_dir: "{{ codebase_basepath }}/public_html.{{ deploy_build_id }}"
+    profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}"
+    project_name: "public_html.{{ deploy_build_id }}"
+    install_profile: "{{ deploy_d_o_install_profile }}"
+  when: deploy_d_o_install_profile != ''
+
+# tarball with only the custom install profile
+- include: ../unarchive-codebase.yml
+  vars:
+    codebase_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
+  when: deploy_custom_install_profile != ''
+
+# git repo with only the custom install profile
+- include: ../git-clone-codebase.yml
+  vars:
+    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
+  when: deploy_custom_install_profile != ''
+
+- name: Set fact for install profile
+  set_fact:
+    install_profile_param__: "{{ (deploy_custom_install_profile != '')|ternary(deploy_custom_install_profile, deploy_d_o_install_profile) }}"
+
+# build/make if needed (for install profiles)
+- include: ../drush-make.yml
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    source_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ install_profile_param__ }}"
+    locale: "{{ app_languages|default([ 'en' ]) }}"
+  when: deploy_drush_make_enabled|default(False)|bool
+
+# compose if needed (for install profiles)
+- include: ../composer-install.yml
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    composer_base_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ install_profile_param__ }}"
+  when: deploy_composer_enabled|default(False)|bool
+
+# copy install profile to webserver folder
+- include: ../deploy-codebase.yml
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
+  when: deploy_custom_install_profile != ''
+
+- include: rsync-profile.yml
+  vars:
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}"
+    install_profile: "{{ install_profile_param__ }}"
+  when: deploy_drush_make_enabled|default(False)|bool or deploy_composer_enabled|default(False)|bool

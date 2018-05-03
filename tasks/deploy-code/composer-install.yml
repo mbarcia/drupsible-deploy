@@ -1,7 +1,7 @@
 ---
 - name: Check for composer.json
   stat:
-    path: "{{ profiles_dir }}/{{ install_profile }}/composer.json"
+    path: "{{ composer_base_dir }}/composer.json"
   register: deploy_composer_json
 
 - name: Fail if composer.json not found
@@ -18,18 +18,18 @@
 
 - name: rsync composer.json
   synchronize:
-    src: "{{ profiles_dir }}/{{ install_profile }}/composer.json"
+    src: "{{ composer_base_dir }}/composer.json"
     dest: "/home/{{ app_user }}/{{ app_name }}"
   delegate_to: "{{ inventory_hostname }}"
 
 - name: Check for composer.lock
   stat:
-    path: "{{ profiles_dir }}/{{ install_profile }}/composer.lock"
+    path: "{{ composer_base_dir }}/composer.lock"
   register: deploy_composer_lock
 
 - name: rsync composer.lock
   synchronize:
-    src: "{{ profiles_dir }}/{{ install_profile }}/composer.lock"
+    src: "{{ composer_base_dir }}/composer.lock"
     dest: "/home/{{ app_user }}/{{ app_name }}"
   delegate_to: "{{ inventory_hostname }}"
   when: deploy_composer_lock.stat.exists
@@ -42,18 +42,6 @@
     recurse: yes
   become: yes
   become_user: root
-
-- name: Require composer/installers
-  composer:
-    command: require
-    arguments: "composer/installers:^1.0"
-    working_dir: "/home/{{ app_user }}/{{ app_name }}"
-
-- name: Require composer/scaffold
-  composer:
-    command: require
-    arguments: "drupal-composer/drupal-scaffold:dev-master"
-    working_dir: "/home/{{ app_user }}/{{ app_name }}"
 
 - name: Run composer install
   composer:

@@ -1,310 +1,51 @@
 ---
-- include: symlinks.yml
-  tags:
-  - deploy.init
+- include: preflight-checks.yml
+  tags: [ deploy.init ]
 
-- include: drush-checks.yml
-  tags:
-  - deploy.init
-
-#
-# Codebase tasks
-#
-
-# d.o. install profile
-- include: download-install-profile.yml
-  vars:
-    codebase_basepath: "{{ deploy_webroot }}/{{ app_name }}"
-    codebase_dir: "{{ codebase_basepath }}/public_html.{{ deploy_build_id }}"
-    profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}"
-    project_name: "public_html.{{ deploy_build_id }}"
-    install_profile: "{{ deploy_d_o_install_profile }}"
-  when: deploy_install_profile_enabled|default(False)|bool and deploy_d_o_install_profile != ''
-  tags:
-  - deploy.app.codebase
-
-# tarball with a whole lotta code
-- include: unarchive-codebase.yml
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  when: deploy_codebase_import_enabled|default(False)|bool and not deploy_install_profile_enabled|default(False)|bool
-  tags:
-  - deploy.app.codebase
-
-# tarball with only the install profile
-- include: unarchive-codebase.yml
-  vars:
-    codebase_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
-  when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '' and deploy_codebase_import_enabled|default(False)|bool
-  tags:
-  - deploy.app.codebase
-
-# git repo with only the install profile
-- include: git-clone-codebase.yml
-  when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '' and not deploy_codebase_import_enabled|default(False)|bool
-  vars:
-    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
-  tags:
-  - deploy.app.codebase
-
-# git repo with a whole lotta code
-- include: git-clone-codebase.yml
-  when: not deploy_install_profile_enabled|default(False)|bool and not deploy_codebase_import_enabled|default(False)|bool
-  vars:
-    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
-  tags:
-  - deploy.app.codebase
-
-# copy a whole lotta code to webserver folder
-- include: deploy-codebase.yml
-  when: not deploy_install_profile_enabled|default(False)|bool and not deploy_codebase_import_enabled|default(False)|bool
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}/cached-copy"
-  tags:
-  - deploy.app.codebase
-
-- name: Set fact for install profile selected
-  set_fact:
-    install_profile_param: "{{ (deploy_custom_install_profile != '')|ternary(deploy_custom_install_profile, deploy_d_o_install_profile) }}"
-  tags:
-  - deploy.app.codebase
-
-# build/make if needed
-- include: drush-make.yml
-  when: deploy_drush_make_enabled|default(False)|bool
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-    profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}"
-    install_profile: "{{ install_profile_param }}"
-    locale: "{{ app_languages|default([ 'en' ]) }}"
-  tags:
-  - deploy.app.codebase
-
-# copy install profile to webserver folder
-- include: deploy-codebase.yml
-  when: deploy_install_profile_enabled|default(False)|bool and deploy_custom_install_profile != '' and not deploy_codebase_import_enabled|default(False)|bool
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-    cached_copy_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}/{{ deploy_custom_install_profile }}"
-  tags:
-  - deploy.app.codebase
-
-# compose if needed
-- include: composer-install.yml
-  when: deploy_composer_enabled|default(False)|bool
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-    profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}"
-    install_profile: "{{ install_profile_param }}"
-  tags:
-  - deploy.app.codebase
-
-- include: rsync-profile.yml
-  when: deploy_drush_make_enabled|default(False)|bool or deploy_composer_enabled|default(False)|bool
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-    profiles_dir: "/home/{{ app_user }}/{{ app_name }}{{ deploy_drupal_profiles_base_folder }}"
-    install_profile: "{{ install_profile_param }}"
-  tags:
-  - deploy.app.codebase
-
-- include: deploy-final.yml
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  tags:
-  - deploy.app.codebase
+- include: deploy-code/main.yml
+  tags: [ deploy.code ]
 
 - include: drupal-settings.yml
   vars:
     codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  tags:
-    - deploy.drupal.settings
+  tags: [ deploy.drupal.settings ]
 
-#
-# Database tasks
-#
 - include: backup-cur-db.yml
   when: deploy_backup_cur_enabled|default(True)|bool and not app_db_create_for_build_enabled|default(False)|bool
-  tags:
-  - deploy.provision.database
+  tags: [ deploy.provision.db, deploy.config.db ]
 
 - include: readonly-mode.yml
   vars:
     readonly_flag: 1
   when: deploy_db_clone_enabled|default(False)|bool and not deploy_db_import_enabled|default(False)|bool and app_drupal_version|version_compare('7', '==')
-  tags:
-  - deploy.provision.database
+  tags: [ deploy.provision.db, deploy.config.db ]
 
 - include: site-offline.yml
   vars:
     offline_flag: 1
   when: not deploy_db_clone_enabled|default(False)|bool and not deploy_db_import_enabled|default(False)|bool
-  tags:
-  - deploy.provision.database
+  tags: [ deploy.provision.db, deploy.config.db ]
 
-# For when setting up a profile/distribution
-- include: drush-site-install.yml
-  when: deploy_site_install_enabled|default(False)|bool
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-    locale: "{{ app_languages[0]|default('en') }}"
-    name: "{{ app_name }}"
-    email: "{{ app_admin_email }}"
-    site_pass: "{{ deploy_drupal_admin_password }}"
-    install_profile: "{{ install_profile_param }}"
-  tags:
-  - deploy.provision.si
+- include: provision-db/main.yml
+  tags: [ deploy.provision.db ]
 
-- include: clone-db.yml
-  when: app_db_create_for_build_enabled|default(False)|bool and deploy_db_clone_enabled|default(False)|bool
-  tags:
-  - deploy.provision.database
-
-- include: import-db.yml
-  when: deploy_db_import_enabled|default(False)|bool
-  tags:
-  - deploy.provision.database
-
-- include: sync-db-from-source.yml
-  when: deploy_db_sync_enabled|default(False)|bool
-  tags:
-  - deploy.provision.database
-
-#
-# Drupal DB tasks
-#
-- include: registry-rebuild.yml
-  when: app_drupal_version|version_compare('7', '==')
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  tags:
-  - deploy.config.database
-
-- include: ops-features.yml
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  tags:
-  - deploy.config.ops-features
-
-- include: enable-disable-modules.yml
-  tags:
-  - deploy.config.database
-
-- include: adjust-db.yml
-  when: deploy_rectify_db_enabled|default(True)|bool and app_drupal_version|version_compare('7', '==')
-  tags:
-  - deploy.config.database
-
-- include: import-config.yml
-  when: deploy_rectify_db_enabled|default(True)|bool and app_drupal_version|version_compare('8', '==')
-  tags:
-  - deploy.config.database
-
-- include: reset-admin-pass.yml
-  when: deploy_reset_admin_pass|default(False)|bool
-  tags:
-  - deploy.config.database
-
-- include: config-languages-d7.yml
-  when: deploy_site_install_enabled|default(False)|bool and app_i18n_enabled|default(False)|bool and app_drupal_version|default('8')|version_compare('7', '==')
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  tags:
-  - deploy.config.database
+- include: config-db/main.yml
+  tags: [ deploy.config.db ]
 
 - include: readonly-mode.yml
   vars:
     readonly_flag: 0
   when: deploy_db_clone_enabled|default(False)|bool and not deploy_db_import_enabled|default(False)|bool
-  tags:
-  - deploy.config.database
-
+  tags: [ deploy.provision.db, deploy.config.db ]
+  
 - include: site-offline.yml
   vars:
     offline_flag: 0
   when: not deploy_db_clone_enabled|default(False)|bool and not deploy_db_import_enabled|default(False)|bool
-  tags:
-  - deploy.config.database
+  tags: [ deploy.provision.db, deploy.config.db ]
 
-#
-# Drupal files tasks
-#
-# Archive in the top folder of the project.
-# Supports tar, gzip, bzip2, and xz.
-# It must not be a tarbomb: it must unpack to a folder called "files".
-# If it does not exist in the local project folder, it will be looked up in the remote host
-# Defaults to {{ app_name }}-files.tar.gz
-- include: unarchive-files.yml
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  when: deploy_files_import_enabled|default(False)|bool
-  tags:
-  - deploy.provision.files
+- include: provision-files/main.yml
+  tags: [ deploy.provision.files ]
 
-- include: copy-files.yml
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  when: deploy_files_copy_enabled|default(False)|bool
-  tags:
-  - deploy.provision.files
-
-- include: sync-files-from-source.yml
-  when: deploy_files_sync_enabled|default(False)|bool
-  tags:
-  - deploy.provision.files
-
-- include: adjust-files-perms.yml
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  tags:
-  - deploy.provision.files
-
-- include: update-translations.yml
-  when: deploy_update_translations_enabled|default('True') and app_drupal_version|default('8')|version_compare('7', '==') and (app_i18n_enabled|default(False)|bool or app_languages[0]|default('en') != 'en')
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  tags:
-  - deploy.provision.translation.files
-
-#
-# Final tasks
-#
-- include: clear-cache.yml
-  tags:
-  - deploy.final
-
-- include: flush-image.yml
-  tags:
-  - deploy.final
-
-- include: branch-tag.yml
-  vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
-  when: deploy_push_hotfix_branch_tag|bool|default(True) and deploy_target == 'prod' and not deploy_site_install_enabled|default(False)|bool and not deploy_codebase_import_enabled|default(False)|bool
-  tags:
-  - deploy.final
-
-- include: switch-on.yml
-  tags:
-  - deploy.final
-
-- include: cron.yml
-  tags:
-  - deploy.cron
-
-- include: rsyslog.yml
-  when: deploy_syslog_enabled|default(False)|bool
-  tags:
-  - deploy.rsyslog
-
-- include: logrotate.yml
-  when: deploy_backup_enabled|default(False)|bool
-  tags:
-  - deploy.logrotate
-
-- name: Restart php-fpm
-  command: /bin/true
-  notify: ['Restart php-fpm']
-  when: deploy_target == 'prod'
-  changed_when: True
+- include: final-tasks/main.yml
+  tags: [ deploy.final ]
