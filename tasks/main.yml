@@ -47,5 +47,5 @@
 - include: provision-files/main.yml
   tags: [ deploy.provision.files ]
 
-- include: final-tasks/main.yml
+- include: finale/main.yml
   tags: [ deploy.final ]
