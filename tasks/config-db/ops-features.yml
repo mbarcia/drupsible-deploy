@@ -47,7 +47,7 @@
     src: "{{ item }}"
     strip: 1
     basedir: "{{ codebase_dir }}"
-  with_items: "{{ corepatches__ }}"
+  with_items: "{{ corepatches__|d([]) }}"
 
 # Drupal 8 config sets
 - name: Harvest all projects Drupal 8 config sets
