@@ -53,7 +53,7 @@
     force: yes
     version: "{{ deploy_git_repo_version }}"
     dest: "{{ cached_copy_dir }}"
-    repo: "ssh://{{ deploy_git_repo_user }}@{{ deploy_git_repo_server }}{{ deploy_git_repo_path__ }}"
+    repo: "{{ deploy_git_repo_user }}@{{ deploy_git_repo_server }}{{ deploy_git_repo_path__ }}"
   when: deploy_git_repo_protocol|default('ssh') == 'ssh'
 
 - name: Git clone the app codebase (git)
