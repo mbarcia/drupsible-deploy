@@ -18,11 +18,11 @@
   become_user: root
 
 - name: Copy the updated codebase to the codebase dir inside the web root
-  command: "cp -pr {{ cached_copy_dir }}{{ deploy_codebase_root_folder }}/. {{ codebase_dir }}/public_html.{{ deploy_build_id }}"
+  command: "cp -pr {{ cached_copy_dir }}{{ deploy_codebase_root_folder }}/. {{ codebase_dir }}/public_html.{{ deploy_build_id }}/"
   when: not deploy_install_profile_enabled|default(False)|bool
 
 - name: Copy the vendor folder to the app web root
-  command: "cp -pr {{ cached_copy_dir }}/vendor/. {{ codebase_dir }}/public_html.{{ deploy_build_id }}"
+  command: "cp -pr {{ cached_copy_dir }}/vendor {{ codebase_dir }}/public_html.{{ deploy_build_id }}"
   when: deploy_composer_enabled|default(False)|bool and not deploy_install_profile_enabled|default(False)|bool
 
 - name: Make sure config sync directory exists (usually outside of the web root)
