@@ -22,10 +22,9 @@
 - include: ../composer-install.yml
   when: deploy_composer_enabled|default(False)|bool
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
     composer_base_dir: "/tmp/cached-copy"
 
 - include: ../deploy-codebase.yml
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}"
     cached_copy_dir: "/tmp/cached-copy"

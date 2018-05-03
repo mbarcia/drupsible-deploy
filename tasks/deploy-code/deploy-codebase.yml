@@ -1,17 +1,29 @@
 ---
 - name: Make sure directory exists for the codebase dir inside the web root
   file:
-    path: "{{ codebase_dir }}"
+    path: "{{ codebase_dir }}/public_html.{{ deploy_build_id }}"
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
   become_user: root
-  when: not deploy_install_profile_enabled|default(False)
+
+- name: Make sure vendor directory exists inside the app web root
+  file:
+    path: "{{ codebase_dir }}/vendor"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: yes
+  become_user: root
 
 - name: Copy the updated codebase to the codebase dir inside the web root
-  command: "cp -pr {{ cached_copy_dir }}{{ deploy_codebase_root_folder }}/. {{ codebase_dir }}"
+  command: "cp -pr {{ cached_copy_dir }}{{ deploy_codebase_root_folder }}/. {{ codebase_dir }}/public_html.{{ deploy_build_id }}"
   when: not deploy_install_profile_enabled|default(False)|bool
+
+- name: Copy the vendor folder to the app web root
+  command: "cp -pr {{ cached_copy_dir }}/vendor/. {{ codebase_dir }}"
+  when: deploy_composer_enabled|default(False)|bool and not deploy_install_profile_enabled|default(False)|bool
 
 - name: Make sure config sync directory exists (usually outside of the web root)
   file:
