@@ -5,7 +5,7 @@
 - include: clear-cache.yml
 
 - include: flush-image.yml
-  when: deploy_flush_images_enabled|bool|default(False)
+  when: deploy_flush_images_enabled|default(False)|bool
 
 - include: branch-tag.yml
   vars:
