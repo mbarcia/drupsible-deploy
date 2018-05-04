@@ -8,7 +8,7 @@
 - block: 
 
   - name: Run drush config-import preview mode
-    command: "drush @{{ app_name }}.bld config-import --preview=diff --skip-modules={{ deploy_modules_absent_env|d([])|join(',') }} sync -n"
+    command: "drush @{{ app_name }}.bld config-import --preview=diff sync -n"
     when: deploy_sync_config_dir_files_output.matched|int != 0
     register: deploy_adjust_db_sync_preview_output
   
@@ -18,7 +18,7 @@
     when: deploy_sync_config_dir_files_output.matched|int != 0
   
   - name: Run drush config-import
-    command: "drush @{{ app_name }}.bld config-import --skip-modules={{ deploy_modules_absent_env|d([])|join(',') }} sync -y"
+    command: "drush @{{ app_name }}.bld config-import sync -y"
 
   when: deploy_sync_config_dir_files_output.matched|int != 0
 
