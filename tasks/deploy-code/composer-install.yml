@@ -8,6 +8,8 @@
   fail: msg="composer.json not found"
   when: not deploy_composer_json.stat.exists
 
-- name: Run composer install
-  composer:
-    working_dir: "{{ composer_base_dir }}"
+# - name: Run composer install
+#   composer:
+#     command: update
+#     working_dir: "{{ composer_base_dir }}"
+

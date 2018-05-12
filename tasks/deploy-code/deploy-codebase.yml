@@ -18,12 +18,27 @@
   become_user: root
 
 - name: Copy the updated codebase to the codebase dir inside the web root
-  command: "cp -pr {{ cached_copy_dir }}{{ deploy_codebase_root_folder }}/. {{ codebase_dir }}/public_html.{{ deploy_build_id }}/"
+  command: "/usr/bin/rsync --delay-updates -F --compress --archive {{ cached_copy_dir }}{{ deploy_codebase_root_folder }}/. {{ codebase_dir }}/public_html.{{ deploy_build_id }}/"
   when: not deploy_install_profile_enabled|default(False)|bool
 
-- name: Copy the vendor folder to the app web root
-  command: "cp -pr {{ cached_copy_dir }}/vendor {{ codebase_dir }}/public_html.{{ deploy_build_id }}"
+- name: Copy the updated vendor to the codebase dir inside the web root
+  command: "/usr/bin/rsync --delay-updates -F --compress --archive {{ cached_copy_dir }}/vendor/. {{ codebase_dir }}/public_html.{{ deploy_build_id }}/vendor/"
+  when: not deploy_install_profile_enabled|default(False)|bool
+
+- name: Find extra dict in composer.json
+  set_fact:
+    deploy_composer_extra__: "{{ (lookup('file', '/tmp/cached-copy/composer.json') | from_json )['extra'] | d({}) }}"
   when: deploy_composer_enabled|default(False)|bool and not deploy_install_profile_enabled|default(False)|bool
+
+- name: Retrieve installer-paths dict in composer.json
+  set_fact:
+    deploy_composer_installer_paths__ : "{{ deploy_composer_extra__['installer-paths'] | d({}) }}"
+  when: deploy_composer_enabled|default(False)|bool and not deploy_install_profile_enabled|default(False)|bool
+
+- name: Rsync the installer-paths folders to the app web root
+  command: "/usr/bin/rsync --delay-updates -F --compress --archive {{ cached_copy_dir }}/{{ item | regex_replace('{\\$name}$', '') }}/. {{ codebase_dir }}/public_html.{{ deploy_build_id }}/{{ item | regex_replace('{\\$name}$', '') }}/"
+  with_items: "{{ deploy_composer_installer_paths__.keys() }}"
+  when: not item|search('drush') and deploy_composer_enabled|default(False)|bool and not deploy_install_profile_enabled|default(False)|bool
 
 - name: Make sure config sync directory exists (usually outside of the web root)
   file:
