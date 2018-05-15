@@ -9,12 +9,12 @@
 # Defaults to {{ app_name }}-files.tar.gz
 - include: unarchive-files.yml
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.{{ deploy_build_id }}"
   when: deploy_files_import_enabled|default(False)|bool
 
 - include: copy-files.yml
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.{{ deploy_build_id }}"
   when: deploy_files_copy_enabled|default(False)|bool
 
 - include: sync-files-from-source.yml
@@ -22,9 +22,9 @@
 
 - include: adjust-files-perms.yml
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.{{ deploy_build_id }}"
 
 - include: update-translations.yml
   when: deploy_update_translations_enabled|default('True') and app_drupal_version|default('8')|version_compare('7', '==') and (app_i18n_enabled|default(False)|bool or app_languages[0]|default('en') != 'en')
   vars:
-    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    codebase_dir: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.{{ deploy_build_id }}"

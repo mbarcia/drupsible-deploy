@@ -21,12 +21,12 @@
 
 - name: Stat public_html for cur vhost
   stat:
-    path: "{{ deploy_webroot }}/{{ app_name }}/public_html"
+    path: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}"
   register: public_html_symlink
 
 - name: Create temp public_html symlink for cur vhost if missing
   file:
-    dest: "{{ deploy_webroot }}/{{ app_name }}/public_html"
+    dest: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}"
     src: "/tmp"
     state: link
     owner: "{{ app_user }}"
@@ -37,12 +37,12 @@
 
 - name: Stat public_html for bak vhost
   stat:
-    path: "{{ deploy_webroot }}/{{ app_name }}/public_html.bak"
+    path: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.bak"
   register: public_html_symlink_bak
 
 - name: Create temp public_html symlink for bak vhost if missing
   file:
-    dest: "{{ deploy_webroot }}/{{ app_name }}/public_html.bak"
+    dest: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.bak"
     src: "/tmp"
     state: link
     owner: "{{ app_user }}"
@@ -53,7 +53,7 @@
 
 - name: Remove current build symlink and its contents, if any
   file:
-    path: "{{ deploy_webroot }}/{{ app_name }}/public_html.build"
+    path: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.build"
     state: absent
     follow: yes
   become: yes

@@ -1,12 +1,12 @@
 ---
 - name: Check files source exists
   stat:
-    path: "{{ deploy_webroot }}/{{ app_name }}/public_html/sites/default/files"
+    path: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}/sites/default/files"
     follow: yes
   register: source_files
 
 - name: Copy files from existing release to codebase dir.
-  command: "cp -pur {{ deploy_webroot }}/{{ app_name }}/public_html/sites/default/files {{ codebase_dir }}/sites/default/"
+  command: "cp -pur {{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}/sites/default/files {{ codebase_dir }}/sites/default/"
   when: source_files.stat.exists
   become: yes
   become_user: root

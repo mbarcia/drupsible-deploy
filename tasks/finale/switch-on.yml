@@ -1,21 +1,21 @@
 ---
 - name: Remove .bak symlink and its contents, if it exists
   file:
-    path: "{{ deploy_webroot }}/{{ app_name }}/public_html.bak"
+    path: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.bak"
     follow: yes
     state: absent
   become: yes
   become_user: root
 
 - name: Rename current symlink to .bak, if it exists
-  command: "mv {{ deploy_webroot }}/{{ app_name }}/public_html {{ deploy_webroot }}/{{ app_name }}/public_html.bak"
+  command: "mv {{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }} {{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.bak"
   become: yes
   become_user: root
 
 - name: Set new symlink to new live codebase
   file:
-    dest: "{{ deploy_webroot }}/{{ app_name }}/public_html"
-    src: "{{ deploy_webroot }}/{{ app_name }}/public_html.{{ deploy_build_id }}"
+    dest: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}"
+    src: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.{{ deploy_build_id }}"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     state: link
@@ -24,21 +24,21 @@
 
 - name: Remove current build symlink
   file:
-    path: "{{ deploy_webroot }}/{{ app_name }}/public_html.build"
+    path: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.build"
     state: absent
     follow: no
   become: yes
   become_user: root
 
-- name: Check user/public_html symlink already exists
+- name: Check user/{{ deploy_public_html_folder }} symlink already exists
   stat: 
-    path: "/home/{{ app_user }}/public_html"
+    path: "/home/{{ app_user }}/{{ deploy_public_html_folder }}"
   register: stat_public_symlink
 
-- name: Create user/public_html symlink
+- name: Create user/{{ deploy_public_html_folder }} symlink
   file:
-    src: "{{ deploy_webroot }}/{{ app_name }}/public_html"
-    dest: "/home/{{ app_user }}/public_html"
+    src: "{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}"
+    dest: "/home/{{ app_user }}/{{ deploy_public_html_folder }}"
     state: link
     owner: "{{ app_user }}"
     group: "{{ app_group }}"

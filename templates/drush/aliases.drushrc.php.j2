@@ -3,24 +3,24 @@
 // {{ ansible_managed }}
 
 $aliases['cur'] = array(
-  'root' => '{{ deploy_webroot }}/{{ app_name }}/public_html',
+  'root' => '{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}',
   'path-aliases' => array(
     '%dump-dir' => '/home/{{ app_user }}/.drush/dbdumps',
     '%ard-dir' => '/home/{{ app_user }}/drush-backups/archive-dump/logrotate/',
-    '%files' => '{{ deploy_webroot }}/{{ app_name }}/public_html/sites/default/files',
-    '%modules' => '{{ deploy_webroot }}/{{ app_name }}/public_html/sites/all/modules',
-    '%themes' => '{{ deploy_webroot }}/{{ app_name }}/public_html/sites/all/themes',
+    '%files' => '{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}/sites/default/files',
+    '%modules' => '{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}/sites/all/modules',
+    '%themes' => '{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}/sites/all/themes',
   ),
 );
 
 $aliases['bld'] = array(
-  'root' => '{{ deploy_webroot }}/{{ app_name }}/public_html.build',
+  'root' => '{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.build',
   'path-aliases' => array(
     '%dump-dir' => '/home/{{ app_user }}/.drush/dbdumps',
     '%ard-dir' => '/home/{{ app_user }}/drush-backups/archive-dump/logrotate/',
-    '%files' => '{{ deploy_webroot }}/{{ app_name }}/public_html.build/sites/default/files',
-    '%modules' => '{{ deploy_webroot }}/{{ app_name }}/public_html.build/sites/all/modules',
-    '%themes' => '{{ deploy_webroot }}/{{ app_name }}/public_html.build/sites/all/themes',
+    '%files' => '{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.build/sites/default/files',
+    '%modules' => '{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.build/sites/all/modules',
+    '%themes' => '{{ deploy_webroot }}/{{ app_name }}/{{ deploy_public_html_folder }}.build/sites/all/themes',
   ),
 );
 
