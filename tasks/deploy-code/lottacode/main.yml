@@ -1,6 +1,6 @@
 ---
 # Get the code in an intermediate folder
-- include: unarchive-codebase.yml
+- include: ../unarchive-codebase.yml
   vars:
     unarchive_target_dir: "/tmp/cached-copy"
   when: deploy_codebase_import_enabled|default(False)|bool
