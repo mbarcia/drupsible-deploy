@@ -14,6 +14,18 @@
   shell: "drush @{{ app_name }}.bld dl {{ deploy_drupal_projects__ | join(' ') }} -y"
   when: deploy_drupal_projects__ | length > 0
 
+- name: Harvest all core patches
+  set_fact:
+    corepatches__: "{{ corepatches__|d([])|union(hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_core_drupal' + app_drupal_version + '_patches']|d([])) }}"
+  with_items: "{{ deploy_drupal_projects__ }}"
+
+- name: Apply core patches for all OPS features
+  patch:
+    src: "{{ item }}"
+    strip: 1
+    basedir: "{{ codebase_dir }}"
+  with_items: "{{ corepatches__|d([]) }}"
+
 - name: Enable Drupal modules for all OPS features
   shell: "drush @{{ app_name }}.bld en {{ hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_drupal' + app_drupal_version + '_modules_enabled']|join(' ') }} -y"
   with_items: "{{ deploy_drupal_projects__ }}"
@@ -36,18 +48,6 @@
     msg: "{{ item }}"
   when: deploy_ops_features_templates_output|failed and item is defined and not item|search('Unable to find')
   with_items: "{{ deploy_ops_features_templates_output.results|map(attribute='msg')|list }}"
-
-- name: Harvest all core patches
-  set_fact:
-    corepatches__: "{{ corepatches__|d([])|union(hostvars[groups[app_name + '-' + app_target + '_deploy'][0]][ item + '_core_drupal' + app_drupal_version + '_patches']|d([])) }}"
-  with_items: "{{ deploy_drupal_projects__ }}"
-
-- name: Apply core patches for all OPS features
-  patch:
-    src: "{{ item }}"
-    strip: 1
-    basedir: "{{ codebase_dir }}"
-  with_items: "{{ corepatches__|d([]) }}"
 
 # Drupal 8 config sets
 - name: Harvest all projects Drupal 8 config sets
