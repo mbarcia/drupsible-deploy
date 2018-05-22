@@ -14,10 +14,15 @@
 - include: enable-disable-modules.yml
 
 - include: adjust-db.yml
-  when: deploy_rectify_db_enabled|default(True)|bool and app_drupal_version|version_compare('7', '==')
+  when: deploy_updb_enabled|default(True)|bool and app_drupal_version|version_compare('7', '==')
+
+- name: Run database updates in D8
+  command: drush @{{ app_name }}.bld updatedb -y
+  ignore_errors: yes
+  when: deploy_updb_enabled|default(True)|bool and app_drupal_version|version_compare('8', '==')
 
 - include: import-config.yml
-  when: deploy_rectify_db_enabled|default(True)|bool and app_drupal_version|version_compare('8', '==')
+  when: deploy_cim_enabled|default(True)|bool and app_drupal_version|version_compare('8', '==')
 
 - include: reset-admin-pass.yml
   when: deploy_reset_admin_pass|default(False)|bool

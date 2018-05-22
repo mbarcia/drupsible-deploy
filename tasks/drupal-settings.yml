@@ -21,7 +21,7 @@
 
 - name: Copy templated custom settings
   template:
-    src: "custom/settings.php.j2"
+    src: "{{ deploy_custom_settings_path }}"
     dest: "{{ codebase_dir }}/sites/default/settings.d/custom.php"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"

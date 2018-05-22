@@ -77,10 +77,15 @@ deploy_db_import_enabled: False
 deploy_db_dump_filename: '{{ app_name }}.sql.gz'
 # Should Drupsible run drush sql-sync with upstream/source DB?
 deploy_db_sync_enabled: False
-# Should Drupsible run drush updb, features-revert, registry-rebuild, etc.,
+
+# Should Drupsible run drush updb 
 # once the DB has been filled with content? Disable if you are building a
 # clone website.
-deploy_rectify_db_enabled: True
+deploy_updb_enabled: True
+# Should Drupsible run drush config-import (or features-revert),
+# once the DB has been filled with content? Disable if you are building a
+# clone website.
+deploy_cim_enabled: False
 
 # True looks for tarballs (files) to upload and import
 deploy_files_import_enabled: False
@@ -198,3 +203,5 @@ deploy_push_hotfix_branch_tag: yes
 deploy_php_service_name: "php{{ ansible_local.php.version|default(deploy_php_version_default) }}-fpm"
 
 deploy_public_html_folder: public_html
+
+deploy_custom_settings_path: custom/settins.php.j2
