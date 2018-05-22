@@ -1,6 +1,6 @@
 ---
 # In a separate play to be invoked multiple times with different params
 - name: Configuration set
-  command: "drush @{{ app_name }}.bld -y cset {{ outer_item.key|quote }} {{ item.key|quote }} {{ item.value|quote }}"
+  command: "drush @{{ app_name }}.bld -y cset {{ outer_item.key }} {{ item.key }} {{ item.value }}"
   with_dict: "{{ outer_item.value }}"
   no_log: True
