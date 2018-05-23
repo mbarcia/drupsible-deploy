@@ -14,6 +14,7 @@
 - name: Register connection string variable
   shell: "drush @{{ app_name }}.bld sql-connect"
   register: sql_connect
+  no_log: yes
 
 - name: Copy archived SQL dump
   copy:
