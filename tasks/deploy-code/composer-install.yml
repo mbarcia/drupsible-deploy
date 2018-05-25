@@ -8,7 +8,19 @@
   fail: msg="composer.json not found"
   when: not deploy_composer_json.stat.exists
 
-- name: Run composer install
+- name: Remove vendor subdir
+  file:
+    state: absent
+    path: "{{ composer_base_dir }}/vendor"
+  when: deploy_composer_empty_vendor|d(False)|bool
+
+- name: Create vendor subdir
+  file:
+    state: directory
+    path: "{{ composer_base_dir }}/vendor"
+  when: deploy_composer_empty_vendor|d(False)|bool
+
+- name: Run composer update
   composer:
     command: update
     working_dir: "{{ composer_base_dir }}"
