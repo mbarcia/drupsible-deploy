@@ -59,10 +59,7 @@
   become_user: root
 
 - name: Copy the sync configuration folder to the web server dir but outside the webroot
-  synchronize: 
-    src: "{{ cached_copy_dir }}/{{ deploy_codebase_config_base_dir }}/sync/"
-    dest: "{{ deploy_config_sync_dir }}"
-    delete: yes
+  command: "/usr/bin/rsync --delay-updates -F --compress --archive --delete {{ cached_copy_dir }}/{{ deploy_codebase_config_base_dir }}/sync/ {{ deploy_config_sync_dir }}"
   when: app_drupal_version|default('8')|version_compare('8', '==') and deploy_codebase_check_sync_output.stat.exists
   delegate_to: "{{ inventory_hostname }}"
 
@@ -85,9 +82,6 @@
   become_user: root
 
 - name: Deploy the configuration for the target environment
-  synchronize: 
-    src: "{{ cached_copy_dir }}/{{ deploy_codebase_config_base_dir }}/{{ app_target }}/"
-    dest: "{{ deploy_config_env_dir }}"
-    delete: yes
+  command: "/usr/bin/rsync --delay-updates -F --compress --archive --delete {{ cached_copy_dir }}/{{ deploy_codebase_config_base_dir }}/{{ app_target }}/ {{ deploy_config_env_dir }}"
   when: app_drupal_version|default('8')|version_compare('8', '==') and deploy_codebase_check_env_output.stat.exists
   delegate_to: "{{ inventory_hostname }}"
