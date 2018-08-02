@@ -204,7 +204,7 @@ deploy_php_service_name: "php{{ ansible_local.php.version|default(deploy_php_ver
 
 deploy_public_html_folder: public_html
 
-deploy_custom_settings_path: custom/settins.php.j2
+deploy_custom_settings_path: custom/settings.php.j2
 
 # Composer patches change the code in /vendor disrupting the subsequent updates.
 # Set this to yes to delete /vendor before trying to update, thus letting
