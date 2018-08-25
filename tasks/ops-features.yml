@@ -58,7 +58,7 @@
   no_log: True
 
 - include: cset-inner.yml
-  with_dict: "{{ dictio__ }}"
+  with_dict: "{{ dictio__|d({}) }}"
   # (needs an inner play called several times)
   loop_control:
     loop_var: outer_item
