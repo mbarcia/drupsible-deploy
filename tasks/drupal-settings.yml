@@ -8,7 +8,7 @@
     mode: 0640
   become: yes
   become_user: root
-  no_log: True
+#  no_log: True
 
 - name: Make sure settings.d directory exists
   file:
