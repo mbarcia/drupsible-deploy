@@ -29,7 +29,7 @@
 - name: Create Drush aliases (current, build and source)
   template:
     src: drush/aliases.drushrc.php.j2
-    dest: /home/{{ app_user }}/.drush/{{ app_name }}.aliases.drushrc.php
+    dest: /etc/drush/{{ app_name }}.aliases.drushrc.php
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
   become: yes
