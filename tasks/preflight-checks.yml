@@ -23,8 +23,11 @@
 
 - name: "Make sure .drush directory exists under the user's home"
   file:
-    path: "/home/{{ app_user }}/.drush"
+    path: "{{ item }}"
     state: directory
+  with_items:
+  - "/home/{{ app_user }}/.drush"
+  - /etc/drush
 
 - name: Create Drush aliases (current, build and source)
   template:
