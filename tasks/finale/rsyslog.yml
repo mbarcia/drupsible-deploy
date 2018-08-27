@@ -18,6 +18,13 @@
   become: yes
   become_user: root
 
+- name: Make sure /etc/rsyslog.d dir exists
+  file:
+    path: /etc/rsyslog.d/
+    state: directory
+  become: yes
+  become_user: root
+
 - name: Install rsyslog config for Drupal syslog module
   template:
     src: rsyslog/drupal.conf
@@ -29,9 +36,16 @@
 - name: Enable syslog drupal module
   command: drush @{{ app_name }}.cur en syslog -y
 
+- name: Make sure /etc/logrotate.d dir exists
+  file:
+    path: /etc/logrotate.d
+    state: directory
+  become: yes
+  become_user: root
+
 - name: setup logrotate.d script for drupal log rotation
   template:
-    src: "logrotate.d/drupal.j2"
-    dest: "/etc/logrotate.d/drupal"
+    src: logrotate.d/drupal.j2
+    dest: /etc/logrotate.d/drupal
   become: yes
   become_user: root
