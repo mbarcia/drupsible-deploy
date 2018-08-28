@@ -18,18 +18,20 @@
   become: yes
   become_user: root
 
-- name: Make sure /etc/rsyslog.d dir exists
+- include: "vars/{{ deploy_syslog_variant }}.yml"
+
+- name: "Make sure {{ deploy_syslog_variant_confdir }} dir exists"
   file:
-    path: /etc/rsyslog.d/
+    path: "{{ deploy_syslog_variant_confdir }}"
     state: directory
   become: yes
   become_user: root
 
-- name: Install rsyslog config for Drupal syslog module
+- name: "Install {{ deploy_syslog_variant }} config for Drupal syslog module"
   template:
-    src: rsyslog/drupal.conf
-    dest: /etc/rsyslog.d/drupal.conf
-  notify: Restart rsyslog
+    src: "{{ deploy_syslog_variant }}/drupal.conf.j2"
+    dest: "{{ deploy_syslog_variant_confdir }}"
+  notify: "Restart {{ deploy_syslog_variant }}"
   become: yes
   become_user: root
 

@@ -1,0 +1,2 @@
+---
+deploy_syslog_variant_confdir: /etc/syslog-ng/conf.d/
