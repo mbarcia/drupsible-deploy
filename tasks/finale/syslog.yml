@@ -18,7 +18,8 @@
   become: yes
   become_user: root
 
-- include: "vars/{{ deploy_syslog_variant }}.yml"
+- name: Source directory name of chosen syslog variant
+  include_vars: "{{ deploy_syslog_variant }}.yml"
 
 - name: "Make sure {{ deploy_syslog_variant_confdir }} dir exists"
   file:
