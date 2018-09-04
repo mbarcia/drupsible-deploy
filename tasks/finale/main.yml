@@ -16,7 +16,7 @@
 
 - include: cron.yml
 
-- include: rsyslog.yml
+- include: syslog.yml
   when: deploy_syslog_enabled|default(False)|bool
 
 - include: logrotate.yml

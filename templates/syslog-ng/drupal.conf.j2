@@ -1,0 +1,13 @@
+destination d_drupal { 
+file('/var/www/{{ app_name }}/logs/drupal.log'); 
+};
+ 
+filter f_drupal {
+program('drupal');
+};
+ 
+log {
+source(s_src); 
+filter(f_drupal); 
+destination(d_drupal);
+};

@@ -97,8 +97,9 @@ deploy_files_sync_enabled: False
 # Can be combined with deploy_files_sync_enabled=yes
 deploy_files_copy_enabled: True
 
-# Should Drupsible setup and configure rsyslog, and enable syslog module?
+# Should Drupsible setup and configure rsyslog (or syslog-ng), and enable syslog module?
 deploy_syslog_enabled: True
+deploy_syslog_variant: rsyslog
 
 # Should Drupsible perform periodic backups with drush ard?
 deploy_backup_enabled: False
